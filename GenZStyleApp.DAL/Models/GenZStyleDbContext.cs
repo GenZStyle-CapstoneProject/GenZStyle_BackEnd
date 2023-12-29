@@ -88,6 +88,8 @@ namespace GenZStyleApp.DAL.Models
                 e.HasOne(e => e.Inbox)
                 .WithOne(e => e.Account)
                 .HasForeignKey<Inbox>(e => e.AccountId);
+
+
             }
             );
 
@@ -399,6 +401,12 @@ namespace GenZStyleApp.DAL.Models
                 Entity.Property(st => st.CreateAt).HasColumnType("datetime");
                 Entity.Property(st => st.UpdateAt).HasColumnType("datetime");
 
+                Entity.HasOne(st => st.Account )
+                .WithMany(st => st.Styles)
+                .HasForeignKey(st => st.AccountId);
+
+
+
             });
             modelBuilder.Entity<StyleFashion>(Entity =>
             {
@@ -417,6 +425,8 @@ namespace GenZStyleApp.DAL.Models
                     .HasOne(it => it.Style)
                     .WithMany(b => b.StyleFashions)
                     .HasForeignKey(it => it.StyleId);
+
+                
 
             });
 

@@ -34,6 +34,7 @@ namespace GenZStyleApp.DAL.Models
         public virtual ICollection<Message> Messages { get; set; }
 
         public virtual ICollection<InboxPaticipant> InboxPaticipants { get; set; }
+        public virtual ICollection<Style> Styles { get; set; }
 
 
     }
