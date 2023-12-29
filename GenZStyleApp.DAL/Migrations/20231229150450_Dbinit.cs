@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace GenZStyleApp.DAL.Migrations
 {
-    public partial class Initial : Migration
+    public partial class Dbinit : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -52,45 +52,6 @@ namespace GenZStyleApp.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Style",
-                columns: table => new
-                {
-                    StyleId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    StyleName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    CreateAt = table.Column<DateTime>(type: "datetime", nullable: false),
-                    UpdateAt = table.Column<DateTime>(type: "datetime", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Style", x => x.StyleId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "FashionItem",
-                columns: table => new
-                {
-                    FashionId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CategoryId = table.Column<int>(type: "int", nullable: false),
-                    fashionName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    fashionDescription = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Cost = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Image = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_FashionItem", x => x.FashionId);
-                    table.ForeignKey(
-                        name: "FK_FashionItem_Category_CategoryId",
-                        column: x => x.CategoryId,
-                        principalTable: "Category",
-                        principalColumn: "CategoriesId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "User",
                 columns: table => new
                 {
@@ -112,32 +73,6 @@ namespace GenZStyleApp.DAL.Migrations
                         column: x => x.RoleId,
                         principalTable: "Role",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "StyleFashion",
-                columns: table => new
-                {
-                    StyleId = table.Column<int>(type: "int", nullable: false),
-                    FashionId = table.Column<int>(type: "int", nullable: false),
-                    CreateAt = table.Column<DateTime>(type: "datetime", nullable: false),
-                    UpdateAt = table.Column<DateTime>(type: "datetime", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_StyleFashion", x => new { x.StyleId, x.FashionId });
-                    table.ForeignKey(
-                        name: "FK_StyleFashion_FashionItem_FashionId",
-                        column: x => x.FashionId,
-                        principalTable: "FashionItem",
-                        principalColumn: "FashionId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_StyleFashion_Style_StyleId",
-                        column: x => x.StyleId,
-                        principalTable: "Style",
-                        principalColumn: "StyleId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -258,6 +193,29 @@ namespace GenZStyleApp.DAL.Migrations
                         column: x => x.AccountId,
                         principalTable: "Account",
                         principalColumn: "AccountId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Style",
+                columns: table => new
+                {
+                    StyleId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    AccountId = table.Column<int>(type: "int", nullable: false),
+                    StyleName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    CreateAt = table.Column<DateTime>(type: "datetime", nullable: false),
+                    UpdateAt = table.Column<DateTime>(type: "datetime", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Style", x => x.StyleId);
+                    table.ForeignKey(
+                        name: "FK_Style_Account_AccountId",
+                        column: x => x.AccountId,
+                        principalTable: "Account",
+                        principalColumn: "AccountId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -408,6 +366,36 @@ namespace GenZStyleApp.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "FashionItem",
+                columns: table => new
+                {
+                    FashionId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CategoryId = table.Column<int>(type: "int", nullable: false),
+                    PostId = table.Column<int>(type: "int", nullable: false),
+                    fashionName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    fashionDescription = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Cost = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Image = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FashionItem", x => x.FashionId);
+                    table.ForeignKey(
+                        name: "FK_FashionItem_Category_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Category",
+                        principalColumn: "CategoriesId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_FashionItem_Post_PostId",
+                        column: x => x.PostId,
+                        principalTable: "Post",
+                        principalColumn: "PostId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Like",
                 columns: table => new
                 {
@@ -462,6 +450,32 @@ namespace GenZStyleApp.DAL.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "StyleFashion",
+                columns: table => new
+                {
+                    StyleId = table.Column<int>(type: "int", nullable: false),
+                    FashionId = table.Column<int>(type: "int", nullable: false),
+                    CreateAt = table.Column<DateTime>(type: "datetime", nullable: false),
+                    UpdateAt = table.Column<DateTime>(type: "datetime", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StyleFashion", x => new { x.StyleId, x.FashionId });
+                    table.ForeignKey(
+                        name: "FK_StyleFashion_FashionItem_FashionId",
+                        column: x => x.FashionId,
+                        principalTable: "FashionItem",
+                        principalColumn: "FashionId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_StyleFashion_Style_StyleId",
+                        column: x => x.StyleId,
+                        principalTable: "Style",
+                        principalColumn: "StyleId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Account_UserId",
                 table: "Account",
@@ -486,6 +500,11 @@ namespace GenZStyleApp.DAL.Migrations
                 name: "IX_FashionItem_CategoryId",
                 table: "FashionItem",
                 column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FashionItem_PostId",
+                table: "FashionItem",
+                column: "PostId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Inbox_AccountId",
@@ -549,6 +568,11 @@ namespace GenZStyleApp.DAL.Migrations
                 column: "AccountId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Style_AccountId",
+                table: "Style",
+                column: "AccountId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_StyleFashion_FashionId",
                 table: "StyleFashion",
                 column: "FashionId");
@@ -606,9 +630,6 @@ namespace GenZStyleApp.DAL.Migrations
                 name: "UserRelation");
 
             migrationBuilder.DropTable(
-                name: "Post");
-
-            migrationBuilder.DropTable(
                 name: "Inbox");
 
             migrationBuilder.DropTable(
@@ -625,6 +646,9 @@ namespace GenZStyleApp.DAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "Category");
+
+            migrationBuilder.DropTable(
+                name: "Post");
 
             migrationBuilder.DropTable(
                 name: "Invoice");

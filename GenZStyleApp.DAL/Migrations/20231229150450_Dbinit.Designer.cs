@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GenZStyleApp.DAL.Migrations
 {
     [DbContext(typeof(GenZStyleDbContext))]
-    [Migration("20231229072810_Initial")]
-    partial class Initial
+    [Migration("20231229150450_Dbinit")]
+    partial class Dbinit
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -164,6 +164,9 @@ namespace GenZStyleApp.DAL.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<int>("PostId")
+                        .HasColumnType("int");
+
                     b.Property<string>("fashionDescription")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -179,6 +182,8 @@ namespace GenZStyleApp.DAL.Migrations
                     b.HasKey("FashionId");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("PostId");
 
                     b.ToTable("FashionItem", (string)null);
                 });
@@ -492,6 +497,9 @@ namespace GenZStyleApp.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StyleId"), 1L, 1);
 
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime");
 
@@ -511,6 +519,8 @@ namespace GenZStyleApp.DAL.Migrations
                         .HasColumnType("datetime");
 
                     b.HasKey("StyleId");
+
+                    b.HasIndex("AccountId");
 
                     b.ToTable("Style", (string)null);
                 });
@@ -713,7 +723,15 @@ namespace GenZStyleApp.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("GenZStyleApp.DAL.Models.Post", "Post")
+                        .WithMany("FashionItems")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Category");
+
+                    b.Navigation("Post");
                 });
 
             modelBuilder.Entity("GenZStyleApp.DAL.Models.Inbox", b =>
@@ -828,6 +846,17 @@ namespace GenZStyleApp.DAL.Migrations
                     b.Navigation("Account");
                 });
 
+            modelBuilder.Entity("GenZStyleApp.DAL.Models.Style", b =>
+                {
+                    b.HasOne("GenZStyleApp.DAL.Models.Account", "Account")
+                        .WithMany("Styles")
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+                });
+
             modelBuilder.Entity("GenZStyleApp.DAL.Models.StyleFashion", b =>
                 {
                     b.HasOne("GenZStyleApp.DAL.Models.FashionItem", "FashionItem")
@@ -917,6 +946,8 @@ namespace GenZStyleApp.DAL.Migrations
 
                     b.Navigation("Posts");
 
+                    b.Navigation("Styles");
+
                     b.Navigation("UserRelations");
 
                     b.Navigation("Wallets");
@@ -962,6 +993,8 @@ namespace GenZStyleApp.DAL.Migrations
             modelBuilder.Entity("GenZStyleApp.DAL.Models.Post", b =>
                 {
                     b.Navigation("Comments");
+
+                    b.Navigation("FashionItems");
 
                     b.Navigation("Likes");
                 });

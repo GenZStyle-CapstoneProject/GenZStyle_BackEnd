@@ -15,12 +15,16 @@ namespace GenZStyleApp.DAL.Models
         public int FashionId {  get; set; }
 
         public int CategoryId { get; set; }
+
+        public int PostId { get; set; }
         public string fashionName { get; set; }
         public string fashionDescription { get; set; }
 
         public Decimal Cost { get; set; }
 
         public string Image {  get; set; }
+
+        public Post Post { get; set; }
 
         public Category Category { get; set; }
         public ICollection<StyleFashion> StyleFashions { get; set; }

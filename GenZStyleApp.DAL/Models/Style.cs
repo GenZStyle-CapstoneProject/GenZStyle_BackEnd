@@ -14,6 +14,8 @@ namespace GenZStyleApp.DAL.Models
 
         public int StyleId { get; set; }
 
+        public int AccountId { get; set; }
+
         public string StyleName { get; set; }
 
         public string Description { get; set; }
@@ -22,7 +24,10 @@ namespace GenZStyleApp.DAL.Models
 
         public DateTime UpdateAt { get; set; }
 
+        public Account Account { get; set; }
+
         public ICollection<StyleFashion> StyleFashions { get; set;}
+        
 
 
     }

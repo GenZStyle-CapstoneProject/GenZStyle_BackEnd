@@ -28,5 +28,7 @@ namespace GenZStyleApp.DAL.Models
         public ICollection<Like> Likes { get; set;}
 
         public ICollection<Comment> Comments { get;}
+
+        public ICollection<FashionItem> FashionItems { get; set;}
     }
 }
