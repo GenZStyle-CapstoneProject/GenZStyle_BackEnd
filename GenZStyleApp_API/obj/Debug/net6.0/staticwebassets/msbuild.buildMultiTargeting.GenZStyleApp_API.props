@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\GenZStyleApp_API.props" />
+</Project>

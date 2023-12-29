@@ -1,0 +1,14 @@
+D:\Demo\FU\Hand-On-Lab\GenZStyleApp\GenZStyleApp.DAL\bin\Debug\net6.0\GenZStyleApp.DAL.deps.json
+D:\Demo\FU\Hand-On-Lab\GenZStyleApp\GenZStyleApp.DAL\bin\Debug\net6.0\GenZStyleApp.DAL.runtimeconfig.json
+D:\Demo\FU\Hand-On-Lab\GenZStyleApp\GenZStyleApp.DAL\bin\Debug\net6.0\GenZStyleApp.DAL.dll
+D:\Demo\FU\Hand-On-Lab\GenZStyleApp\GenZStyleApp.DAL\bin\Debug\net6.0\GenZStyleApp.DAL.pdb
+D:\Demo\FU\Hand-On-Lab\GenZStyleApp\GenZStyleApp.DAL\obj\Debug\net6.0\GenZStyleApp.DAL.csproj.AssemblyReference.cache
+D:\Demo\FU\Hand-On-Lab\GenZStyleApp\GenZStyleApp.DAL\obj\Debug\net6.0\GenZStyleApp.DAL.GeneratedMSBuildEditorConfig.editorconfig
+D:\Demo\FU\Hand-On-Lab\GenZStyleApp\GenZStyleApp.DAL\obj\Debug\net6.0\GenZStyleApp.DAL.AssemblyInfoInputs.cache
+D:\Demo\FU\Hand-On-Lab\GenZStyleApp\GenZStyleApp.DAL\obj\Debug\net6.0\GenZStyleApp.DAL.AssemblyInfo.cs
+D:\Demo\FU\Hand-On-Lab\GenZStyleApp\GenZStyleApp.DAL\obj\Debug\net6.0\GenZStyleApp.DAL.csproj.CoreCompileInputs.cache
+D:\Demo\FU\Hand-On-Lab\GenZStyleApp\GenZStyleApp.DAL\obj\Debug\net6.0\GenZStyleApp.DAL.dll
+D:\Demo\FU\Hand-On-Lab\GenZStyleApp\GenZStyleApp.DAL\obj\Debug\net6.0\refint\GenZStyleApp.DAL.dll
+D:\Demo\FU\Hand-On-Lab\GenZStyleApp\GenZStyleApp.DAL\obj\Debug\net6.0\GenZStyleApp.DAL.pdb
+D:\Demo\FU\Hand-On-Lab\GenZStyleApp\GenZStyleApp.DAL\obj\Debug\net6.0\GenZStyleApp.DAL.genruntimeconfig.cache
+D:\Demo\FU\Hand-On-Lab\GenZStyleApp\GenZStyleApp.DAL\obj\Debug\net6.0\ref\GenZStyleApp.DAL.dll
