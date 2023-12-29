@@ -350,6 +350,11 @@ namespace GenZStyleApp.DAL.Models
                 Entity.HasOne(fa => fa.Category)
                 .WithMany(fa => fa.FashionItems)
                 .HasForeignKey(fa => fa.CategoryId);
+
+                Entity.HasOne(fa => fa.Post)
+                .WithMany(fa => fa.FashionItems)
+                .HasForeignKey(fa => fa.PostId);
+
             });
             modelBuilder.Entity<Category>(Entity =>
             {
