@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <Folder Include="DAO\" />
+    <Folder Include="DAO\" />
   </ItemGroup>
 
 </Project>
