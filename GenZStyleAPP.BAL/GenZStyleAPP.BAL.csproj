@@ -7,11 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Repository\" />
+    <ProjectReference Include="..\GenZStyleApp.DAL\GenZStyleApp.DAL.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GenZStyleApp.DAL\GenZStyleApp.DAL.csproj" />
+    <Folder Include="Repository\" />
   </ItemGroup>
 
 </Project>
