@@ -75,8 +75,8 @@ namespace GenZStyleApp.DAL.Models
                 e.Property(acc => acc.Username).IsUnicode(true).HasMaxLength(50);
                 e.Property(acc => acc.PasswordHash).IsUnicode(true).HasMaxLength(50);
                 e.Property(acc => acc.Firstname).IsUnicode(true).HasMaxLength(50);
+                e.Property(acc => acc.Email).IsUnicode(true).HasMaxLength(50);
                 e.Property(acc => acc.Lastname).IsUnicode(true).HasMaxLength(50);
-                e.Property(acc => acc.AvatarUrl).IsUnicode(true).HasMaxLength(int.MaxValue);
                 e.Property(acc => acc.IsVip).IsRequired();
                 e.Property(acc => acc.IsActive).IsRequired();
 
@@ -87,7 +87,11 @@ namespace GenZStyleApp.DAL.Models
                 
                 e.HasOne(e => e.Inbox)
                 .WithOne(e => e.Account)
-                .HasForeignKey<Inbox>(e => e.AccountId);
+                .HasForeignKey<Inbox>(e => e.InboxId);
+
+                e.HasOne(e => e.Wallet)
+                .WithOne(e => e.Account)
+                .HasForeignKey<Wallet>(e => e.WalletId);
 
 
             }
@@ -107,13 +111,10 @@ namespace GenZStyleApp.DAL.Models
                 .ValueGeneratedOnAdd();             
                 e.Property(us => us.City).IsUnicode(true).HasMaxLength(50);
                 e.Property(us => us.Address).IsUnicode(true).HasMaxLength(50);
-                e.Property(us => us.Email).IsUnicode(true).HasMaxLength(50);
                 e.Property(us => us.Phone).IsUnicode(true).HasMaxLength(50);
                 e.Property(us => us.Gender).IsUnicode(true).HasMaxLength(50);
                 e.Property(us => us.Dob).HasColumnType("datetime");
-
-
-
+                e.Property(us => us.AvatarUrl).IsUnicode(true).HasMaxLength(int.MaxValue);
 
                 e.HasOne(us => us.Role)
                 .WithMany(us => us.Users)
@@ -173,7 +174,7 @@ namespace GenZStyleApp.DAL.Models
             modelBuilder.Entity<Transaction>(e =>
             {
                 e.ToTable("Transaction");
-                e.Property(Tr => Tr.TransactionId)
+                e.Property(Tr => Tr.Id)
                 .ValueGeneratedOnAdd();
                 e.Property(us => us.TransStyle).IsUnicode(true).HasMaxLength(50);
                 e.Property(us => us.Amount).HasColumnType("decimal(18, 2)").IsRequired();
@@ -238,16 +239,18 @@ namespace GenZStyleApp.DAL.Models
                 Entity.Property(w => w.Balance ).HasColumnType("decimal(18, 2)").IsRequired();
                 Entity.Property(po => po.CreatDate).HasColumnType("datetime");
                 
-                Entity.HasOne(w => w.Account)
-                .WithMany(w => w.Wallets)
-                .HasForeignKey(w => w.AccountId);
+                
+
+                Entity.HasOne(e => e.Account)
+                .WithOne(e => e.Wallet)
+                .HasForeignKey<Account>(e => e.AccountId);
 
             });
             modelBuilder.Entity<Like>(Entity =>
-            {
+            {   
                 Entity.ToTable("Like");
-                Entity.Property(L => L.LikeId)
-                .ValueGeneratedOnAdd();
+                Entity.HasKey(e => new { e.AccountId, e.PostId });
+                
 
                 Entity.HasOne(L => L.Post)
                 .WithMany(L => L.Likes)
@@ -262,9 +265,8 @@ namespace GenZStyleApp.DAL.Models
             modelBuilder.Entity<Message>(Entity =>
             {
                 Entity.ToTable("Message");
-                Entity.Property(m => m.MessageId)
-                .ValueGeneratedOnAdd();
 
+                Entity.HasKey(e => new { e.AccountId, e.InboxId });
                 Entity.Property(m => m.Content).IsUnicode(true).HasMaxLength(50);
                 Entity.Property(m => m.File).IsUnicode(true).HasMaxLength(50);
                 Entity.Property(m => m.CreateAt).HasColumnType("datetime");
@@ -323,10 +325,10 @@ namespace GenZStyleApp.DAL.Models
             modelBuilder.Entity<UserRelation>(Entity =>
             {
                 Entity.ToTable("UserRelation");
-                Entity.Property(u => u.Id)
-                .ValueGeneratedOnAdd();
+                Entity.HasKey(e => new { e.FollowerId, e.FollowingId });
 
-                
+
+
 
                 Entity.HasOne(u => u.Account)
                 .WithMany(u => u.UserRelations)
