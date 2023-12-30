@@ -10,9 +10,6 @@ namespace GenZStyleApp.DAL.Models
 {
     public class Like
     {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-
-        public int LikeId { get; set; } 
 
         public int PostId { get; set; }
         public int AccountId { get; set; }

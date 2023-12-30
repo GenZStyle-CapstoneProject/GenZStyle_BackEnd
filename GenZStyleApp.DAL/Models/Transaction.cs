@@ -12,7 +12,7 @@ namespace GenZStyleApp.DAL.Models
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 
-        public int TransactionId { get; set; }
+        public int Id { get; set; }
         public int PaymentId { get; set; }
         public int WalletId { get; set; }
         public decimal Amount { get; set; }

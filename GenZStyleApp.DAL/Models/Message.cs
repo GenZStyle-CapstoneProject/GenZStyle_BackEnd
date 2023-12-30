@@ -11,9 +11,6 @@ namespace GenZStyleApp.DAL.Models
 {
     public class Message
     {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-
-        public int MessageId { get; set; }
 
         public int AccountId { get; set; }
 
