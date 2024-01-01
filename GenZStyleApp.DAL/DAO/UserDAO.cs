@@ -10,25 +10,56 @@ namespace GenZStyleApp.DAL.DAO
 {
     public class UserDAO
     {
-        private static UserDAO instance = null;
-        private static object instanceLook = new object();
-
-        public static UserDAO Instance
+        private GenZStyleDbContext _dbContext;
+        public UserDAO(GenZStyleDbContext dbContext)
         {
-            get
-            {
-                lock (instanceLook)
-                {
-                    if (instance == null)
-                    {
-                        instance = new UserDAO();
-                    }
-
-                    return instance;
-                }
-            }
+            this._dbContext = dbContext;
         }
 
+        #region Get User by email
+        public async Task<User> GetUserByEmailAsync(string email)
+        {
+            try
+            {
+                return await _dbContext.Users.Include(c => c.Accounts)
+                                                 .SingleOrDefaultAsync(c => c.Accounts.Any(a => a.Email.Equals(email)
+                                                 && c.Accounts.Any(a => a.IsActive == true)
+                                                 ))
+                                                  ;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        #endregion
+        #region Get User by phone
+        public async Task<User> GetUserByPhoneAsync(string phone)
+        {
+            try
+            {
+                return await _dbContext.Users.Include(c => c.Accounts)
+                                                 .SingleOrDefaultAsync(c => c.Phone.Equals(phone));
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        #endregion
+
+        public async Task AddNewUser(User User)
+        {
+            try
+            {
+                await _dbContext.Users.AddAsync(User);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+        }
         private readonly GenZStyleDbContext _context = new GenZStyleDbContext();
 
         public List<User> GetAllUser()
@@ -39,14 +70,7 @@ namespace GenZStyleApp.DAL.DAO
                 .ToList();
         }
 
-        public void AddUser(User user)
-        {
-            /*var maxId = _context.CarInformations.Max(c => c.CarId);
-            car.CarId = maxId + 1;*/
-
-            _context.Users.Add(user);
-            _context.SaveChanges();
-        }
+        
 
         public User GetUserByid(int id)
         {

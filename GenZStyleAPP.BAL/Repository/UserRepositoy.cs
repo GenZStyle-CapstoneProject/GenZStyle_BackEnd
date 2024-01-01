@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace GenZStyleAPP.BAL.Repository
 {
-    public class UserRepositoy: IUserRepository
+    public class UserRepositoy
     {
-        public void CreateUser(User newUser)
+        /*public void CreateUser(User newUser)
         {
             //newUser.Role = 1;
             UserDAO.Instance.AddUser(newUser);
@@ -34,6 +34,6 @@ namespace GenZStyleAPP.BAL.Repository
         public void UpdateUser(User newUser)
         {
             UserDAO.Instance.UpdateUser(newUser);
-        }
+        }*/
     }
 }

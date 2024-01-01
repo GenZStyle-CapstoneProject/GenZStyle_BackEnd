@@ -112,7 +112,6 @@ namespace GenZStyleApp.DAL.Models
                 e.Property(us => us.City).IsUnicode(true).HasMaxLength(50);
                 e.Property(us => us.Address).IsUnicode(true).HasMaxLength(50);
                 e.Property(us => us.Phone).IsUnicode(true).HasMaxLength(50);
-                e.Property(us => us.Gender).IsUnicode(true).HasMaxLength(50);
                 e.Property(us => us.Dob).HasColumnType("datetime");
                 e.Property(us => us.AvatarUrl).IsUnicode(true).HasMaxLength(int.MaxValue);
 
