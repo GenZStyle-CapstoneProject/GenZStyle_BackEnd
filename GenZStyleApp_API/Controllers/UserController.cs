@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
+using GenZStyleApp.DAL.Models;
 using GenZStyleAPP.BAL.DTOs.Users;
 using GenZStyleAPP.BAL.Repository.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -41,5 +42,13 @@ namespace GenZStyleApp_API.Controllers
             return Ok();
         }
         #endregion
+
+        [HttpGet("odata/Users/Active/User")]
+        [EnableQuery]
+        public async Task<IActionResult> ActiveUsers()
+        {
+            List<User> users = await this._userRepository.GetUsersAsync();
+            return Ok(users);
+        }
     }
 }

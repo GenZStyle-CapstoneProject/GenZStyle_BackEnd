@@ -118,5 +118,34 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
             }*/
         }
 
+        public void DeleteUserByid(int id)
+        {
+            _unitOfWork.UserDAO.DeleteUser(id);
+        }
+
+        public async Task<List<User>> GetUsersAsync()
+        {
+            try
+            {
+                List<User> users = await this._unitOfWork.UserDAO.GetAllUser();
+                return this._mapper.Map<List<User>>(users);
+            }
+            catch (Exception ex)
+            {
+                string error = ErrorHelper.GetErrorString(ex.Message);
+                throw new Exception(error);
+            }
+        }
+
+        public User GetUserById(int id)
+        {
+            return _unitOfWork.UserDAO.GetUserByid(id);
+        }
+
+        public void UpdateUser(User newCar)
+        {
+            _unitOfWork.UserDAO.UpdateUser(newCar);
+        }
+
     }
 }

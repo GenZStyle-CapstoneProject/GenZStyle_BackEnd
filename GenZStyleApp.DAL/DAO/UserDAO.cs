@@ -62,15 +62,22 @@ namespace GenZStyleApp.DAL.DAO
         }
         private readonly GenZStyleDbContext _context = new GenZStyleDbContext();
 
-        public List<User> GetAllUser()
+        //get User
+        public async Task<List<User>> GetAllUser()
         {
-            return _context.Users
-                .Include(f => f.Role)
-                /*.Where(o => o.CarStatus == 1)*/
-                .ToList();
+            try
+            {
+                List<User> users = await _dbContext.Users.ToListAsync();
+                return users;
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
-        
+
 
         public User GetUserByid(int id)
         {
@@ -90,11 +97,17 @@ namespace GenZStyleApp.DAL.DAO
             var existingUser = _context.Users.Find(user.UserId);
             if (existingUser != null)
             {
-                user.Role = null;
+                existingUser.City = user.City;
+                existingUser.AvatarUrl = user.AvatarUrl;
+                existingUser.Address = user.Address;
+                existingUser.Phone = user.Phone;
+                existingUser.Gender = user.Gender;
+                existingUser.Dob = user.Dob;
+                existingUser.Role = null;
                 
 
                 _context.Entry(existingUser).State = EntityState.Detached;
-                _context.Users.Update(user);
+                _context.Users.Update(existingUser);
                 _context.SaveChanges();
             }
         }
