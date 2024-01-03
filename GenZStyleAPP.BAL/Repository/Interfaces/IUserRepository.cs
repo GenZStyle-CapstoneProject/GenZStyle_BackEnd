@@ -1,5 +1,6 @@
 ﻿using GenZStyleApp.DAL.Models;
 using GenZStyleAPP.BAL.DTOs.Users;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace GenZStyleAPP.BAL.Repository.Interfaces
         public Task<GetUserResponse> Register(RegisterRequest registerRequest);
         public void DeleteUserByid(int id);
         public Task<List<User>> GetUsersAsync();
-        public User GetUserById(int id);
-        public void UpdateUser(User newCar);
+        public Task<User> GetUserDetailByIdAsync(int id);
+        public Task<User> UpdateUserAsync(int userId, UpdateUserRequest updateUserRequest, HttpContext httpContext);
     }
 }

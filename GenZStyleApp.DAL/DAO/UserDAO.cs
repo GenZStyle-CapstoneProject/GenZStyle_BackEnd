@@ -79,38 +79,36 @@ namespace GenZStyleApp.DAL.DAO
 
 
 
-        public User GetUserByid(int id)
+        public async Task<User> GetUserByIdAsync(int id)
         {
-            var user = _context.Users.Where(c => c.UserId == id).ToList();
-            if (user.Count == 0)
+            try
             {
-                return null;
+                return await _dbContext.Users
+                    //.Include(p => p.ProductImages)
+                    //.Include(p => p.ProductMeals)
+                    //.ThenInclude(p => p.Meal)
+                    //.ThenInclude(m => m.MealImages)
+                   .SingleOrDefaultAsync(p => p.UserId == id);
             }
-            else
+            catch (Exception ex)
             {
-                return user[0];
+                throw new Exception(ex.Message);
             }
         }
 
+        #region Update user
         public void UpdateUser(User user)
         {
-            var existingUser = _context.Users.Find(user.UserId);
-            if (existingUser != null)
+            try
             {
-                existingUser.City = user.City;
-                existingUser.AvatarUrl = user.AvatarUrl;
-                existingUser.Address = user.Address;
-                existingUser.Phone = user.Phone;
-                existingUser.Gender = user.Gender;
-                existingUser.Dob = user.Dob;
-                existingUser.Role = null;
-                
-
-                _context.Entry(existingUser).State = EntityState.Detached;
-                _context.Users.Update(existingUser);
-                _context.SaveChanges();
+                this._dbContext.Entry<User>(user).State = EntityState.Modified;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
+        #endregion
         public void DeleteUser(int id)
         {
             var user = _context.Users.Where(c => c.UserId == id).ToList()[0];

@@ -43,6 +43,7 @@ namespace GenZStyleApp_API.Controllers
         }
         #endregion
 
+        // GetAll
         [HttpGet("odata/Users/Active/User")]
         [EnableQuery]
         public async Task<IActionResult> ActiveUsers()
@@ -50,5 +51,31 @@ namespace GenZStyleApp_API.Controllers
             List<User> users = await this._userRepository.GetUsersAsync();
             return Ok(users);
         }
+
+        [HttpGet("odata/Users/Active/User/{userId}")]
+        [EnableQuery(MaxExpansionDepth = 3)]
+        public async Task<IActionResult> ActiveUser(int userId)
+        {
+            User user = await this._userRepository.GetUserDetailByIdAsync(userId);
+            return Ok(user);
+        }
+
+        #region Update Product
+        [HttpPut("UpdateUser")]
+        [EnableQuery]
+        //[PermissionAuthorize("Staff")]
+        public async Task<IActionResult> Put([FromRoute] int key, [FromForm] UpdateUserRequest updateUserRequest)
+        {
+            //var resultValid = _updateProductValidator.Validate(updateUserRequest);
+            //if (!resultValid.IsValid)
+            //{
+            //    string error = ErrorHelper.GetErrorsString(resultValid);
+            //    throw new BadRequestException(error);
+            //}
+            User user = await this._userRepository.UpdateUserAsync(key, updateUserRequest, HttpContext);
+            return Updated(user);
+        }
+        #endregion
+
     }
 }
