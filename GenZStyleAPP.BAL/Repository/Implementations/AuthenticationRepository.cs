@@ -33,8 +33,8 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 {
                     GetLoginResponse loginResponse = new GetLoginResponse()
                     {
-                        EmployeeID = 0,
-                        Email = account.UserName,
+                        UserrID = 0,
+                        UserName = account.UserName,
                         FullName = account.UserName,
                         IsAdmin = true
                     };
@@ -45,14 +45,15 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                     Account account1 = await this._unitOfWork.AccountDAO.LoginAsync(account.UserName, account.Password);
                     if (account1 == null)
                     {
-                        throw new BadRequestException("Email or Password is invalid.");
+                        throw new BadRequestException("UserName or Password is invalid.");
                     }
                     GetLoginResponse loginResponse = new GetLoginResponse()
                     {
-                        EmployeeID = account1.AccountId,
-                        Email = account1.Username,
-                        FullName = account1.Firstname,
+                        UserrID = account1.AccountId,
+                        UserName = account1.Username,
+                        FullName = account1.Firstname + account1.Lastname,
                         IsAdmin = false
+
                     };
                     return loginResponse;
                 }

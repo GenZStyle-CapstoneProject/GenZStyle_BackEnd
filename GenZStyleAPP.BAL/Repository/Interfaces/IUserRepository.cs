@@ -9,6 +9,6 @@ namespace GenZStyleAPP.BAL.Repository.Interfaces
 {
     public interface IUserRepository
     {
-        public Task<GetUserResponse> Register(RegisterRequest registerrequest);
+        public Task<GetUserResponse> Register(RegisterRequest registerRequest);
     }
 }

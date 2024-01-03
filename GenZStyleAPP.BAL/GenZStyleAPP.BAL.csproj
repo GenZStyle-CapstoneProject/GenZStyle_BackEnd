@@ -24,6 +24,7 @@
     <Folder Include="DTOs\Like\" />
     <Folder Include="DTOs\Message\" />
     <Folder Include="DTOs\Payment\" />
+    <Folder Include="Profiles\NewFolder1\" />
   </ItemGroup>
 
 </Project>
