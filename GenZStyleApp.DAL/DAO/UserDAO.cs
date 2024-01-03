@@ -79,16 +79,13 @@ namespace GenZStyleApp.DAL.DAO
 
 
 
-        public async Task<User> GetUserByIdAsync(int id)
+        public async Task<User> GetUserByIdAsync(int userId)
         {
             try
             {
-                return await _dbContext.Users
-                    //.Include(p => p.ProductImages)
-                    //.Include(p => p.ProductMeals)
-                    //.ThenInclude(p => p.Meal)
-                    //.ThenInclude(m => m.MealImages)
-                   .SingleOrDefaultAsync(p => p.UserId == id);
+                User users = await _dbContext.Users.SingleOrDefaultAsync(x => x.UserId == userId);
+                return users;
+
             }
             catch (Exception ex)
             {
@@ -109,24 +106,19 @@ namespace GenZStyleApp.DAL.DAO
             }
         }
         #endregion
-        public void DeleteUser(int id)
+        #region DeleteUser
+        public void DeleteUser(User user)
         {
-            var user = _context.Users.Where(c => c.UserId == id).ToList()[0];
-            var isCarInRenting = _context.Accounts.Where(c => c.UserId == id).ToList().Count > 0;
-            if (isCarInRenting) // have in rent --> Update status
+            try
             {
-                //user.CarStatus = 0;
-                user.Role = null;
-                
+                this._dbContext.Users.Remove(user);
 
-                _context.Users.Update(user);
-                _context.SaveChanges();
             }
-            else // Not have in rent --> Remove
+            catch (Exception ex)
             {
-                _context.Users.Remove(user);
-                _context.SaveChanges();
+                throw new Exception(ex.Message);
             }
         }
+        #endregion
     }
 }

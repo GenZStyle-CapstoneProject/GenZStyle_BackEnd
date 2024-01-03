@@ -12,9 +12,9 @@ namespace GenZStyleAPP.BAL.Repository.Interfaces
     public interface IUserRepository
     {
         public Task<GetUserResponse> Register(RegisterRequest registerRequest);
-        public void DeleteUserByid(int id);
+        public Task DeleteUserAsync(int id, HttpContext httpContext);
         public Task<List<User>> GetUsersAsync();
-        public Task<User> GetUserDetailByIdAsync(int id);
+        public Task<User> GetActiveUser(int userId);
         public Task<User> UpdateUserAsync(int userId, UpdateUserRequest updateUserRequest, HttpContext httpContext);
     }
 }

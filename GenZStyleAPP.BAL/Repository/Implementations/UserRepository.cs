@@ -121,10 +121,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
             }*/
         }
 
-        public void DeleteUserByid(int id)
-        {
-            _unitOfWork.UserDAO.DeleteUser(id);
-        }
+        
 
         public async Task<List<User>> GetUsersAsync()
         {
@@ -140,19 +137,16 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
             }
         }
 
-        public async Task<User> GetUserDetailByIdAsync(int id)
+        public async Task<User> GetActiveUser(int userId)
         {
             try
             {
-                var product = await _unitOfWork.UserDAO.GetUserByIdAsync(id);
-                if (product == null)
+                User user = await this._unitOfWork.UserDAO.GetUserByIdAsync(userId);
+                if (user == null)
                 {
-                    throw new NotFoundException("User id does not exist in the system.");
+                    throw new NotFoundException("User does not exist in the system.");
                 }
-                var userDTO = _mapper.Map<User>(product);
-                //Staff staff = await this._unitOfWork.StaffDAO.GetStaffDetailAsync(product.ModifiedBy);
-                //userDTO.Role = staff.FullName;
-                return userDTO;
+                return this._mapper.Map<User>(user);
             }
             catch (NotFoundException ex)
             {
@@ -282,7 +276,47 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 throw new Exception(error);
             }
         }
-        
+
+        #region DeleteUserAsync
+        public async Task DeleteUserAsync(int id, HttpContext httpContext)
+        {
+            try
+            {
+                //JwtSecurityToken jwtSecurityToken = TokenHelper.ReadToken(httpContext);
+                //string emailFromClaim = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Email).Value;
+                //var accountStaff = await _unitOfWork.AccountDAO.GetAccountByEmail(emailFromClaim);
+                var user = await _unitOfWork.UserDAO.GetUserByIdAsync(id);
+                if (user == null)
+                {
+                    throw new NotFoundException("User id does not exist in the system.");
+                }
+                //product.Status = (int)ProductEnum.Status.INACTIVE;
+                //if (product.ProductMeals != null && product.ProductMeals.Count() > 0)
+                //{
+                //    foreach (var productMeal in product.ProductMeals)
+                //    {
+                //        productMeal.Meal.Status = (int)MealEnum.Status.INACTIVE;
+                //    }
+                //}
+                    user.Dob = DateTime.Today;
+                //product.ModifiedBy = accountStaff.ID;
+                _unitOfWork.UserDAO.DeleteUser(user);
+                await _unitOfWork.CommitAsync();
+
+            }
+            catch (NotFoundException ex)
+            {
+                string error = ErrorHelper.GetErrorString("User Id", ex.Message);
+                throw new NotFoundException(error);
+            }
+            catch (Exception ex)
+            {
+                string error = ErrorHelper.GetErrorString(ex.Message);
+                throw new Exception(error);
+            }
+        }
+        #endregion
+
 
     }
 }
