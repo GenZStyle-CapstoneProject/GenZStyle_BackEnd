@@ -20,6 +20,6 @@ namespace GenZStyleAPP.BAL.DTOs.Users
         public string Avatar { get; set; }
         public bool Gender { get; set; }
         public DateTime BirthDate { get; set; }
-        public GetAccountResponse Account { get; set; }
+        public ICollection<GetAccountResponse> Account { get; set; }
     }
 }

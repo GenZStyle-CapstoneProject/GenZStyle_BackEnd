@@ -59,6 +59,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 User user = new User
                 {
                     City = registerRequest.City,
+                    RoleId = 3,
                     AvatarUrl = registerRequest.Avatar,
                     Address = registerRequest.Address,
                     Dob = registerRequest.Dob,
@@ -73,7 +74,8 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 Wallet wallet = new Wallet()
                     {
                         Account = account,
-                        Balance = 0
+                        Balance = 0,
+                        CreatDate = DateTime.Now 
                     };
                 await _unitOfWork.UserDAO.AddNewUser(user);
                 await this._unitOfWork.WalletDAO.CreateWalletAsync(wallet);
@@ -89,9 +91,10 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                     UserID = user.UserId,
                     Address = user.Address,
                     Avatar = user.AvatarUrl,
-                    BirthDate = user.Dob,                    
+                    BirthDate = user.Dob,
+                    City = user.City,
                     Gender = user.Gender,
-                    Account = _mapper.Map<GetAccountResponse>(user.Accounts),
+                    Account = _mapper.Map<List<GetAccountResponse>>(user.Accounts),
                 };
             }
             catch (BadRequestException ex)
@@ -108,11 +111,11 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 string error = ErrorHelper.GetErrorString(fieldNameError, ex.Message);
                 throw new BadRequestException(error);
             }
-            catch (Exception ex)
+            /*catch (Exception ex)
             {
                 string error = ErrorHelper.GetErrorString(ex.Message);
                 throw new Exception(error);
-            }
+            }*/
         }
 
     }

@@ -15,6 +15,11 @@ namespace GenZStyleAPP.BAL.DTOs.Account
     {
         [Key]
         public int AccountId { get; set; }
+        public int UserId { get; set; }
+
+        public int? InboxId { get; set; }
+
+        public int WalletId { get; set; }
         public string Email { get; set; }
         public string Firstname { get; set; }
         public string Lastname { get; set; }
