@@ -22,6 +22,7 @@ namespace GenZStyleApp.DAL.Models
 
         public string Address { get; set; }
         public string Phone { get; set; }
+        public decimal Height { get; set; }
         public bool Gender { get; set; }
         public DateTime Dob { get; set; }
 
