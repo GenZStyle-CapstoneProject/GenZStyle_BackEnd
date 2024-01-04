@@ -1,4 +1,5 @@
-﻿using GenZStyleApp.DAL.Models;
+﻿using BMOS.DAL.Models;
+using GenZStyleApp.DAL.Models;
 using GenZStyleAPP.BAL.DTOs.Inboxs;
 using GenZStyleAPP.BAL.DTOs.Users;
 using GenZStyleAPP.BAL.DTOs.Wallets;
@@ -27,7 +28,25 @@ namespace GenZStyleAPP.BAL.DTOs.Account
         public string PasswordHash { get; set; }
         public bool IsVip { get; set; }
         public bool IsActive { get; set; }
+        public Inbox Inbox { get; set; }
+        public User User { get; set; }
 
-        
+        public Wallet Wallet { get; set; }
+
+        public virtual ICollection<Invoice> Invoices { get; set; }
+        public virtual ICollection<Token> Tokens { get; set; }
+
+        public virtual ICollection<Post> Posts { get; set; }
+        public virtual ICollection<Comment> Comments { get; set; }
+        public virtual ICollection<Like> Likes { get; set; }
+        public virtual ICollection<Notification> Notifications { get; set; }
+
+        public virtual ICollection<UserRelation> UserRelations { get; set; }
+        public virtual ICollection<Message> Messages { get; set; }
+
+        public virtual ICollection<InboxPaticipant> InboxPaticipants { get; set; }
+        public virtual ICollection<Style> Styles { get; set; }
+
+
     }
 }
