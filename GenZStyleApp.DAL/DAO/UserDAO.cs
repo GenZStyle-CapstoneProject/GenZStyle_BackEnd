@@ -1,4 +1,5 @@
-﻿using GenZStyleApp.DAL.Models;
+﻿using GenZStyleApp.DAL.DBContext;
+using GenZStyleApp.DAL.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -72,17 +73,21 @@ namespace GenZStyleApp.DAL.DAO
 
         
 
-        public User GetUserByid(int id)
+        public async Task<User> GetUserByid(int id)
         {
-            var user = _context.Users.Where(c => c.UserId == id).ToList();
-            if (user.Count == 0)
-            {
-                return null;
+            try {
+                return await _context.Users.Include(u => u.Role)                                      
+                                      .Include(u => u.Accounts).ThenInclude(a => a.Invoices).ThenInclude(a => a.Payments)
+                                      .Include(u => u.Accounts).ThenInclude(a => a.IsActive == true)
+                                      .Include(u => u.Accounts).ThenInclude(a => a.Likes).ThenInclude(a => a.Post)
+                                      .SingleOrDefaultAsync(u => u.UserId == id);
+                                     
             }
-            else
+            catch (Exception ex)
             {
-                return user[0];
+                throw new Exception(ex.Message);
             }
+            
         }
 
         public void UpdateUser(User user)

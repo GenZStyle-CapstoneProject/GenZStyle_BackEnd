@@ -1,4 +1,5 @@
-﻿using GenZStyleAPP.BAL.DTOs.Users;
+﻿using GenZStyleAPP.BAL.DTOs.FireBase;
+using GenZStyleAPP.BAL.DTOs.Users;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,6 @@ namespace GenZStyleAPP.BAL.Repository.Interfaces
 {
     public interface IUserRepository
     {
-        public Task<GetUserResponse> Register(RegisterRequest registerRequest);
+        public Task<GetUserResponse> Register(FireBaseImage fireBaseImage,RegisterRequest registerRequest);
     }
 }

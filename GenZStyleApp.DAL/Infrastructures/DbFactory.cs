@@ -1,4 +1,4 @@
-﻿using GenZStyleApp.DAL.Models;
+﻿using GenZStyleApp.DAL.DBContext;
 using System;
 using System.Collections.Generic;
 using System.Linq;
