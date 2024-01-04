@@ -21,7 +21,7 @@ namespace GenZStyleAPP.BAL.Validators.Accounts
             #endregion
 
             #region Password
-            RuleFor(a => a.Password)
+            RuleFor(a => a.PasswordHash)
               .Cascade(CascadeMode.Continue)
               .NotEmpty().WithMessage("Password is empty.")
               .NotNull().WithMessage("Password is null.");

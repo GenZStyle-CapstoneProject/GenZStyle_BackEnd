@@ -1,5 +1,6 @@
-﻿using GenZStyleApp.DAL.DAO;
-using GenZStyleApp.DAL.Models;
+﻿using BMOS.DAL.DAOs;
+using GenZStyleApp.DAL.DAO;
+using GenZStyleApp.DAL.DBContext;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace ProjectParticipantManagement.DAL.Infrastructures
         private RoleDAO _roleDAO;
         private UserDAO _userDAO;
         private WalletDAO _walletDAO;
+        private TokenDAO _tokenDAO;
         
 
         public UnitOfWork()
@@ -33,6 +35,17 @@ namespace ProjectParticipantManagement.DAL.Infrastructures
                     _roleDAO = new RoleDAO(_dbContext);
                 }
                 return _roleDAO;
+            }
+        }
+        public TokenDAO TokenDAO
+        {
+            get
+            {
+                if (_tokenDAO == null)
+                {
+                    _tokenDAO = new TokenDAO(_dbContext);
+                }
+                return _tokenDAO;
             }
         }
         public WalletDAO WalletDAO

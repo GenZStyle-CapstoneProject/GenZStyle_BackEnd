@@ -12,6 +12,8 @@ using System.Text;
 using System.Threading.Tasks;
 using BMOS.DAL.Enums;
 using GenZStyleAPP.BAL.Repository.Interfaces;
+using GenZStyleAPP.BAL.DTOs.FireBase;
+using BMOS.BAL.Helpers;
 
 namespace GenZStyleAPP.BAL.Repository.Implementations
 {
@@ -25,7 +27,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
             _mapper = mapper;
         }
 
-        public async Task<GetUserResponse> Register( RegisterRequest registerRequest)
+        public async Task<GetUserResponse> Register(FireBaseImage fireBaseImage,RegisterRequest registerRequest)
         {
             try
             {
@@ -60,17 +62,23 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 {
                     City = registerRequest.City,
                     RoleId = 3,
-                    AvatarUrl = registerRequest.Avatar,
                     Address = registerRequest.Address,
                     Dob = registerRequest.Dob,
                     Gender = registerRequest.Gender,
                     Phone = registerRequest.Phone,
                     Role = role,
-                    
+                    Accounts = new List<Account> { account },
                 };
 
-                user.Accounts = new List<Account>();
-                user.Accounts.Add(account);
+                
+
+                // Upload image to firebase
+                FileHelper.SetCredentials(fireBaseImage);
+                FileStream fileStream = FileHelper.ConvertFormFileToStream(registerRequest.Avatar);
+                Tuple<string, string> result = await FileHelper.UploadImage(fileStream, "Customer");
+                user.AvatarUrl = result.Item1;
+                
+                
                 Wallet wallet = new Wallet()
                     {
                         Account = account,

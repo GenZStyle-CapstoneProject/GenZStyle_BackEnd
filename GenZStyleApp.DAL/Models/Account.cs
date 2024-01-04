@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using BMOS.DAL.Models;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GenZStyleApp.DAL.Models
@@ -27,6 +28,7 @@ namespace GenZStyleApp.DAL.Models
         public Wallet Wallet { get; set; }
 
         public virtual ICollection<Invoice> Invoices { get; set; }
+        public virtual ICollection<Token> Tokens { get; set; }
 
         public virtual ICollection<Post> Posts { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
@@ -37,7 +39,8 @@ namespace GenZStyleApp.DAL.Models
         public virtual ICollection<Message> Messages { get; set; }
 
         public virtual ICollection<InboxPaticipant> InboxPaticipants { get; set; }
-        public virtual ICollection<Style> Styles { get; set; }
+        public virtual ICollection<Style> Styles { get; set; } 
+
 
 
     }
