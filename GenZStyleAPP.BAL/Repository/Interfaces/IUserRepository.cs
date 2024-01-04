@@ -15,6 +15,9 @@ namespace GenZStyleAPP.BAL.Repository.Interfaces
         public Task DeleteUserAsync(int id, HttpContext httpContext);
         public Task<List<User>> GetUsersAsync();
         public Task<User> GetActiveUser(int userId);
-        public Task<User> UpdateUserAsync(int userId, UpdateUserRequest updateUserRequest, HttpContext httpContext);
+        public Task<User> UpdateUserProfileByAccountIdAsync(int accountId,
+                                                                                     //FireBaseImage fireBaseImage,
+                                                                                     UpdateUserRequest updateUserRequest);
+        public Task<User> BanUserAsync(int accountId);
     }
 }

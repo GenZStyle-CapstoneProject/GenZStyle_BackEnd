@@ -77,6 +77,19 @@ namespace GenZStyleApp.DAL.DAO
             }
         }
 
+        public async Task<User> GetUserByAccountIdAsync(int accountId)
+        {
+            try
+            {
+                return await _dbContext.Users
+                                                 .SingleOrDefaultAsync(c => c.UserId == accountId /*&& c.Accounts.Status == Convert.ToBoolean(AccountEnum.Status.ACTIVE)*/);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
 
 
         public async Task<User> GetUserByIdAsync(int userId)
@@ -120,5 +133,18 @@ namespace GenZStyleApp.DAL.DAO
             }
         }
         #endregion
+
+        //ban user by updating status
+        public void BanUser(User user)
+        {
+            try
+            {
+                this._dbContext.Entry<User>(user).State = EntityState.Modified;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }

@@ -54,37 +54,76 @@ namespace GenZStyleApp_API.Controllers
         [EnableQuery]
         public async Task<IActionResult> ActiveUsers()
         {
-            List<User> users = await this._userRepository.GetUsersAsync();
-            return Ok(users);
+            try
+            {
+                List<User> users = await this._userRepository.GetUsersAsync();
+                return Ok(new
+                {
+                    Status = "Get List Success",
+                    Data = users
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
         }
 
         [HttpGet("odata/Users/Active/User/{userId}")]
         [EnableQuery(MaxExpansionDepth = 3)]
         public async Task<IActionResult> ActiveUser(int userId)
         {
-            User user = await this._userRepository.GetActiveUser(userId);
-            return Ok(user);
+            try
+            {
+                User user = await this._userRepository.GetActiveUser(userId);
+                return Ok(new
+                {
+                    Status = "Get User By Id Success",
+                    Data = user
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+
         }
 
-        #region Update Product
-        [HttpPut("User/Update/{userId}")]
+        #region Update User
+        [HttpPut("User/{key}/UpdateUser")]
         [EnableQuery]
-        //[PermissionAuthorize("Staff")]
-        public async Task<IActionResult> Put([FromRoute] int userId, [FromForm] UpdateUserRequest updateUserRequest)
+        //[PermissionAuthorize("Customer", "Store Owner")]
+        public async Task<IActionResult> Put([FromRoute] int key, [FromForm] UpdateUserRequest updateUserRequest)
         {
-            var resultValid = _updateUserValidator.Validate(updateUserRequest);
-            if (!resultValid.IsValid)
+            try
             {
-                string error = ErrorHelper.GetErrorsString(resultValid);
-                throw new BadRequestException(error);
+                ValidationResult validationResult = await _updateUserValidator.ValidateAsync(updateUserRequest);
+                if (!validationResult.IsValid)
+                {
+                    string error = ErrorHelper.GetErrorsString(validationResult);
+                    throw new BadRequestException(error);
+                }
+                User user = await this._userRepository.UpdateUserProfileByAccountIdAsync(key,
+                                                                                                                    //_firebaseImageOptions.Value,
+                                                                                                                    updateUserRequest);
+
+                return Ok(new
+                {
+                    Status = "Update User Success",
+                    Data = Updated(user)
+                });
             }
-            User user = await this._userRepository.UpdateUserAsync(userId, updateUserRequest, HttpContext);
-            return Updated(user);
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
         }
-        #endregion
 
         #region Delete User 
-        
+
         [HttpDelete("User/{userId}")]
         [EnableQuery]
         //[PermissionAuthorize("Staff")]
@@ -95,5 +134,41 @@ namespace GenZStyleApp_API.Controllers
         }
         #endregion
 
+
+        //ban user
+        [EnableQuery]
+        [HttpPut("odata/Users/{key}/Ban")]
+        //[PermissionAuthorize("Store Owner")]
+        public async Task<IActionResult> BanUser([FromRoute] int key)
+        {
+            try
+            {
+                User user = await this._userRepository.BanUserAsync(key);
+                if(user != null)
+                {
+                    return Ok(new
+                    {
+                        Status = "Ban User Successfully",
+                        Data = user
+                    });
+                }
+                else
+                {
+                    return StatusCode(400, new
+                    {
+                        Status = -1,
+                        Message = "Ban User Fail"
+                    });
+                
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        #endregion
     }
 }
+

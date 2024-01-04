@@ -15,6 +15,7 @@ using GenZStyleAPP.BAL.Repository.Interfaces;
 using System.Collections;
 using Microsoft.AspNetCore.Http;
 using System.IdentityModel.Tokens.Jwt;
+using GenZStyleApp.DAL.Enums;
 
 namespace GenZStyleAPP.BAL.Repository.Implementations
 {
@@ -160,122 +161,60 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
             }
         }
 
-        #region UpdateUerAsync
-        public async Task<User> UpdateUserAsync(int userId, UpdateUserRequest updateUserRequest, HttpContext httpContext)
+        #region UpdateUserProfileByAccountIdAsync
+        public async Task<User> UpdateUserProfileByAccountIdAsync(int accountId,
+                                                                                     //FireBaseImage fireBaseImage,
+                                                                                     UpdateUserRequest updateUserRequest)
         {
             try
             {
-                User user = await _unitOfWork.UserDAO.GetUserByIdAsync(userId);
+                User user = await _unitOfWork.UserDAO.GetUserByAccountIdAsync(accountId);
+
                 if (user == null)
                 {
-                    throw new NotFoundException("User Id does not exist in the system.");
+                    throw new NotFoundException("AccountId does not exist in system");
                 }
-                //if (updateProductRequest.Status != (int)ProductEnum.Status.INACTIVE && updateProductRequest.Status != (int)ProductEnum.Status.STOCKING)
+
+                user.City = updateUserRequest.City;
+                user.Address = updateUserRequest.Address;
+                user.Phone = updateUserRequest.Phone;
+                user.Gender = updateUserRequest.Gender;
+                user.Dob = updateUserRequest.Dob;
+                 //if (updateCustomerRequest.PasswordHash != null)
                 //{
-                //    throw new BadRequestException("Status must be 1 or 0.");
+                //    customer.Account.PasswordHash = StringHelper.EncryptData(updateCustomerRequest.PasswordHash);
                 //}
-                //var images = new List<ProductImage>();
-                //JwtSecurityToken jwtSecurityToken = TokenHelper.ReadToken(httpContext);
-                //string emailFromClaim = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Email).Value;
-                //var accountStaff = await _unitOfWork.AccountDAO.GetAccountByEmail(emailFromClaim);
-
-                user = _mapper.Map(updateUserRequest, user);
-
-                //Inactive
-                //if (updateProductRequest.Status == (int)ProductEnum.Status.INACTIVE)
-                //{
-                //    foreach (var productMeal in product.ProductMeals)
-                //    {
-                //        productMeal.Meal.Status = (int)MealEnum.Status.INACTIVE;
-                //    }
-                //}
-                //active
-                //if (updateProductRequest.Status == (int)ProductEnum.Status.STOCKING)
-                //{
-                //    double totalAmount = 0d;
-                //    product.ProductMeals = product.ProductMeals.OrderBy(x => x.Amount).ToList();
-                //    foreach (var productMeal in product.ProductMeals)
-                //    {
-                //        totalAmount += productMeal.Amount;
-                //        if (totalAmount > updateProductRequest.Total)
-                //        {
-                //            productMeal.Meal.Status = (int)MealEnum.Status.INACTIVE;
-                //        }
-                //        else
-                //        {
-                //            productMeal.Meal.Status = (int)MealEnum.Status.STOCKING;
-                //        }
-
-                //    }
-                //}
-
-                //product.ModifiedBy = accountStaff.ID;
-                //product.ModifiedDate = DateTime.Now;
 
                 //#region Upload image to firebase
-                //FileHelper.SetCredentials(fireBaseImage);
-                //if (updateProductRequest.RemoveProductImages != null && updateProductRequest.RemoveProductImages.Count > 0)
+                //if (updateCustomerRequest.Avatar != null)
                 //{
-                //    foreach (var removeProductImage in updateProductRequest.RemoveProductImages)
-                //    {
-                //        ProductImage removedImage = product.ProductImages.SingleOrDefault(x => x.Source.ToLower().Equals(removeProductImage.ToLower()));
-                //        if (removedImage != null)
-                //        {
-                //            await FileHelper.DeleteImageAsync(removedImage.ImageID, "Product");
-                //            product.ProductImages.Remove(removedImage);
-                //        }
-                //        else
-                //        {
-                //            throw new BadRequestException($"Remove Image URL: {removeProductImage} does not exist in this product.");
-                //        }
-                //    }
+                //    FileHelper.SetCredentials(fireBaseImage);
+                //    await FileHelper.DeleteImageAsync(customer.AvatarID, "Customer");
+                //    FileStream fileStream = FileHelper.ConvertFormFileToStream(updateCustomerRequest.Avatar);
+                //    Tuple<string, string> result = await FileHelper.UploadImage(fileStream, "Customer");
+                //    customer.Avatar = result.Item1;
+                //    customer.AvatarID = result.Item2;
                 //}
-
-                //if (updateProductRequest.NewProductImages != null && updateProductRequest.NewProductImages.Count > 0)
-                //{
-                //    foreach (var newProductImage in updateProductRequest.NewProductImages)
-                //    {
-                //        FileStream fileStream = FileHelper.ConvertFormFileToStream(newProductImage);
-                //        Tuple<string, string> result = await FileHelper.UploadImage(fileStream, "Product");
-                //        var productImage = new ProductImage
-                //        {
-                //            Source = result.Item1,
-                //            ImageID = result.Item2
-                //        };
-                //        product.ProductImages.Add(productImage);
-                //    }
-                //}
-                #endregion
+                //#endregion
 
                 _unitOfWork.UserDAO.UpdateUser(user);
                 await this._unitOfWork.CommitAsync();
-                return this._mapper.Map<User>(user);
+                return _mapper.Map<User>(user);
             }
+
             catch (NotFoundException ex)
             {
-                string error = ErrorHelper.GetErrorString("User Id", ex.Message);
+                string error = ErrorHelper.GetErrorString("AccountId", ex.Message);
                 throw new NotFoundException(error);
-            }
-            catch (BadRequestException ex)
-            {
-                string fieldNameError = "";
-                if (ex.Message.ToLower().Contains("status"))
-                {
-                    fieldNameError = "Status";
-                }
-                else if (ex.Message.ToLower().Contains("remove image url"))
-                {
-                    fieldNameError = "RemoveProductImages";
-                }
-                string error = ErrorHelper.GetErrorString(fieldNameError, ex.Message);
-                throw new BadRequestException(error);
             }
             catch (Exception ex)
             {
                 string error = ErrorHelper.GetErrorString(ex.Message);
                 throw new Exception(error);
             }
+
         }
+        #endregion
 
         #region DeleteUserAsync
         public async Task DeleteUserAsync(int id, HttpContext httpContext)
@@ -317,6 +256,31 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
         }
         #endregion
 
-
+        //ban user
+        public async Task<User> BanUserAsync(int accountId)
+        {
+            try
+            {
+                User user = await _unitOfWork.UserDAO.GetUserByAccountIdAsync(accountId);
+                if (user == null)
+                {
+                    throw new NotFoundException("AccountId does not exist in system.");
+                }
+                user.Gender = Convert.ToBoolean((int)AccountEnum.Status.INACTIVE);
+                _unitOfWork.UserDAO.BanUser(user);
+                await this._unitOfWork.CommitAsync();
+                return _mapper.Map<User>(user);
+            }
+            catch (NotFoundException ex)
+            {
+                string error = ErrorHelper.GetErrorString(ex.Message);
+                throw new NotFoundException(error);
+            }
+            catch (Exception ex)
+            {
+                string error = ErrorHelper.GetErrorString(ex.Message);
+                throw new Exception(error);
+            }
+        }
     }
 }
