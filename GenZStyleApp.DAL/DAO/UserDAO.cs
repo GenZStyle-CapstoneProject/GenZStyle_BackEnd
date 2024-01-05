@@ -1,4 +1,5 @@
-﻿using GenZStyleApp.DAL.Models;
+﻿using GenZStyleApp.DAL.DBContext;
+using GenZStyleApp.DAL.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -101,11 +102,23 @@ namespace GenZStyleApp.DAL.DAO
                 User users = await _dbContext.Users.SingleOrDefaultAsync(x => x.UserId == userId);
                 return users;
 
+        
+
+        public async Task<User> GetUserByid(int id)
+        {
+            try {
+                return await _context.Users.Include(u => u.Role)                                      
+                                      .Include(u => u.Accounts).ThenInclude(a => a.Invoices).ThenInclude(a => a.Payments)
+                                      .Include(u => u.Accounts).ThenInclude(a => a.IsActive == true)
+                                      .Include(u => u.Accounts).ThenInclude(a => a.Likes).ThenInclude(a => a.Post)
+                                      .SingleOrDefaultAsync(u => u.UserId == id);
+                                     
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
+            
         }
 
         #region Update user

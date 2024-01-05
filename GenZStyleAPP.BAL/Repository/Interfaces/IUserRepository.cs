@@ -21,5 +21,6 @@ namespace GenZStyleAPP.BAL.Repository.Interfaces
                                                                                      UpdateUserRequest updateUserRequest);
         public Task<User> BanUserAsync(int accountId);
         public Task<User> GetUserByAccountIdAsync(int accountId);
+        public Task<GetUserResponse> Register(FireBaseImage fireBaseImage,RegisterRequest registerRequest);
     }
 }

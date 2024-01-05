@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GenZStyleAPP.BAL.Heplers
+namespace BMOS.BAL.Helpers
 {
     public class FileHelper
     {

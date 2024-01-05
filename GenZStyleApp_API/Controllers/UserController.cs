@@ -47,7 +47,7 @@ namespace GenZStyleApp_API.Controllers
                 throw new BadRequestException(error);
             }
             GetUserResponse customer = await this._userRepository
-                .Register(registerRequest);
+                .Register(_firebaseImageOptions.Value, registerRequest);
             return Ok();
         }
         #endregion
