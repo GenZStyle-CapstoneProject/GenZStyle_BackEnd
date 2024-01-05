@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using GenZStyleAPP.BAL.DTOs.Account;
+using GenZStyleAPP.BAL.DTOs.Accounts;
 using GenZStyleAPP.BAL.DTOs.Users;
 using GenZStyleApp.DAL.Models;
 using ProjectParticipantManagement.BAL.Exceptions;

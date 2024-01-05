@@ -82,9 +82,9 @@ namespace GenZStyleApp.DAL.DAO
         {
             try
             {
-                
+
                 return await _dbContext.Users.Include(u => u.Accounts)
-                                             
+
                                              .SingleOrDefaultAsync(u => u.Accounts.Any(a => a.AccountId == accountId));
             }
             catch (Exception ex)
@@ -102,25 +102,14 @@ namespace GenZStyleApp.DAL.DAO
                 User users = await _dbContext.Users.SingleOrDefaultAsync(x => x.UserId == userId);
                 return users;
 
-        
 
-        public async Task<User> GetUserByid(int id)
-        {
-            try {
-                return await _context.Users.Include(u => u.Role)                                      
-                                      .Include(u => u.Accounts).ThenInclude(a => a.Invoices).ThenInclude(a => a.Payments)
-                                      .Include(u => u.Accounts).ThenInclude(a => a.IsActive == true)
-                                      .Include(u => u.Accounts).ThenInclude(a => a.Likes).ThenInclude(a => a.Post)
-                                      .SingleOrDefaultAsync(u => u.UserId == id);
-                                     
+
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
-            
         }
-
         #region Update user
         public void UpdateUser(User user)
         {
@@ -161,5 +150,25 @@ namespace GenZStyleApp.DAL.DAO
                 throw new Exception(ex.Message);
             }
         }
+
+
+        public async Task<User> GetUserById(int id)
+        {
+            try
+            {
+                return await _context.Users.Include(u => u.Role)
+                                      .Include(u => u.Accounts).ThenInclude(a => a.Invoices).ThenInclude(a => a.Payments)
+                                      .Include(u => u.Accounts).ThenInclude(a => a.IsActive == true)
+                                      .Include(u => u.Accounts).ThenInclude(a => a.Likes).ThenInclude(a => a.Post)
+                                      .SingleOrDefaultAsync(u => u.UserId == id);
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+        }
     }
 }
+    

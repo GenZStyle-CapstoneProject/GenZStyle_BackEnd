@@ -2,7 +2,7 @@ using BMOS.BAL.DTOs.JWT;
 using BMOS.BAL.Validators.Accounts;
 using FluentValidation;
 using GenZStyleApp.DAL.Models;
-using GenZStyleAPP.BAL.DTOs.Account;
+using GenZStyleAPP.BAL.DTOs.Accounts;
 using GenZStyleAPP.BAL.DTOs.FireBase;
 using GenZStyleAPP.BAL.DTOs.Users;
 using GenZStyleAPP.BAL.Profiles.Accounts;
