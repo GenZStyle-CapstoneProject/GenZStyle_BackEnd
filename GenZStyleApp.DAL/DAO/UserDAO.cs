@@ -81,8 +81,10 @@ namespace GenZStyleApp.DAL.DAO
         {
             try
             {
-                return await _dbContext.Users
-                                                 .SingleOrDefaultAsync(c => c.UserId == accountId /*&& c.Accounts.Status == Convert.ToBoolean(AccountEnum.Status.ACTIVE)*/);
+                
+                return await _dbContext.Users.Include(u => u.Accounts)
+                                             
+                                             .SingleOrDefaultAsync(u => u.Accounts.Any(a => a.AccountId == accountId));
             }
             catch (Exception ex)
             {

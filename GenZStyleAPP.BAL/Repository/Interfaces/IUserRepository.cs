@@ -1,4 +1,5 @@
 ﻿using GenZStyleApp.DAL.Models;
+using GenZStyleAPP.BAL.DTOs.FireBase;
 using GenZStyleAPP.BAL.DTOs.Users;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -16,8 +17,9 @@ namespace GenZStyleAPP.BAL.Repository.Interfaces
         public Task<List<User>> GetUsersAsync();
         public Task<User> GetActiveUser(int userId);
         public Task<User> UpdateUserProfileByAccountIdAsync(int accountId,
-                                                                                     //FireBaseImage fireBaseImage,
+                                                                                     FireBaseImage fireBaseImage,
                                                                                      UpdateUserRequest updateUserRequest);
         public Task<User> BanUserAsync(int accountId);
+        public Task<User> GetUserByAccountIdAsync(int accountId);
     }
 }

@@ -16,6 +16,8 @@ using System.Collections;
 using Microsoft.AspNetCore.Http;
 using System.IdentityModel.Tokens.Jwt;
 using GenZStyleApp.DAL.Enums;
+using GenZStyleAPP.BAL.DTOs.FireBase;
+using GenZStyleAPP.BAL.Heplers;
 
 namespace GenZStyleAPP.BAL.Repository.Implementations
 {
@@ -163,7 +165,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
 
         #region UpdateUserProfileByAccountIdAsync
         public async Task<User> UpdateUserProfileByAccountIdAsync(int accountId,
-                                                                                     //FireBaseImage fireBaseImage,
+                                                                                     FireBaseImage fireBaseImage,
                                                                                      UpdateUserRequest updateUserRequest)
         {
             try
@@ -180,22 +182,22 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 user.Phone = updateUserRequest.Phone;
                 user.Gender = updateUserRequest.Gender;
                 user.Dob = updateUserRequest.Dob;
-                 //if (updateCustomerRequest.PasswordHash != null)
+                //if (updateCustomerRequest.PasswordHash != null)
                 //{
                 //    customer.Account.PasswordHash = StringHelper.EncryptData(updateCustomerRequest.PasswordHash);
                 //}
 
-                //#region Upload image to firebase
-                //if (updateCustomerRequest.Avatar != null)
-                //{
-                //    FileHelper.SetCredentials(fireBaseImage);
-                //    await FileHelper.DeleteImageAsync(customer.AvatarID, "Customer");
-                //    FileStream fileStream = FileHelper.ConvertFormFileToStream(updateCustomerRequest.Avatar);
-                //    Tuple<string, string> result = await FileHelper.UploadImage(fileStream, "Customer");
-                //    customer.Avatar = result.Item1;
-                //    customer.AvatarID = result.Item2;
-                //}
-                //#endregion
+                #region Upload image to firebase
+                if (updateUserRequest.AvatarUrl != null)
+                {
+                    FileHelper.SetCredentials(fireBaseImage);
+                    //await FileHelper.DeleteImageAsync(user.AvatarUrl, "User");
+                    FileStream fileStream = FileHelper.ConvertFormFileToStream(updateUserRequest.AvatarUrl);
+                    Tuple<string, string> result = await FileHelper.UploadImage(fileStream, "User");
+                    user.AvatarUrl = result.Item1;
+                    //customer.AvatarID = result.Item2;
+                }
+                #endregion
 
                 _unitOfWork.UserDAO.UpdateUser(user);
                 await this._unitOfWork.CommitAsync();
@@ -256,6 +258,34 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
         }
         #endregion
 
+
+        #region GetUserByAccountIdAsync
+        public async Task<User> GetUserByAccountIdAsync(int accountId)
+        {
+            try
+            {
+                User user = await _unitOfWork.UserDAO.GetUserByAccountIdAsync(accountId);
+                if (user == null)
+                {
+                    throw new NotFoundException("AccountId does not exist in system");
+                }
+                
+                return _mapper.Map<User>(user);
+            }
+            catch (NotFoundException ex)
+            {
+                string error = ErrorHelper.GetErrorString(ex.Message);
+                throw new Exception(error);
+            }
+            catch (Exception ex)
+            {
+                string error = ErrorHelper.GetErrorString(ex.Message);
+                throw new Exception(error);
+            }
+
+        }
+
+        #endregion
         //ban user
         public async Task<User> BanUserAsync(int accountId)
         {
@@ -266,7 +296,17 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 {
                     throw new NotFoundException("AccountId does not exist in system.");
                 }
-                user.Gender = Convert.ToBoolean((int)AccountEnum.Status.INACTIVE);
+                //user.Accounts. = Convert.ToBoolean((int)AccountEnum.Status.INACTIVE);
+                //_unitOfWork.UserDAO.BanUser(user);
+                //await this._unitOfWork.CommitAsync();
+                //return _mapper.Map<User>(user);
+
+                // Lặp qua tất cả các tài khoản và thiết lập trạng thái
+                foreach (var account in user.Accounts)
+                {
+                    account.IsActive = false; // Đặt IsActive thành false
+                }
+
                 _unitOfWork.UserDAO.BanUser(user);
                 await this._unitOfWork.CommitAsync();
                 return _mapper.Map<User>(user);

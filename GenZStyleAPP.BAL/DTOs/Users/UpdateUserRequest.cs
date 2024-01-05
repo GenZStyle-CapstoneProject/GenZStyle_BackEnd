@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,7 @@ namespace GenZStyleAPP.BAL.DTOs.Users
     {
         public string City { get; set; }
 
-        //public string AvatarUrl { get; set; }
+        public IFormFile? AvatarUrl { get; set; }
 
         public string Address { get; set; }
         public string Phone { get; set; }
