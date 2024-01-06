@@ -63,64 +63,112 @@ namespace GenZStyleApp.DAL.DAO
         }
         private readonly GenZStyleDbContext _context = new GenZStyleDbContext();
 
-        public List<User> GetAllUser()
+        //get User
+        public async Task<List<User>> GetAllUser()
         {
-            return _context.Users
-                .Include(f => f.Role)
-                /*.Where(o => o.CarStatus == 1)*/
-                .ToList();
-        }
+            try
+            {
+                List<User> users = await _dbContext.Users.ToListAsync();
+                return users;
 
-        
-
-        public async Task<User> GetUserByid(int id)
-        {
-            try {
-                return await _context.Users.Include(u => u.Role)                                      
-                                      .Include(u => u.Accounts).ThenInclude(a => a.Invoices).ThenInclude(a => a.Payments)
-                                      .Include(u => u.Accounts).ThenInclude(a => a.IsActive == true)
-                                      .Include(u => u.Accounts).ThenInclude(a => a.Likes).ThenInclude(a => a.Post)
-                                      .SingleOrDefaultAsync(u => u.UserId == id);
-                                     
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
-            
         }
 
+        public async Task<User> GetUserByAccountIdAsync(int accountId)
+        {
+            try
+            {
+
+                return await _dbContext.Users.Include(u => u.Accounts)
+
+                                             .SingleOrDefaultAsync(u => u.Accounts.Any(a => a.AccountId == accountId));
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+
+
+        public async Task<User> GetUserByIdAsync(int userId)
+        {
+            try
+            {
+                User users = await _dbContext.Users.SingleOrDefaultAsync(x => x.UserId == userId);
+                return users;
+
+
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        #region Update user
         public void UpdateUser(User user)
         {
-            var existingUser = _context.Users.Find(user.UserId);
-            if (existingUser != null)
+            try
             {
-                user.Role = null;
-                
-
-                _context.Entry(existingUser).State = EntityState.Detached;
-                _context.Users.Update(user);
-                _context.SaveChanges();
+                this._dbContext.Entry<User>(user).State = EntityState.Modified;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
-        public void DeleteUser(int id)
+        #endregion
+        #region DeleteUser
+        public void DeleteUser(User user)
         {
-            var user = _context.Users.Where(c => c.UserId == id).ToList()[0];
-            var isCarInRenting = _context.Accounts.Where(c => c.UserId == id).ToList().Count > 0;
-            if (isCarInRenting) // have in rent --> Update status
+            try
             {
-                //user.CarStatus = 0;
-                user.Role = null;
-                
+                this._dbContext.Users.Remove(user);
 
-                _context.Users.Update(user);
-                _context.SaveChanges();
             }
-            else // Not have in rent --> Remove
+            catch (Exception ex)
             {
-                _context.Users.Remove(user);
-                _context.SaveChanges();
+                throw new Exception(ex.Message);
             }
+        }
+        #endregion
+
+        //ban user by updating status
+        public void BanUser(User user)
+        {
+            try
+            {
+                this._dbContext.Entry<User>(user).State = EntityState.Modified;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+
+        public async Task<User> GetUserById(int id)
+        {
+            try
+            {
+                return await _context.Users.Include(u => u.Role)
+                                      .Include(u => u.Accounts).ThenInclude(a => a.Invoices).ThenInclude(a => a.Payments)
+                                      .Include(u => u.Accounts).ThenInclude(a => a.IsActive == true)
+                                      .Include(u => u.Accounts).ThenInclude(a => a.Likes).ThenInclude(a => a.Post)
+                                      .SingleOrDefaultAsync(u => u.UserId == id);
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
         }
     }
 }
+    

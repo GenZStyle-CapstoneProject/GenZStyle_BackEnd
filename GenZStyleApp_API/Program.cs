@@ -9,6 +9,7 @@ using GenZStyleAPP.BAL.DTOs.HashTag;
 using GenZStyleAPP.BAL.DTOs.PostLike;
 using GenZStyleAPP.BAL.DTOs.Users;
 using GenZStyleAPP.BAL.Profiles.Accounts;
+using GenZStyleAPP.BAL.Profiles.Users;
 using GenZStyleAPP.BAL.Profiles.Comments;
 using GenZStyleAPP.BAL.Profiles.PostLike;
 using GenZStyleAPP.BAL.Repository.Implementations;
@@ -101,6 +102,16 @@ namespace GenZStyleApp_API {
                 };
             });
             #endregion*/
+    builder.Services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+                    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+                });
+            ;
+            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
             //ODATA
             var modelBuilder = new ODataConventionModelBuilder();
             modelBuilder.EntitySet<GetUserResponse>("Users");
@@ -135,13 +146,16 @@ namespace GenZStyleApp_API {
             builder.Services.AddScoped<IValidator<RegisterRequest>, RegisterValidation>();
             builder.Services.AddScoped<IValidator<GetLoginRequest>, LoginValidation>();
             builder.Services.AddScoped<IValidator<ChangePasswordRequest>, ChangePasswordValidation>();
+            builder.Services.AddScoped<IValidator<UpdateUserRequest>, UpdateUserValidation>();
 
             builder.Services.Configure<FireBaseImage>(builder.Configuration.GetSection("FireBaseImage"));
 
             // Auto mapper config
             builder.Services.AddAutoMapper(typeof(AccountProfile),
                                            typeof(PostLikeProfile),                    
-                                           typeof(CommentProfile)                    
+                                           typeof(CommentProfile),                    
+                                            typeof(AccountProfile),
+                                            typeof(CustomerProfile)
                                             );
                                             
 

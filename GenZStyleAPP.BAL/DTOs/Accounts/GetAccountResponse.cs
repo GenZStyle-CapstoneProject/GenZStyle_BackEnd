@@ -1,4 +1,5 @@
-﻿using GenZStyleApp.DAL.Models;
+﻿using BMOS.DAL.Models;
+using GenZStyleApp.DAL.Models;
 using GenZStyleAPP.BAL.DTOs.Inboxs;
 using GenZStyleAPP.BAL.DTOs.Users;
 using GenZStyleAPP.BAL.DTOs.Wallets;

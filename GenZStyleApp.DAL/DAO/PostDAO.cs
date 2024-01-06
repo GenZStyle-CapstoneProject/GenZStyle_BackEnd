@@ -43,7 +43,7 @@ namespace GenZStyleApp.DAL.DAO
                                                 
 
             }catch (Exception ex) 
-            {
+    {
                 throw new Exception(ex.Message);
             }
         }
