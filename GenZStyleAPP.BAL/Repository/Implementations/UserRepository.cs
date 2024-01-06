@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using GenZStyleAPP.BAL.DTOs.Account;
+using GenZStyleAPP.BAL.DTOs.Accounts;
 using GenZStyleAPP.BAL.DTOs.Users;
 using GenZStyleApp.DAL.Models;
 using ProjectParticipantManagement.BAL.Exceptions;
@@ -57,7 +57,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 };
                 await _unitOfWork.AccountDAO.AddAccountAsync(account);
 
-                // assign registerRequest to customer
+                // assign registerRequest to user
                 User user = new User
                 {
                     City = registerRequest.City,
@@ -75,7 +75,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 // Upload image to firebase
                 FileHelper.SetCredentials(fireBaseImage);
                 FileStream fileStream = FileHelper.ConvertFormFileToStream(registerRequest.Avatar);
-                Tuple<string, string> result = await FileHelper.UploadImage(fileStream, "Customer");
+                Tuple<string, string> result = await FileHelper.UploadImage(fileStream, "User");
                 user.AvatarUrl = result.Item1;
                 
                 

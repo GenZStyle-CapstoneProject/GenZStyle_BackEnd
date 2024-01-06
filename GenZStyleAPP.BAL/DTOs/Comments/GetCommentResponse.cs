@@ -1,32 +1,25 @@
-﻿using System;
+﻿using GenZStyleApp.DAL.Models;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GenZStyleApp.DAL.Models
+namespace GenZStyleAPP.BAL.DTOs.Comments
 {
-    public class Comment
+    public class GetCommentResponse
     {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-
+        [Key]
         public int CommentId { get; set; }
 
         public int AccountId { get; set; }
-        public int? ParentCommentId { get; set; }
         public int PostId { get; set; }
 
         public DateTime CreateAt { get; set; }
         public string Content { get; set; }
 
-        public int CommentBy {  get; set; }
         public Post Post { get; set; }
-        
-        
-        public Comment ParentComment { get; set; }
-        public ICollection<Comment> SubComments { get; set; }
 
         public Account Account { get; set; }
 
