@@ -1,5 +1,4 @@
-﻿using BMOS.DAL.Models;
-using GenZStyleApp.DAL.Models;
+﻿using GenZStyleApp.DAL.Models;
 using GenZStyleAPP.BAL.DTOs.Inboxs;
 using GenZStyleAPP.BAL.DTOs.Users;
 using GenZStyleAPP.BAL.DTOs.Wallets;
@@ -10,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GenZStyleAPP.BAL.DTOs.Account
+namespace GenZStyleAPP.BAL.DTOs.Accounts
 {
     public class GetAccountResponse
     {
@@ -38,6 +37,7 @@ namespace GenZStyleAPP.BAL.DTOs.Account
 
         public virtual ICollection<Post> Posts { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
+
         public virtual ICollection<Like> Likes { get; set; }
         public virtual ICollection<Notification> Notifications { get; set; }
 

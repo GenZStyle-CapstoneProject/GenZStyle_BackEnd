@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using GenZStyleAPP.BAL.DTOs.Account;
+using GenZStyleAPP.BAL.DTOs.Accounts;
 using System;
 using System.Collections.Generic;
 using System.Linq;

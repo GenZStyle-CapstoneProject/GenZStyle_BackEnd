@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GenZStyleAPP.BAL.DTOs.Account
+namespace GenZStyleAPP.BAL.DTOs.Accounts
 {
     public class ChangePasswordRequest
     {   

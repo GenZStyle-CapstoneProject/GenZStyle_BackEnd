@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GenZStyleApp.DAL.Models;
 
-namespace BMOS.DAL.Models
+namespace GenZStyleApp.DAL.Models
 {
     public class Token
     {

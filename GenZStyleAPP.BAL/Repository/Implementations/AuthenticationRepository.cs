@@ -3,7 +3,7 @@ using BMOS.BAL.DTOs.Authentications;
 using BMOS.BAL.DTOs.JWT;
 using BMOS.BAL.Helpers;
 using BMOS.DAL.Enums;
-using BMOS.DAL.Models;
+using GenZStyleApp.DAL.Models;
 using GenZStyleApp.DAL.Models;
 using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.Extensions.Configuration;
