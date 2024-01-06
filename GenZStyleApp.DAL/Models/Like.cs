@@ -12,10 +12,8 @@ namespace GenZStyleApp.DAL.Models
     {
 
         public int PostId { get; set; }
-        public int AccountId { get; set; }
-
+        public int LikeBy { get; set; }
         public Post Post { get; set; }
-
         public Account Account { get; set; }
 
     }

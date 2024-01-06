@@ -19,7 +19,8 @@ namespace GenZStyleApp.DAL.Models
         
         public DateTime CreateTime { get; set; }
         public DateTime UpdateTime { get; set; }
-
+        
+        public int TotalLike {  get; set; }
         public string Content { get; set; }
         public string Image {  get; set; }
 

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GenZStyleApp.DAL.Migrations
 {
     [DbContext(typeof(GenZStyleDbContext))]
-    [Migration("20240102031418_dbInit")]
+    [Migration("20231230091252_dbInit")]
     partial class dbInit
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -30,11 +30,13 @@ namespace GenZStyleApp.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("Email")
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AccountId"), 1L, 1);
+
+                    b.Property<string>("AvatarUrl")
                         .IsRequired()
-                        .HasMaxLength(50)
+                        .HasMaxLength(2147483647)
                         .IsUnicode(true)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Firstname")
                         .IsRequired()
@@ -71,9 +73,6 @@ namespace GenZStyleApp.DAL.Migrations
                         .HasMaxLength(50)
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(50)");
-
-                    b.Property<int>("WalletId")
-                        .HasColumnType("int");
 
                     b.HasKey("AccountId");
 
@@ -280,13 +279,21 @@ namespace GenZStyleApp.DAL.Migrations
 
             modelBuilder.Entity("GenZStyleApp.DAL.Models.Like", b =>
                 {
+                    b.Property<int>("LikeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LikeId"), 1L, 1);
+
                     b.Property<int>("AccountId")
                         .HasColumnType("int");
 
                     b.Property<int>("PostId")
                         .HasColumnType("int");
 
-                    b.HasKey("AccountId", "PostId");
+                    b.HasKey("LikeId");
+
+                    b.HasIndex("AccountId");
 
                     b.HasIndex("PostId");
 
@@ -295,10 +302,13 @@ namespace GenZStyleApp.DAL.Migrations
 
             modelBuilder.Entity("GenZStyleApp.DAL.Models.Message", b =>
                 {
-                    b.Property<int>("AccountId")
+                    b.Property<int>("MessageId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("InboxId")
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MessageId"), 1L, 1);
+
+                    b.Property<int>("AccountId")
                         .HasColumnType("int");
 
                     b.Property<string>("Content")
@@ -319,10 +329,15 @@ namespace GenZStyleApp.DAL.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<int>("InboxId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("Seen")
                         .HasColumnType("bit");
 
-                    b.HasKey("AccountId", "InboxId");
+                    b.HasKey("MessageId");
+
+                    b.HasIndex("AccountId");
 
                     b.HasIndex("InboxId");
 
@@ -533,11 +548,11 @@ namespace GenZStyleApp.DAL.Migrations
 
             modelBuilder.Entity("GenZStyleApp.DAL.Models.Transaction", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("TransactionId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TransactionId"), 1L, 1);
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
@@ -560,7 +575,7 @@ namespace GenZStyleApp.DAL.Migrations
                     b.Property<int>("status")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("TransactionId");
 
                     b.HasIndex("PaymentId");
 
@@ -583,12 +598,6 @@ namespace GenZStyleApp.DAL.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("AvatarUrl")
-                        .IsRequired()
-                        .HasMaxLength(2147483647)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("City")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -598,8 +607,17 @@ namespace GenZStyleApp.DAL.Migrations
                     b.Property<DateTime>("Dob")
                         .HasColumnType("datetime");
 
-                    b.Property<bool>("Gender")
-                        .HasColumnType("bit");
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Phone")
                         .IsRequired()
@@ -619,16 +637,19 @@ namespace GenZStyleApp.DAL.Migrations
 
             modelBuilder.Entity("GenZStyleApp.DAL.Models.UserRelation", b =>
                 {
-                    b.Property<int>("FollowerId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FollowerId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("FollowerId")
+                        .HasColumnType("int");
 
                     b.Property<int>("FollowingId")
                         .HasColumnType("int");
 
-                    b.HasKey("FollowerId", "FollowingId");
+                    b.HasKey("Id");
 
                     b.HasIndex("FollowingId");
 
@@ -643,6 +664,9 @@ namespace GenZStyleApp.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WalletId"), 1L, 1);
 
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("Balance")
                         .HasColumnType("decimal(18,2)");
 
@@ -651,17 +675,13 @@ namespace GenZStyleApp.DAL.Migrations
 
                     b.HasKey("WalletId");
 
+                    b.HasIndex("AccountId");
+
                     b.ToTable("Wallet", (string)null);
                 });
 
             modelBuilder.Entity("GenZStyleApp.DAL.Models.Account", b =>
                 {
-                    b.HasOne("GenZStyleApp.DAL.Models.Wallet", "Wallet")
-                        .WithOne("Account")
-                        .HasForeignKey("GenZStyleApp.DAL.Models.Account", "AccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("GenZStyleApp.DAL.Models.User", "User")
                         .WithMany("Accounts")
                         .HasForeignKey("UserId")
@@ -669,8 +689,6 @@ namespace GenZStyleApp.DAL.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-
-                    b.Navigation("Wallet");
                 });
 
             modelBuilder.Entity("GenZStyleApp.DAL.Models.Comment", b =>
@@ -898,6 +916,17 @@ namespace GenZStyleApp.DAL.Migrations
                     b.Navigation("Account");
                 });
 
+            modelBuilder.Entity("GenZStyleApp.DAL.Models.Wallet", b =>
+                {
+                    b.HasOne("GenZStyleApp.DAL.Models.Account", "Account")
+                        .WithMany("Wallets")
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+                });
+
             modelBuilder.Entity("GenZStyleApp.DAL.Models.Account", b =>
                 {
                     b.Navigation("Comments");
@@ -920,6 +949,8 @@ namespace GenZStyleApp.DAL.Migrations
                     b.Navigation("Styles");
 
                     b.Navigation("UserRelations");
+
+                    b.Navigation("Wallets");
                 });
 
             modelBuilder.Entity("GenZStyleApp.DAL.Models.Category", b =>
@@ -985,9 +1016,6 @@ namespace GenZStyleApp.DAL.Migrations
 
             modelBuilder.Entity("GenZStyleApp.DAL.Models.Wallet", b =>
                 {
-                    b.Navigation("Account")
-                        .IsRequired();
-
                     b.Navigation("Transactions");
                 });
 #pragma warning restore 612, 618

@@ -3,10 +3,15 @@ using BMOS.BAL.Validators.Accounts;
 using FluentValidation;
 using GenZStyleApp.DAL.Models;
 using GenZStyleAPP.BAL.DTOs.Accounts;
+using GenZStyleAPP.BAL.DTOs.Comments;
 using GenZStyleAPP.BAL.DTOs.FireBase;
+using GenZStyleAPP.BAL.DTOs.HashTag;
+using GenZStyleAPP.BAL.DTOs.PostLike;
 using GenZStyleAPP.BAL.DTOs.Users;
 using GenZStyleAPP.BAL.Profiles.Accounts;
 using GenZStyleAPP.BAL.Profiles.Users;
+using GenZStyleAPP.BAL.Profiles.Comments;
+using GenZStyleAPP.BAL.Profiles.PostLike;
 using GenZStyleAPP.BAL.Repository.Implementations;
 using GenZStyleAPP.BAL.Repository.Interfaces;
 using GenZStyleAPP.BAL.Validators.Accounts;
@@ -112,14 +117,19 @@ namespace GenZStyleApp_API {
             modelBuilder.EntitySet<GetUserResponse>("Users");
             modelBuilder.EntitySet<GetAccountResponse>("Accounts");
             modelBuilder.EntitySet<GetLoginResponse>("Authentications");
+            modelBuilder.EntitySet<GetHashTagResponse>("HashTags");
+            modelBuilder.EntitySet<GetPostLikeResponse>("PostLikes");
+            modelBuilder.EntitySet<GetCommentResponse>("Comments");
+            /*modelBuilder.EntitySet<GetPostLikeResponse>("Likes");*/
 
-            builder.Services.AddControllers().AddOData(options => options.Select()
+
+            /*builder.Services.AddControllers().AddOData(options => options.Select()
                                                                          .Filter()
                                                                          .OrderBy()
                                                                          .Expand()
                                                                          .Count()
                                                                          .SetMaxTop(null)
-                                                                         .AddRouteComponents("odata", modelBuilder.GetEdmModel()));
+                                                                         .AddRouteComponents("odata", modelBuilder.GetEdmModel()));*/
 
 
             //Dependency Injections
@@ -129,7 +139,9 @@ namespace GenZStyleApp_API {
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IAccountRepository, AccountRepository>();
             builder.Services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
-            builder.Services.Configure<FireBaseImage>(builder.Configuration.GetSection("FireBaseImage"));
+            builder.Services.AddScoped<IHashTagRepository, HashTagRepository>();
+            builder.Services.AddScoped<ILikeRepository, LikeRepository>();
+            builder.Services.AddScoped<ICommentRepository, CommentRepository>();
             //DI Validator
             builder.Services.AddScoped<IValidator<RegisterRequest>, RegisterValidation>();
             builder.Services.AddScoped<IValidator<GetLoginRequest>, LoginValidation>();
@@ -140,6 +152,9 @@ namespace GenZStyleApp_API {
 
             // Auto mapper config
             builder.Services.AddAutoMapper(typeof(AccountProfile),
+                                           typeof(PostLikeProfile),                    
+                                           typeof(CommentProfile),                    
+                                            typeof(AccountProfile),
                                             typeof(CustomerProfile)
                                             );
                                             
