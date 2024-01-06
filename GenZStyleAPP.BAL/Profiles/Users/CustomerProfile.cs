@@ -12,9 +12,10 @@ namespace GenZStyleAPP.BAL.Profiles.Users
     public class CustomerProfile : Profile
     {       
         public CustomerProfile() {
-            
+
             //CreateMap<User, GetUserResponse>().ForMember(dest => dest.Account, opt => opt.MapFrom(src => src.Accounts)); 
-                    }
+            CreateMap<User, UpdateUserRequest>().ReverseMap();
+        }
         
     }
 }

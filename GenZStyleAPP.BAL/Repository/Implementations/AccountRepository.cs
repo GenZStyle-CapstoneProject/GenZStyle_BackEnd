@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using BMOS.BAL.Helpers;
-using GenZStyleAPP.BAL.DTOs.Account;
+using GenZStyleAPP.BAL.DTOs.Accounts;
 using GenZStyleAPP.BAL.Repository.Interfaces;
 using ProjectParticipantManagement.BAL.Exceptions;
 using ProjectParticipantManagement.BAL.Heplers;

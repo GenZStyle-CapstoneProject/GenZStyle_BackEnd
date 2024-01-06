@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using GenZStyleApp.DAL.Models;
-using GenZStyleAPP.BAL.DTOs.Account;
+using GenZStyleAPP.BAL.DTOs.Accounts;
 using GenZStyleAPP.BAL.DTOs.Users;
 using ProjectParticipantManagement.DAL.Infrastructures;
 using System;

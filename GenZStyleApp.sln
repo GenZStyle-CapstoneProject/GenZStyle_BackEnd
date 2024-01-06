@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34024.191
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenZStyleApp_API", "GenZStyleApp_API\GenZStyleApp_API.csproj", "{A7792467-B3D9-41BC-B770-27E791127902}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenZStyleApp_API", "GenZStyleApp_API\GenZStyleApp_API.csproj", "{A7792467-B3D9-41BC-B770-27E791127902}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenZStyleAPP.BAL", "GenZStyleAPP.BAL\GenZStyleAPP.BAL.csproj", "{A372AB8D-AC92-4D54-A7F5-CECABF49F1A1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenZStyleAPP.BAL", "GenZStyleAPP.BAL\GenZStyleAPP.BAL.csproj", "{A372AB8D-AC92-4D54-A7F5-CECABF49F1A1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenZStyleApp.DAL", "GenZStyleApp.DAL\GenZStyleApp.DAL.csproj", "{4808B62B-5C2E-46A3-AC41-E236B55AE672}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenZStyleApp.DAL", "GenZStyleApp.DAL\GenZStyleApp.DAL.csproj", "{4808B62B-5C2E-46A3-AC41-E236B55AE672}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

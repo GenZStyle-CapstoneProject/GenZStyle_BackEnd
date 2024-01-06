@@ -2,10 +2,11 @@ using BMOS.BAL.DTOs.JWT;
 using BMOS.BAL.Validators.Accounts;
 using FluentValidation;
 using GenZStyleApp.DAL.Models;
-using GenZStyleAPP.BAL.DTOs.Account;
+using GenZStyleAPP.BAL.DTOs.Accounts;
 using GenZStyleAPP.BAL.DTOs.FireBase;
 using GenZStyleAPP.BAL.DTOs.Users;
 using GenZStyleAPP.BAL.Profiles.Accounts;
+using GenZStyleAPP.BAL.Profiles.Users;
 using GenZStyleAPP.BAL.Repository.Implementations;
 using GenZStyleAPP.BAL.Repository.Interfaces;
 using GenZStyleAPP.BAL.Validators.Accounts;
@@ -96,6 +97,16 @@ namespace GenZStyleApp_API {
                 };
             });
             #endregion*/
+    builder.Services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+                    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+                });
+            ;
+            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
             //ODATA
             var modelBuilder = new ODataConventionModelBuilder();
             modelBuilder.EntitySet<GetUserResponse>("Users");
@@ -118,15 +129,18 @@ namespace GenZStyleApp_API {
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IAccountRepository, AccountRepository>();
             builder.Services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
+            builder.Services.Configure<FireBaseImage>(builder.Configuration.GetSection("FireBaseImage"));
             //DI Validator
             builder.Services.AddScoped<IValidator<RegisterRequest>, RegisterValidation>();
             builder.Services.AddScoped<IValidator<GetLoginRequest>, LoginValidation>();
             builder.Services.AddScoped<IValidator<ChangePasswordRequest>, ChangePasswordValidation>();
+            builder.Services.AddScoped<IValidator<UpdateUserRequest>, UpdateUserValidation>();
 
             builder.Services.Configure<FireBaseImage>(builder.Configuration.GetSection("FireBaseImage"));
 
             // Auto mapper config
-            builder.Services.AddAutoMapper(typeof(AccountProfile)
+            builder.Services.AddAutoMapper(typeof(AccountProfile),
+                                            typeof(CustomerProfile)
                                             );
                                             
 
