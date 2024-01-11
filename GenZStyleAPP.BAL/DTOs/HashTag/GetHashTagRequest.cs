@@ -11,11 +11,9 @@ namespace GenZStyleAPP.BAL.DTOs.HashTag
 {
     public class GetHashTagRequest
     {
-        [Key]
-        public int id { get; set; }
+        
         public string Name { get; set; }
         public IFormFile Image { get; set; }
         public DateTime CreationDate { get; set; }
-        public virtual ICollection<HashPost> HashPosts { get; set; }
     }
 }

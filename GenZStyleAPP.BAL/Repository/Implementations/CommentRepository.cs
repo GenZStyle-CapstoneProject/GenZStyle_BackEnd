@@ -1,13 +1,16 @@
 ﻿using AutoMapper;
 using GenZStyleApp.DAL.Models;
 using GenZStyleAPP.BAL.DTOs.Comments;
+using GenZStyleAPP.BAL.Helpers;
 using GenZStyleAPP.BAL.Repository.Interfaces;
+using Microsoft.AspNetCore.Http;
 using ProjectParticipantManagement.BAL.Exceptions;
 using ProjectParticipantManagement.BAL.Heplers;
 using ProjectParticipantManagement.DAL.Infrastructures;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -44,24 +47,45 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
             }
         }
 
-        public async Task<GetCommentResponse> UpdateCommentByPostId(GetCommentRequest commentRequest ,int PostId )
+        public async Task<GetCommentResponse> UpdateCommentByPostId(GetCommentRequest commentRequest ,int PostId,HttpContext httpContext )
         {
             try
             {
                 var post = await _unitOfWork.PostDAO.GetPostById(PostId);
+                if (post == null)
+                {
+                    throw new NotFoundException("PostId does not exist in system.");
+                }
 
-                
+                JwtSecurityToken jwtSecurityToken = TokenHelper.ReadToken(httpContext);
+                string emailFromClaim = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Email).Value;
+                var account = await _unitOfWork.AccountDAO.GetAccountByEmail(emailFromClaim);
+
+                post.TotalComment += 1;
                 Comment comment = new Comment
                 {
                     Content = commentRequest.Content,
                     CreateAt = commentRequest.CreateAt,
                     PostId = PostId,
-                                         
+                    CommentBy = post.PostId,
+                    Account = post.Account,
+                    Post = post,
                 };
-                
-                post.Comments.Add(comment);
+                Notification notification = new Notification
+                {
+                    CreateAt = DateTime.Now,
+                    AccountId = post.AccountId,
+                    Message = account.Lastname + " " + "đã bình luận bài viết của bạn",
+                    Account = account,
+                };
+
+                /*post.Comments.Add(comment);*/
                 await _unitOfWork.CommentDAO.AddCommentAsync(comment);
-                return _mapper.Map<GetCommentResponse>(comment);
+                     this._unitOfWork.PostDAO.UpdatePostComment(post);
+                await _unitOfWork.NotificationDAO.AddNotiAsync(notification);
+
+                await _unitOfWork.CommitAsync();
+                return _mapper.Map<GetCommentResponse>(post);
 
 
 

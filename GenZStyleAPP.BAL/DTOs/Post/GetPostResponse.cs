@@ -1,4 +1,4 @@
-﻿using GenZStyleAPP.BAL.DTOs.Account;
+﻿using GenZStyleAPP.BAL.DTOs.Accounts;
 using GenZStyleAPP.BAL.DTOs.FashionItem;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GenZStyleAPP.BAL.DTOs.Post
+namespace GenZStyleAPP.BAL.DTOs.Postss
 {
     public class GetPostResponse
     {
