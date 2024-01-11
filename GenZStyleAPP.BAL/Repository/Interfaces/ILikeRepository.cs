@@ -1,4 +1,5 @@
 ﻿using GenZStyleAPP.BAL.DTOs.PostLike;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,6 @@ namespace GenZStyleAPP.BAL.Repository.Interfaces
 {
     public interface ILikeRepository
     {
-        public  Task<GetPostLikeResponse> GetLikeByPostIdAsync(int postId);
+        public  Task<GetPostLikeResponse> GetLikeByPostIdAsync(int postId, HttpContext httpContext);
     }
 }

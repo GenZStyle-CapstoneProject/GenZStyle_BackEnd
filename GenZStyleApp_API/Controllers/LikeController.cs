@@ -1,4 +1,5 @@
-﻿using GenZStyleAPP.BAL.DTOs.PostLike;
+﻿using BMOS.BAL.Authorization;
+using GenZStyleAPP.BAL.DTOs.PostLike;
 using GenZStyleAPP.BAL.Repository.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
@@ -16,11 +17,12 @@ namespace GenZStyleApp_API.Controllers
         }
 
         #region Like
-        [HttpGet("odata/Likes/{key}/Like")]
+        [HttpGet("odata/PostLikes/GetPostId/{key}")]
         [EnableQuery]
+        [PermissionAuthorize("User")]
         public async Task<IActionResult> Get([FromRoute] int key)
         {
-            GetPostLikeResponse like = await this._likeRepository.GetLikeByPostIdAsync(key);
+            GetPostLikeResponse like = await this._likeRepository.GetLikeByPostIdAsync(key, HttpContext);
             return Ok(like);
         }
 
