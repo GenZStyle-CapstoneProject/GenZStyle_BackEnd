@@ -128,8 +128,7 @@ namespace GenZStyleApp_API {
             modelBuilder.EntitySet<GetCommentResponse>("Comments");
             /*modelBuilder.EntitySet<GetPostLikeResponse>("Likes");*/
             modelBuilder.EntitySet<GetPostResponse>("Posts");
-            modelBuilder.EntitySet<GetNotificationResponse>("Notifications");
-            modelBuilder.EntitySet<GetHashTagReponse>("HashTags");
+            modelBuilder.EntitySet<GetNotificationResponse>("Notifications");       
             modelBuilder.EntitySet<GetFashionItemResponse>("FashionItems");
 
 
@@ -154,7 +153,6 @@ namespace GenZStyleApp_API {
             builder.Services.AddScoped<ICommentRepository, CommentRepository>();
             builder.Services.AddScoped<IPostRepository, PostRepository>();
             builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
-            builder.Services.AddScoped<IHashTagRepository, HashTagRepository>();
             builder.Services.AddScoped<IFashionItemRepository, FashionItemRepository>();
             builder.Services.Configure<FireBaseImage>(builder.Configuration.GetSection("FireBaseImage"));
             //DI Validator
@@ -170,9 +168,7 @@ namespace GenZStyleApp_API {
             builder.Services.AddAutoMapper(typeof(AccountProfile),
                                            typeof(PostLikeProfile),                    
                                            typeof(CommentProfile),                    
-                                            typeof(AccountProfile),
-                                            typeof(CustomerProfile)
-                                            typeof(CustomerProfile),
+                                            typeof(CustomerProfile),                                           
                                             typeof(PostProfile),
                                             typeof(FashionItemProfile),
                                             typeof(NotificationProfile),

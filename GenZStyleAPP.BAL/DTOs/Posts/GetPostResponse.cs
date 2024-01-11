@@ -2,6 +2,7 @@
 using GenZStyleAPP.BAL.DTOs.Accounts;
 using GenZStyleAPP.BAL.DTOs.FashionItems;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using GenZStyleAPP.BAL.DTOs.PostLike;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -13,10 +14,13 @@ namespace GenZStyleAPP.BAL.DTOs.Posts
 {
     public class GetPostResponse
     {
-        [Key]
 
+        [Key]
         public int PostId { get; set; }
+
         public int AccountId { get; set; }
+
+
         public DateTime CreateTime { get; set; }
         public DateTime UpdateTime { get; set; }
 
@@ -26,5 +30,6 @@ namespace GenZStyleAPP.BAL.DTOs.Posts
         public GetAccountResponse Account { get; set; }
         public ICollection<GetFashionItemResponse> FashionItems { get; set; }
 
+        public ICollection<GetPostLikeResponse> Likes { get; set; }
     }
 }

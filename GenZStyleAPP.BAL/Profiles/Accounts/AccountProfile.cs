@@ -13,13 +13,7 @@ namespace GenZStyleAPP.BAL.Profiles.Accounts
 {
     public class AccountProfile : Profile
     {
-        private IMapper _mapper;
-
-        public AccountProfile(  IMapper mapper)
-        {
-            
-            _mapper = mapper;
-        }
+        
         public AccountProfile() 
         {
             CreateMap<Account, GetAccountResponse>().ReverseMap();

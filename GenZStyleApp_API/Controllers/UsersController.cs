@@ -36,7 +36,7 @@ namespace GenZStyleApp_API.Controllers
         }
 
         #region Register
-        [HttpPost("odata/User/Register")]
+        [HttpPost("odata/Users/Register")]
         [EnableQuery]
         public async Task<IActionResult> Post([FromForm] RegisterRequest registerRequest)
        {
