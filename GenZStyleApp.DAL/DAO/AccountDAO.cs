@@ -1,4 +1,5 @@
 ﻿using GenZStyleApp.DAL.DBContext;
+using GenZStyleApp.DAL.Enums;
 using GenZStyleApp.DAL.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -55,6 +56,20 @@ namespace GenZStyleApp.DAL.DAO
             }
 
         }
+        public async Task<Account> GetAccountByEmail(string email)
+        {
+
+            try
+            {
+                return await this._dbContext.Accounts
+                                    .Include(u => u.Posts)
+                                    .SingleOrDefaultAsync(a => a.Email.Equals(email) && a.IsActive == true );
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
         public async Task<Account> GetAccountByEmailAndPasswordAsync(string email, string password)
         {
             try
@@ -63,6 +78,17 @@ namespace GenZStyleApp.DAL.DAO
                                                     .FirstOrDefaultAsync(x => x.Username.Equals(email.Trim().ToLower())
                                                                                    && x.PasswordHash.Equals(password)
                                                                                    && x.IsActive == true);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public void UpdateAccountProfile(Account account)
+        {
+            try
+            {
+                this._dbContext.Entry<Account>(account).State = EntityState.Modified;
             }
             catch (Exception ex)
             {

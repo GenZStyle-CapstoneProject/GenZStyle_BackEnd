@@ -15,5 +15,7 @@ namespace ProjectParticipantManagement.BAL.Repositories.Interfaces
         public Task<PostLoginResponse> LoginAsync(GetLoginRequest account, JwtAuth jwtAuth);
 
 
+        public Task<PostRecreateTokenResponse> ReCreateTokenAsync(PostRecreateTokenRequest request, JwtAuth jwtAuth);
+
     }
 }

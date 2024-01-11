@@ -17,13 +17,13 @@ namespace BMOS.DAL.DAOs
             this._dbContext = dbContext;
         }
 
-        /*#region Get token by refresh token
+        #region Get token by refresh token
         public async Task<Token> GetTokenByRefreshTokenAsync(string token)
         {
             try
             {
                 return await _dbContext.Tokens.Include(t => t.Account)
-                                              .ThenInclude(a => a.Role)
+                                              .ThenInclude(a => a.User).ThenInclude(u => u.Role)
                                               .SingleOrDefaultAsync(t => t.RefreshToken.Equals(token));
             }
             catch (Exception ex)
@@ -32,7 +32,22 @@ namespace BMOS.DAL.DAOs
             }
 
         }
-        #endregion*/
+        #endregion
+        public async Task<Token> GetLastToken()
+        {
+            try
+            {
+                List<Token> tokens = await _dbContext.Tokens.Include(p => p.Account)                                                                 
+                                                                  .ToListAsync();
+                Token lastToken = tokens.LastOrDefault();
+                return lastToken;
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
 
         #region Create token
         public async Task CreateTokenAsync(Token token)
