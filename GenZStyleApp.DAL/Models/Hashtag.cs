@@ -16,6 +16,6 @@ namespace GenZStyleApp.DAL.Models
         public string Name { get; set; }
         public string Image { get; set; }
         public DateTime CreationDate { get; set; }
-        public virtual ICollection<HashPost> HashPosts { get; set; }
+        public virtual ICollection<HashPost>? HashPosts { get; set; }
     }
 }
