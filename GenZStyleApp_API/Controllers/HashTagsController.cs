@@ -10,24 +10,20 @@ using Microsoft.AspNetCore.OData.Routing.Controllers;
 
 namespace GenZStyleApp_API.Controllers
 {
-    //[Route("api/[controller]")]
-    //[ApiController]
-    public class HashTagsController: ODataController
+    public class HashTagsController : ODataController
     {
         private IHashTagRepository _hashTagRepository;
-        
+        /*private IValidator<> */
 
-
-        public HashTagsController(IHashTagRepository hashTagRepository
-            )
+        public HashTagsController(IHashTagRepository hashTagRepository)
         {
             _hashTagRepository = hashTagRepository;
-            
+
         }
 
         #region SearchByHashTagName
         [HttpGet("odata/HashTags/{hashtag}/SearchByHashTagName")]
-        [EnableQuery]
+
         public async Task<IActionResult> SearchByHashTagName([FromRoute] string hashtag)
         {
             try
@@ -52,7 +48,19 @@ namespace GenZStyleApp_API.Controllers
                 // Có lỗi, trả về thông báo lỗi
                 return BadRequest(new { Message = $"Lỗi: {ex.Message}" });
             }
-            #endregion
         }
+        #endregion
+        #region GetHashTags
+        [EnableQuery]
+        [HttpGet("odata/Hashtags/{key}")]
+        public async Task<IActionResult> Get()
+        {
+                
+            var result = await _hashTagRepository.GetHashTagsAsync();
+            return Ok(result);
+        }
+        
+        #endregion
     }
 }
+

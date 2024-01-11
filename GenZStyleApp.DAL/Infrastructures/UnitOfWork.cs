@@ -21,6 +21,8 @@ namespace ProjectParticipantManagement.DAL.Infrastructures
         private NotificationDAO _notificationDAO;
         private HashTagDAO _hashtagDAO;
         private FashionItemDAO _fashionItemDAO;
+        private LikeDAO _likeDAO;
+        private CommentDAO _commentDAO;
         
 
         public UnitOfWork()
@@ -41,6 +43,39 @@ namespace ProjectParticipantManagement.DAL.Infrastructures
                 return _roleDAO;
             }
         }
+        public LikeDAO LikeDAO
+        {
+            get
+            {
+                if (_likeDAO == null)
+                {
+                    _likeDAO = new LikeDAO(_dbContext);
+                }
+                return _likeDAO;
+            }
+        }
+        public PostDAO PostDAO
+        {
+            get
+            {
+                if (_postDAO == null)
+                {
+                    _postDAO = new PostDAO(_dbContext);
+                }
+                return _postDAO;
+            }
+        }
+        public CommentDAO CommentDAO
+        {
+            get
+            {
+                if (_commentDAO == null)
+                {
+                    _commentDAO = new CommentDAO(_dbContext);
+                }
+                return _commentDAO;
+            }
+        }
         public TokenDAO TokenDAO
         {
             get
@@ -52,6 +87,8 @@ namespace ProjectParticipantManagement.DAL.Infrastructures
                 return _tokenDAO;
             }
         }
+
+        
         public WalletDAO WalletDAO
         {
             get
@@ -86,17 +123,7 @@ namespace ProjectParticipantManagement.DAL.Infrastructures
             }
         }
 
-        public PostDAO PostDAO
-        {
-            get
-            {
-                if (this._postDAO == null)
-                {
-                    this._postDAO = new PostDAO(this._dbContext);
-                }
-                return this._postDAO;
-            }
-        }
+        
 
         public NotificationDAO NotificationDAO
         {

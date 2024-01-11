@@ -1,4 +1,4 @@
-﻿using BMOS.DAL.Models;
+﻿using GenZStyleApp.DAL.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 

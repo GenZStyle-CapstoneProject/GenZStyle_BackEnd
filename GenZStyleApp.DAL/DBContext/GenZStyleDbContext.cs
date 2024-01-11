@@ -1,4 +1,4 @@
-﻿using BMOS.DAL.Models;
+﻿using GenZStyleApp.DAL.Models;
 using GenZStyleApp.DAL.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -294,7 +294,7 @@ namespace GenZStyleApp.DAL.DBContext
             modelBuilder.Entity<Like>(Entity =>
             {
                 Entity.ToTable("Like");
-                Entity.HasKey(e => new { e.AccountId, e.PostId });
+                Entity.HasKey(e => new { e.LikeBy, e.PostId });
 
 
                 Entity.HasOne(L => L.Post)
@@ -303,7 +303,7 @@ namespace GenZStyleApp.DAL.DBContext
 
                 Entity.HasOne(L => L.Account)
                 .WithMany(L => L.Likes)
-                .HasForeignKey(po => po.AccountId);
+                .HasForeignKey(po => po.LikeBy);
 
             });
 

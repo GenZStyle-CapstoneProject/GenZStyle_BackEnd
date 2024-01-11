@@ -52,20 +52,6 @@ namespace GenZStyleApp.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Wallet",
-                columns: table => new
-                {
-                    WalletId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Balance = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    CreatDate = table.Column<DateTime>(type: "datetime", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Wallet", x => x.WalletId);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "User",
                 columns: table => new
                 {
@@ -73,10 +59,10 @@ namespace GenZStyleApp.DAL.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     RoleId = table.Column<int>(type: "int", nullable: false),
                     City = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    AvatarUrl = table.Column<string>(type: "nvarchar(max)", maxLength: 2147483647, nullable: false),
                     Address = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Phone = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Gender = table.Column<bool>(type: "bit", nullable: false),
+                    Gender = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Dob = table.Column<DateTime>(type: "datetime", nullable: false)
                 },
                 constraints: table =>
@@ -94,15 +80,15 @@ namespace GenZStyleApp.DAL.Migrations
                 name: "Account",
                 columns: table => new
                 {
-                    AccountId = table.Column<int>(type: "int", nullable: false),
+                    AccountId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     InboxId = table.Column<int>(type: "int", nullable: false),
-                    WalletId = table.Column<int>(type: "int", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Firstname = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Lastname = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Username = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     PasswordHash = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    AvatarUrl = table.Column<string>(type: "nvarchar(max)", maxLength: 2147483647, nullable: false),
                     IsVip = table.Column<bool>(type: "bit", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -114,12 +100,6 @@ namespace GenZStyleApp.DAL.Migrations
                         column: x => x.UserId,
                         principalTable: "User",
                         principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Account_Wallet_AccountId",
-                        column: x => x.AccountId,
-                        principalTable: "Wallet",
-                        principalColumn: "WalletId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -242,16 +222,38 @@ namespace GenZStyleApp.DAL.Migrations
                 name: "UserRelation",
                 columns: table => new
                 {
-                    FollowerId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    FollowerId = table.Column<int>(type: "int", nullable: false),
                     FollowingId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserRelation", x => new { x.FollowerId, x.FollowingId });
+                    table.PrimaryKey("PK_UserRelation", x => x.Id);
                     table.ForeignKey(
                         name: "FK_UserRelation_Account_FollowingId",
                         column: x => x.FollowingId,
+                        principalTable: "Account",
+                        principalColumn: "AccountId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Wallet",
+                columns: table => new
+                {
+                    WalletId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    AccountId = table.Column<int>(type: "int", nullable: false),
+                    Balance = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    CreatDate = table.Column<DateTime>(type: "datetime", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Wallet", x => x.WalletId);
+                    table.ForeignKey(
+                        name: "FK_Wallet_Account_AccountId",
+                        column: x => x.AccountId,
                         principalTable: "Account",
                         principalColumn: "AccountId",
                         onDelete: ReferentialAction.Cascade);
@@ -285,6 +287,8 @@ namespace GenZStyleApp.DAL.Migrations
                 name: "Message",
                 columns: table => new
                 {
+                    MessageId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     AccountId = table.Column<int>(type: "int", nullable: false),
                     InboxId = table.Column<int>(type: "int", nullable: false),
                     Seen = table.Column<bool>(type: "bit", nullable: false),
@@ -295,7 +299,7 @@ namespace GenZStyleApp.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Message", x => new { x.AccountId, x.InboxId });
+                    table.PrimaryKey("PK_Message", x => x.MessageId);
                     table.ForeignKey(
                         name: "FK_Message_Account_AccountId",
                         column: x => x.AccountId,
@@ -395,12 +399,14 @@ namespace GenZStyleApp.DAL.Migrations
                 name: "Like",
                 columns: table => new
                 {
+                    LikeId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     PostId = table.Column<int>(type: "int", nullable: false),
                     AccountId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Like", x => new { x.AccountId, x.PostId });
+                    table.PrimaryKey("PK_Like", x => x.LikeId);
                     table.ForeignKey(
                         name: "FK_Like_Account_AccountId",
                         column: x => x.AccountId,
@@ -419,7 +425,7 @@ namespace GenZStyleApp.DAL.Migrations
                 name: "Transaction",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    TransactionId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PaymentId = table.Column<int>(type: "int", nullable: false),
                     WalletId = table.Column<int>(type: "int", nullable: false),
@@ -430,7 +436,7 @@ namespace GenZStyleApp.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Transaction", x => x.Id);
+                    table.PrimaryKey("PK_Transaction", x => x.TransactionId);
                     table.ForeignKey(
                         name: "FK_Transaction_Payment_PaymentId",
                         column: x => x.PaymentId,
@@ -527,9 +533,19 @@ namespace GenZStyleApp.DAL.Migrations
                 column: "packageId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Like_AccountId",
+                table: "Like",
+                column: "AccountId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Like_PostId",
                 table: "Like",
                 column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Message_AccountId",
+                table: "Message",
+                column: "AccountId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Message_InboxId",
@@ -580,6 +596,11 @@ namespace GenZStyleApp.DAL.Migrations
                 name: "IX_UserRelation_FollowingId",
                 table: "UserRelation",
                 column: "FollowingId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Wallet_AccountId",
+                table: "Wallet",
+                column: "AccountId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -621,6 +642,9 @@ namespace GenZStyleApp.DAL.Migrations
                 name: "Payment");
 
             migrationBuilder.DropTable(
+                name: "Wallet");
+
+            migrationBuilder.DropTable(
                 name: "Category");
 
             migrationBuilder.DropTable(
@@ -637,9 +661,6 @@ namespace GenZStyleApp.DAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "User");
-
-            migrationBuilder.DropTable(
-                name: "Wallet");
 
             migrationBuilder.DropTable(
                 name: "Role");
