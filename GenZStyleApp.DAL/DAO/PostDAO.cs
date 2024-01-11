@@ -21,10 +21,8 @@ namespace GenZStyleApp.DAL.DAO
         {
             try
             {
-                return await _dbContext.Posts/*Include(a => a.Likes)*/
-                                           /*.Include(a => a.Comments)*/     
-                                           .Include(a => a.Account)
-                                           .SingleOrDefaultAsync(a => a.PostId == Id);
+                return await _dbContext.Posts.Include(a => a.Account)
+                                             .SingleOrDefaultAsync(a => a.PostId == Id);
             }
             catch (Exception ex)
             {
@@ -47,5 +45,17 @@ namespace GenZStyleApp.DAL.DAO
                 throw new Exception(ex.Message);
             }
         }
+        public void UpdatePostComment(Post post)
+        {
+            try
+            {
+                this._dbContext.Entry<Post>(post).State = EntityState.Modified;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
     }
 }
