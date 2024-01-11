@@ -21,6 +21,8 @@ namespace ProjectParticipantManagement.DAL.Infrastructures
         private LikeDAO _likeDAO;
         private PostDAO _postDAO;
         private CommentDAO _commentDAO;
+        private NotificationDAO _notificationDAO;
+        private UserRelationDAO  _userRelationDAO;
         
 
         public UnitOfWork()
@@ -39,6 +41,28 @@ namespace ProjectParticipantManagement.DAL.Infrastructures
                     _roleDAO = new RoleDAO(_dbContext);
                 }
                 return _roleDAO;
+            }
+        }
+        public UserRelationDAO userRelationDAO
+        {
+            get
+            {
+                if (_userRelationDAO == null)
+                {
+                    _userRelationDAO = new UserRelationDAO(_dbContext);
+                }
+                return _userRelationDAO;
+            }
+        }
+        public NotificationDAO NotificationDAO
+        {
+            get
+            {
+                if (_notificationDAO == null)
+                {
+                    _notificationDAO = new NotificationDAO(_dbContext);
+                }
+                return _notificationDAO;
             }
         }
         public LikeDAO LikeDAO

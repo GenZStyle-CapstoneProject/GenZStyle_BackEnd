@@ -27,6 +27,14 @@ using ProjectParticipantManagement.BAL.Repositories.Interfaces;
 using ProjectParticipantManagement.DAL.Infrastructures;
 using System.Reflection;
 using System.Text;
+using GenZStyleAPP.BAL.Validators.Hashtags;
+using GenZStyleAPP.BAL.Validators.Comments;
+using GenZStyleAPP.BAL.Profiles.HashTagProfile;
+using GenZStyleAPP.BAL.Validators.Authentication;
+using BMOS.BAL.DTOs.Authentications;
+using GenZStyleAPP.BAL.Profiles.UserRelations;
+using GenZStyleAPP.BAL.DTOs.Posts;
+using GenZStyleAPP.BAL.DTOs.UserRelations;
 
 namespace GenZStyleApp_API {
     public class Program { 
@@ -35,13 +43,13 @@ namespace GenZStyleApp_API {
     {
     var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+            // Add services to the container.
 
-    builder.Services.AddControllers();
-    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-    builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddControllers();
+            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-            /*#region JWT 
+            #region JWT 
             builder.Services.AddSwaggerGen(options =>
             {
                 // using System.Reflection;
@@ -51,7 +59,7 @@ namespace GenZStyleApp_API {
                 options.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",
-                    Title = "FU BMOS Shop Application API",
+                    Title = "GenZStyle Store Application API",
                     Description = "JWT Authentication API"
                 });
 
@@ -79,7 +87,7 @@ namespace GenZStyleApp_API {
                     }
                 });
             });
-            
+
 
             builder.Services.AddAuthentication(options =>
             {
@@ -101,8 +109,8 @@ namespace GenZStyleApp_API {
                     ClockSkew = TimeSpan.Zero
                 };
             });
-            #endregion*/
-    builder.Services.AddControllers()
+            #endregion
+            builder.Services.AddControllers()
                 .AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
@@ -110,26 +118,26 @@ namespace GenZStyleApp_API {
                 });
             ;
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
             //ODATA
             var modelBuilder = new ODataConventionModelBuilder();
+            
             modelBuilder.EntitySet<GetUserResponse>("Users");
             modelBuilder.EntitySet<GetAccountResponse>("Accounts");
             modelBuilder.EntitySet<GetLoginResponse>("Authentications");
             modelBuilder.EntitySet<GetHashTagResponse>("HashTags");
             modelBuilder.EntitySet<GetPostLikeResponse>("PostLikes");
             modelBuilder.EntitySet<GetCommentResponse>("Comments");
-            /*modelBuilder.EntitySet<GetPostLikeResponse>("Likes");*/
 
 
-            /*builder.Services.AddControllers().AddOData(options => options.Select()
+
+            builder.Services.AddControllers().AddOData(options => options.Select()
                                                                          .Filter()
                                                                          .OrderBy()
                                                                          .Expand()
                                                                          .Count()
                                                                          .SetMaxTop(null)
-                                                                         .AddRouteComponents("odata", modelBuilder.GetEdmModel()));*/
+                                                                         .AddRouteComponents("odata", modelBuilder.GetEdmModel()));
+
 
 
             //Dependency Injections
@@ -142,11 +150,15 @@ namespace GenZStyleApp_API {
             builder.Services.AddScoped<IHashTagRepository, HashTagRepository>();
             builder.Services.AddScoped<ILikeRepository, LikeRepository>();
             builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+            builder.Services.AddScoped<IPostRepository, PostRepository>();
             //DI Validator
             builder.Services.AddScoped<IValidator<RegisterRequest>, RegisterValidation>();
             builder.Services.AddScoped<IValidator<GetLoginRequest>, LoginValidation>();
             builder.Services.AddScoped<IValidator<ChangePasswordRequest>, ChangePasswordValidation>();
             builder.Services.AddScoped<IValidator<UpdateUserRequest>, UpdateUserValidation>();
+            builder.Services.AddScoped<IValidator<GetHashTagRequest>, PostHashTagRequestValidation>();
+            builder.Services.AddScoped<IValidator<GetCommentRequest>, GetCommentRequestValidator>();
+            builder.Services.AddScoped<IValidator<PostRecreateTokenRequest>, PostRecreateTokenValidation>();
 
             builder.Services.Configure<FireBaseImage>(builder.Configuration.GetSection("FireBaseImage"));
 
@@ -155,26 +167,35 @@ namespace GenZStyleApp_API {
                                            typeof(PostLikeProfile),                    
                                            typeof(CommentProfile),                    
                                             typeof(AccountProfile),
-                                            typeof(CustomerProfile)
+                                            typeof(CustomerProfile),
+                                            typeof(HashtagProfile),
+                                            typeof(UserRelationProfile)
                                             );
-                                            
 
+
+            /*builder.Services.AddControllers().AddOData(options =>
+            {
+                options.Select().Filter().OrderBy().Expand().Count().SetMaxTop(null);
+                options.AddRouteComponents("odata", modelBuilder.GetEdmModel());
+            });*/
             var app = builder.Build();
-
-    // Configure the HTTP request pipeline.
-    if (app.Environment.IsDevelopment())
+            
+            // Configure the HTTP request pipeline.
+            if (app.Environment.IsDevelopment())
     {
         app.UseSwagger();
         app.UseSwaggerUI();
     }
+            
+            app.UseHttpsRedirection();
+            app.UseAuthentication();
 
-    app.UseHttpsRedirection();
 
-    app.UseAuthorization();
+            app.UseAuthorization();
 
-    app.MapControllers();
+            app.MapControllers();
 
-    app.Run();
+            app.Run();
 
 }
     } 

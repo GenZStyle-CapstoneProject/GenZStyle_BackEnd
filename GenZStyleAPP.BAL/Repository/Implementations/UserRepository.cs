@@ -17,7 +17,10 @@ using Microsoft.AspNetCore.Http;
 using System.IdentityModel.Tokens.Jwt;
 using GenZStyleApp.DAL.Enums;
 using GenZStyleAPP.BAL.DTOs.FireBase;
-using GenZStyleAPP.BAL.Heplers;
+using BMOS.BAL.Helpers;
+using GenZStyleAPP.BAL.DTOs.UserRelations;
+using Microsoft.Extensions.Hosting;
+using GenZStyleAPP.BAL.Helpers;
 
 namespace GenZStyleAPP.BAL.Repository.Implementations
 {
@@ -31,6 +34,48 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
             _mapper = mapper;
         }
 
+
+        public async Task<GetUserRelationResponse> FollowUser(int UserId,HttpContext httpContext)
+        {
+            try 
+            {
+                var accounts = await _unitOfWork.AccountDAO.GetAccountById(UserId);
+                if (accounts == null)
+                {
+                    throw new NotFoundException("AccountId does not exist in system.");
+                }
+                JwtSecurityToken jwtSecurityToken = TokenHelper.ReadToken(httpContext);
+                string emailFromClaim = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Email).Value;
+                var account = await _unitOfWork.AccountDAO.GetAccountByEmail(emailFromClaim);
+
+                UserRelation userRelation = new UserRelation
+                {
+                    FollowerId = account.AccountId,
+                    FollowingId = UserId,
+                    Account = account,                    
+                };
+                
+                if (userRelation.FollowingId == userRelation.FollowerId) 
+                {
+                    throw new NotFoundException("AccountId has duplicate in system.");
+                }
+                await _unitOfWork.userRelationDAO.AddFollowAsync(userRelation);
+                await _unitOfWork.CommitAsync();
+                return _mapper.Map<GetUserRelationResponse>(userRelation);
+            }
+            catch (NotFoundException ex)
+            {
+                string error = ErrorHelper.GetErrorString("AccountId", ex.Message);
+                throw new NotFoundException(error);
+            }
+            catch (Exception ex)
+             {
+                string error = ErrorHelper.GetErrorString(ex.Message);
+                throw new Exception(error);
+
+            }
+
+        }
         public async Task<GetUserResponse> Register(FireBaseImage fireBaseImage,RegisterRequest registerRequest)
         {
             try
@@ -123,11 +168,11 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 string error = ErrorHelper.GetErrorString(fieldNameError, ex.Message);
                 throw new BadRequestException(error);
             }
-            /*catch (Exception ex)
+            catch (Exception ex)
             {
                 string error = ErrorHelper.GetErrorString(ex.Message);
                 throw new Exception(error);
-            }*/
+            }
         }
 
         
@@ -328,5 +373,32 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 throw new Exception(error);
             }
         }
+
+
+        public async Task<GetFollowResponse> GetFollowByProfileIdAsync(HttpContext httpContext)
+        {
+            try 
+            {
+                JwtSecurityToken jwtSecurityToken = TokenHelper.ReadToken(httpContext);
+                string emailFromClaim = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Email).Value;
+                var account = await _unitOfWork.AccountDAO.GetAccountByEmail(emailFromClaim);
+
+
+                 var followers =  await this._unitOfWork.userRelationDAO.GetFollower(account.AccountId);
+                 var followings  =  await this._unitOfWork.userRelationDAO.GetFollowing(account.AccountId);
+                GetFollowResponse followResponse = new GetFollowResponse
+                {
+                    Follower = followers.Count,
+                    Followering = followings.Count
+                };
+
+                return followResponse;
+            } 
+            catch (Exception ex)
+            {
+                throw new Exception (ex.Message);
+            }
+        }
+
     }
 }
