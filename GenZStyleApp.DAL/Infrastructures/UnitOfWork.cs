@@ -17,9 +17,11 @@ namespace ProjectParticipantManagement.DAL.Infrastructures
         private UserDAO _userDAO;
         private WalletDAO _walletDAO;
         private TokenDAO _tokenDAO;
-        private HashTagDAO _hashTagDAO;
-        private LikeDAO _likeDAO;
         private PostDAO _postDAO;
+        private NotificationDAO _notificationDAO;
+        private HashTagDAO _hashtagDAO;
+        private FashionItemDAO _fashionItemDAO;
+        private LikeDAO _likeDAO;
         private CommentDAO _commentDAO;
         
 
@@ -86,17 +88,7 @@ namespace ProjectParticipantManagement.DAL.Infrastructures
             }
         }
 
-        public HashTagDAO HashTagDAO
-        {
-            get
-            {
-                if (_hashTagDAO == null)
-                {
-                    _hashTagDAO = new HashTagDAO(_dbContext);
-                }
-                return _hashTagDAO;
-            }
-        }
+        
         public WalletDAO WalletDAO
         {
             get
@@ -130,7 +122,45 @@ namespace ProjectParticipantManagement.DAL.Infrastructures
                 return this._userDAO;
             }
         }
+
         
+
+        public NotificationDAO NotificationDAO
+        {
+            get
+            {
+                if (this._notificationDAO == null)
+                {
+                    this._notificationDAO = new NotificationDAO(this._dbContext);
+                }
+                return this._notificationDAO;
+            }
+        }
+
+        public HashTagDAO HashTagDAO
+        {
+            get
+            {
+                if (this._hashtagDAO == null)
+                {
+                    this._hashtagDAO = new HashTagDAO(this._dbContext);
+                }
+                return this._hashtagDAO;
+            }
+        }
+
+        public FashionItemDAO FashionItemDAO
+        {
+            get
+            {
+                if (this._fashionItemDAO == null)
+                {
+                    this._fashionItemDAO = new FashionItemDAO(this._dbContext);
+                }
+                return this._fashionItemDAO;
+            }
+        }
+
 
 
 

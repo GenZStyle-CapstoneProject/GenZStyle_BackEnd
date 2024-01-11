@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GenZStyleApp.DAL.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -17,5 +18,8 @@ namespace GenZStyleAPP.BAL.DTOs.FashionItems
         public Decimal Cost { get; set; }
 
         public string Image { get; set; }
+        public Post Post { get; set; }
+
+        public Category Category { get; set; }
     }
 }

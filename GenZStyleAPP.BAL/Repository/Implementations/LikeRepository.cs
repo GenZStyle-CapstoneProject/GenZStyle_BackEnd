@@ -28,7 +28,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
         {
             try
             {
-                var post = await _unitOfWork.PostDAO.GetPostById(postId);
+                var post = await _unitOfWork.PostDAO.GetPostByIdAsync(postId);
                 if (post == null)
                 {
                     throw new NotFoundException("PostId does not exist in system.");

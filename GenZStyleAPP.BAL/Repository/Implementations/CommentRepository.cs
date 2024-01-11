@@ -48,7 +48,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
         {
             try
             {
-                var post = await _unitOfWork.PostDAO.GetPostById(PostId);
+                var post = await _unitOfWork.PostDAO.GetPostByIdAsync(PostId);
 
                 
                 Comment comment = new Comment
