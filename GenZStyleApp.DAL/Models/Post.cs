@@ -17,8 +17,8 @@ namespace GenZStyleApp.DAL.Models
         public int AccountId { get; set; }
 
         
-        public DateTime CreateTime { get; set; }
-        public DateTime UpdateTime { get; set; }
+        public DateTime? CreateTime { get; set; }
+        public DateTime? UpdateTime { get; set; }
 
         public string Content { get; set; }
         public string Image {  get; set; }

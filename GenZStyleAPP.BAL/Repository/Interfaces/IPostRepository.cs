@@ -1,4 +1,8 @@
-﻿using System;
+﻿using GenZStyleApp.DAL.Models;
+using GenZStyleAPP.BAL.DTOs.FireBase;
+using GenZStyleAPP.BAL.DTOs.Posts;
+using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +10,16 @@ using System.Threading.Tasks;
 
 namespace GenZStyleAPP.BAL.Repository.Interfaces
 {
-    internal class IPostRepository
+    public interface IPostRepository
     {
+        public Task<List<GetPostResponse>> GetPostsAsync(HttpContext httpContext);
+        public Task<List<GetPostResponse>> GetActivePosts();
+        public Task<GetPostResponse> GetPostDetailByIdAsync(int id);
+        public Task<GetPostResponse> GetPostByAccountIdAsync(int id);
+        public Task<List<GetPostResponse>> GetPostByGenderAsync(bool gender);
+        public Task<GetPostResponse> CreateNewPostAsync(AddPostRequest addPostRequest, FireBaseImage fireBaseImage, HttpContext httpContext);
+        public Task<GetPostResponse> UpdatePostProfileByPostIdAsync(int postId,
+                                                                                     FireBaseImage fireBaseImage,
+                                                                                     UpdatePostRequest updatePostRequest);
     }
 }

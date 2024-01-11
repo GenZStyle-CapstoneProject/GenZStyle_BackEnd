@@ -3,13 +3,22 @@ using BMOS.BAL.Validators.Accounts;
 using FluentValidation;
 using GenZStyleApp.DAL.Models;
 using GenZStyleAPP.BAL.DTOs.Accounts;
+using GenZStyleAPP.BAL.DTOs.FashionItems;
 using GenZStyleAPP.BAL.DTOs.FireBase;
+using GenZStyleAPP.BAL.DTOs.HashTags;
+using GenZStyleAPP.BAL.DTOs.Notifications;
+using GenZStyleAPP.BAL.DTOs.Posts;
 using GenZStyleAPP.BAL.DTOs.Users;
 using GenZStyleAPP.BAL.Profiles.Accounts;
+using GenZStyleAPP.BAL.Profiles.FashionItems;
+using GenZStyleAPP.BAL.Profiles.HashTags;
+using GenZStyleAPP.BAL.Profiles.Notifications;
+using GenZStyleAPP.BAL.Profiles.Posts;
 using GenZStyleAPP.BAL.Profiles.Users;
 using GenZStyleAPP.BAL.Repository.Implementations;
 using GenZStyleAPP.BAL.Repository.Interfaces;
 using GenZStyleAPP.BAL.Validators.Accounts;
+using GenZStyleAPP.BAL.Validators.Posts;
 using GenZStyleAPP.BAL.Validators.Users;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.OData;
@@ -32,11 +41,17 @@ namespace GenZStyleApp_API {
 
 // Add services to the container.
 
-    builder.Services.AddControllers();
-    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+                    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+                });
+            ;
+            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-            /*#region JWT 
+            #region JWT 
             builder.Services.AddSwaggerGen(options =>
             {
                 // using System.Reflection;
@@ -74,7 +89,7 @@ namespace GenZStyleApp_API {
                     }
                 });
             });
-            
+
 
             builder.Services.AddAuthentication(options =>
             {
@@ -96,22 +111,17 @@ namespace GenZStyleApp_API {
                     ClockSkew = TimeSpan.Zero
                 };
             });
-            #endregion*/
-    builder.Services.AddControllers()
-                .AddJsonOptions(options =>
-                {
-                    options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
-                    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
-                });
-            ;
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
+            #endregion
+
             //ODATA
             var modelBuilder = new ODataConventionModelBuilder();
             modelBuilder.EntitySet<GetUserResponse>("Users");
             modelBuilder.EntitySet<GetAccountResponse>("Accounts");
             modelBuilder.EntitySet<GetLoginResponse>("Authentications");
+            modelBuilder.EntitySet<GetPostResponse>("Posts");
+            modelBuilder.EntitySet<GetNotificationResponse>("Notifications");
+            modelBuilder.EntitySet<GetHashTagReponse>("HashTags");
+            modelBuilder.EntitySet<GetFashionItemResponse>("FashionItems");
 
             builder.Services.AddControllers().AddOData(options => options.Select()
                                                                          .Filter()
@@ -129,30 +139,40 @@ namespace GenZStyleApp_API {
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IAccountRepository, AccountRepository>();
             builder.Services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
+            builder.Services.AddScoped<IPostRepository, PostRepository>();
+            builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+            builder.Services.AddScoped<IHashTagRepository, HashTagRepository>();
+            builder.Services.AddScoped<IFashionItemRepository, FashionItemRepository>();
             builder.Services.Configure<FireBaseImage>(builder.Configuration.GetSection("FireBaseImage"));
             //DI Validator
             builder.Services.AddScoped<IValidator<RegisterRequest>, RegisterValidation>();
             builder.Services.AddScoped<IValidator<GetLoginRequest>, LoginValidation>();
             builder.Services.AddScoped<IValidator<ChangePasswordRequest>, ChangePasswordValidation>();
             builder.Services.AddScoped<IValidator<UpdateUserRequest>, UpdateUserValidation>();
-
+            builder.Services.AddScoped<IValidator<AddPostRequest>, AddPostValidation>();
+            builder.Services.AddScoped<IValidator<UpdatePostRequest>, UpdatePostValidation>();
             builder.Services.Configure<FireBaseImage>(builder.Configuration.GetSection("FireBaseImage"));
 
             // Auto mapper config
             builder.Services.AddAutoMapper(typeof(AccountProfile),
-                                            typeof(CustomerProfile)
+                                            typeof(CustomerProfile),
+                                            typeof(PostProfile),
+                                            typeof(FashionItemProfile),
+                                            typeof(NotificationProfile),
+                                            typeof(HashTagProfile)
                                             );
                                             
 
             var app = builder.Build();
 
     // Configure the HTTP request pipeline.
-    if (app.Environment.IsDevelopment())
-    {
+    //if (app.Environment.IsDevelopment())
+    //{
         app.UseSwagger();
         app.UseSwaggerUI();
-    }
-
+        
+    //}
+    
     app.UseHttpsRedirection();
 
     app.UseAuthorization();

@@ -1,12 +1,17 @@
 ﻿using AutoMapper;
 using BMOS.BAL.Helpers;
+using GenZStyleApp.DAL.DAO;
+using GenZStyleApp.DAL.Models;
 using GenZStyleAPP.BAL.DTOs.Accounts;
+using GenZStyleAPP.BAL.Heplers;
 using GenZStyleAPP.BAL.Repository.Interfaces;
+using Microsoft.AspNetCore.Http;
 using ProjectParticipantManagement.BAL.Exceptions;
 using ProjectParticipantManagement.BAL.Heplers;
 using ProjectParticipantManagement.DAL.Infrastructures;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -56,6 +61,25 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
             {
                 string error = ErrorHelper.GetErrorString(ex.Message);
                 throw new Exception(error);
+            }
+        }
+
+        public async Task<List<GetAccountResponse>> SearchByUserName(string username)
+        {
+            try
+            {
+                
+                // Sử dụng hàm SearchByUsername từ AccountDAO
+                List<Account> accounts = await _unitOfWork.AccountDAO.SearchByUsername(username);
+
+                // Chuyển đổi List<Account> thành List<AccountDTO> nếu cần thiết
+                List<GetAccountResponse> accountDTOs = _mapper.Map<List<GetAccountResponse>>(accounts);
+
+                return accountDTOs;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
 

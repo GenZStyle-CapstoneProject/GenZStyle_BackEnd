@@ -1,4 +1,5 @@
 ﻿using GenZStyleApp.DAL.DBContext;
+using GenZStyleApp.DAL.Enums;
 using GenZStyleApp.DAL.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -81,5 +82,40 @@ namespace GenZStyleApp.DAL.DAO
                 throw new Exception(ex.Message);
             }
         }
+
+        // Search By UserName
+        public async Task<List<Account>> SearchByUsername(string username)
+        {
+            try
+            {
+                List<Account> accounts = await _dbContext.Accounts
+                    .Include(u => u.Posts)
+                    .Where(a => a.Username.Contains(username))
+                    .ToListAsync();
+
+                return accounts;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<Account> GetAccountByEmail(string email)
+        {
+
+            try
+            {
+                return await this._dbContext.Accounts
+                    .Include(u => u.Posts)
+                    .SingleOrDefaultAsync(a => a.Email.Equals(email) && a.IsActive == true);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+
     }
 }

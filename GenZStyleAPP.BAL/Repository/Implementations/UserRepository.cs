@@ -17,7 +17,8 @@ using Microsoft.AspNetCore.Http;
 using System.IdentityModel.Tokens.Jwt;
 using GenZStyleApp.DAL.Enums;
 using GenZStyleAPP.BAL.DTOs.FireBase;
-using GenZStyleAPP.BAL.Heplers;
+
+using GenZStyleApp.BAL.Helpers;
 
 namespace GenZStyleAPP.BAL.Repository.Implementations
 {
@@ -187,6 +188,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 user.Address = updateUserRequest.Address;
                 user.Phone = updateUserRequest.Phone;
                 user.Gender = updateUserRequest.Gender;
+                user.Height = updateUserRequest.Height;
                 user.Dob = updateUserRequest.Dob;
                 //if (updateCustomerRequest.PasswordHash != null)
                 //{

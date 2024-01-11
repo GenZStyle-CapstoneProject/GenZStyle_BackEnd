@@ -10,5 +10,6 @@ namespace GenZStyleAPP.BAL.Repository.Interfaces
     public interface IAccountRepository
     {
         public Task<GetAccountResponse> ChangPassword(int accountId, ChangePasswordRequest changePasswordRequest);
+        public Task<List<GetAccountResponse>> SearchByUserName(string username);
     }
 }
