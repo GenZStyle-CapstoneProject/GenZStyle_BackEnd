@@ -169,6 +169,21 @@ namespace GenZStyleApp.DAL.DAO
             }
 
         }
+        public async Task<User> GetUserByUserNameAsync(string username)
+        {
+            try
+            {
+                return await _dbContext.Users.Include(c => c.Accounts)
+                                                 .SingleOrDefaultAsync(c => c.Accounts.Any(a => a.Username.Equals(username)
+                                                 && c.Accounts.Any(a => a.IsActive == true)
+                                                 ))
+                                                  ;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }
     

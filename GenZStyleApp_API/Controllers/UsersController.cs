@@ -19,13 +19,13 @@ namespace GenZStyleApp_API.Controllers
 {
     //[Route("api/[controller]/[action]")]
     //[ApiController]
-    public class UserController : ODataController
+    public class UsersController : ODataController
     {
         private IUserRepository _userRepository;
         private IValidator<RegisterRequest> _registerValidator;
         private IValidator<UpdateUserRequest> _updateUserValidator;
         private IOptions<FireBaseImage> _firebaseImageOptions;
-        public UserController(IUserRepository userRepository,
+        public UsersController(IUserRepository userRepository,
             IValidator<RegisterRequest> registerValidator,
             IValidator<UpdateUserRequest> updateUserValidator,
             IOptions<FireBaseImage> firebaseImageOptions
@@ -55,7 +55,7 @@ namespace GenZStyleApp_API.Controllers
             return Ok();
         }
         #endregion
-        #region Register
+        #region Follower
         [HttpPost("odata/Users/Follower")]
         [EnableQuery]
         public async Task<IActionResult> Post(int Userid)

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
+using GenZStyleAPP.BAL.DTOs.Accounts;
 using GenZStyleApp.DAL.Models;
 using GenZStyleAPP.BAL.DTOs.FireBase;
-using GenZStyleAPP.BAL.DTOs.HashTag;
 using GenZStyleAPP.BAL.DTOs.Users;
 using GenZStyleAPP.BAL.Helpers;
 using GenZStyleAPP.BAL.Repository.Interfaces;
@@ -13,6 +13,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GenZStyleAPP.BAL.DTOs.HashTags;
+using GenZStyleApp.BAL.Helpers;
+using GenZStyleAPP.BAL.DTOs.HashTag;
 
 namespace GenZStyleAPP.BAL.Repository.Implementations
 {
@@ -26,6 +29,12 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
             _mapper = mapper;
         }
 
+        public async Task<List<GetHashTagReponse>> SearchByHashTagName(string hashtag) {
+            List<Hashtag> hashtags = await _unitOfWork.HashTagDAO.SearchByHashTagName(hashtag);
+            List<GetHashTagReponse> hashtagDTOs = _mapper.Map<List<GetHashTagReponse>>(hashtags);
+            return hashtagDTOs;
+        }
+            
         #region GetHashTag
         public async Task<List<GetHashTagResponse>> GetHashTagsAsync()
         {
@@ -47,12 +56,14 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
         }
         #endregion
 
+                
         /*public async Task<GetHashTagResponse> GetHashTagByName(GetHashTagRequest hashTagRequest)
         {
             try
             {
 
 
+                List<GetHashTagReponse> hashtagDTOs = _mapper.Map<List<GetHashTagReponse>>(hashtags);
             }catch (Exception ex)
             {
                 string error = ErrorHelper.GetErrorString(ex.Message);
@@ -70,6 +81,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 {
                     throw new BadRequestException("HashTag already exist in the system.");
                 }
+                
                 
                 Hashtag hashtag = new Hashtag
                 {
@@ -128,6 +140,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
             }
             catch (Exception ex) 
             {
+                throw new Exception(ex.Message);
                 string error = ErrorHelper.GetErrorString(ex.Message);
                 throw new Exception(error);
             }

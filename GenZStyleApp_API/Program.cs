@@ -4,17 +4,26 @@ using FluentValidation;
 using GenZStyleApp.DAL.Models;
 using GenZStyleAPP.BAL.DTOs.Accounts;
 using GenZStyleAPP.BAL.DTOs.Comments;
+using GenZStyleAPP.BAL.DTOs.FashionItems;
 using GenZStyleAPP.BAL.DTOs.FireBase;
 using GenZStyleAPP.BAL.DTOs.HashTag;
 using GenZStyleAPP.BAL.DTOs.PostLike;
+using GenZStyleAPP.BAL.DTOs.HashTags;
+using GenZStyleAPP.BAL.DTOs.Notifications;
+using GenZStyleAPP.BAL.DTOs.Posts;
 using GenZStyleAPP.BAL.DTOs.Users;
 using GenZStyleAPP.BAL.Profiles.Accounts;
+using GenZStyleAPP.BAL.Profiles.FashionItems;
+using GenZStyleAPP.BAL.Profiles.HashTags;
+using GenZStyleAPP.BAL.Profiles.Notifications;
+using GenZStyleAPP.BAL.Profiles.Posts;
 using GenZStyleAPP.BAL.Profiles.Users;
 using GenZStyleAPP.BAL.Profiles.Comments;
 using GenZStyleAPP.BAL.Profiles.PostLike;
 using GenZStyleAPP.BAL.Repository.Implementations;
 using GenZStyleAPP.BAL.Repository.Interfaces;
 using GenZStyleAPP.BAL.Validators.Accounts;
+using GenZStyleAPP.BAL.Validators.Posts;
 using GenZStyleAPP.BAL.Validators.Users;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.OData;
@@ -29,23 +38,30 @@ using System.Reflection;
 using System.Text;
 using GenZStyleAPP.BAL.Validators.Hashtags;
 using GenZStyleAPP.BAL.Validators.Comments;
-using GenZStyleAPP.BAL.Profiles.HashTagProfile;
 using GenZStyleAPP.BAL.Validators.Authentication;
 using BMOS.BAL.DTOs.Authentications;
 using GenZStyleAPP.BAL.Profiles.UserRelations;
 using GenZStyleAPP.BAL.DTOs.Posts;
 using GenZStyleAPP.BAL.DTOs.UserRelations;
 
-namespace GenZStyleApp_API {
-    public class Program { 
-    
-    public static void Main(string[] args)
+namespace GenZStyleApp_API
+{
+    public class Program
     {
-    var builder = WebApplication.CreateBuilder(args);
+
+        public static void Main(string[] args)
+        {
+            var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                        .AddJsonOptions(options =>
+                        {
+                            options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+                            options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+                        });
+            ;
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -110,23 +126,20 @@ namespace GenZStyleApp_API {
                 };
             });
             #endregion
-            builder.Services.AddControllers()
-                .AddJsonOptions(options =>
-                {
-                    options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
-                    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
-                });
-            ;
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
             //ODATA
             var modelBuilder = new ODataConventionModelBuilder();
-            
-            modelBuilder.EntitySet<GetUserResponse>("Users");
+            //xoa 1 chu s la het loi 
+            modelBuilder.EntitySet<GetUserResponse>("User");  
             modelBuilder.EntitySet<GetAccountResponse>("Accounts");
             modelBuilder.EntitySet<GetLoginResponse>("Authentications");
             modelBuilder.EntitySet<GetHashTagResponse>("HashTags");
             modelBuilder.EntitySet<GetPostLikeResponse>("PostLikes");
             modelBuilder.EntitySet<GetCommentResponse>("Comments");
+            modelBuilder.EntitySet<GetPostLikeResponse>("Likes");
+            modelBuilder.EntitySet<GetPostResponse>("Posts");
+            modelBuilder.EntitySet<GetNotificationResponse>("Notifications");
+            modelBuilder.EntitySet<GetFashionItemResponse>("FashionItems");
 
 
 
@@ -151,6 +164,9 @@ namespace GenZStyleApp_API {
             builder.Services.AddScoped<ILikeRepository, LikeRepository>();
             builder.Services.AddScoped<ICommentRepository, CommentRepository>();
             builder.Services.AddScoped<IPostRepository, PostRepository>();
+            builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+            builder.Services.AddScoped<IFashionItemRepository, FashionItemRepository>();
+            builder.Services.Configure<FireBaseImage>(builder.Configuration.GetSection("FireBaseImage"));
             //DI Validator
             builder.Services.AddScoped<IValidator<RegisterRequest>, RegisterValidation>();
             builder.Services.AddScoped<IValidator<GetLoginRequest>, LoginValidation>();
@@ -160,34 +176,33 @@ namespace GenZStyleApp_API {
             builder.Services.AddScoped<IValidator<GetCommentRequest>, GetCommentRequestValidator>();
             builder.Services.AddScoped<IValidator<PostRecreateTokenRequest>, PostRecreateTokenValidation>();
 
+            builder.Services.AddScoped<IValidator<AddPostRequest>, AddPostValidation>();
+            builder.Services.AddScoped<IValidator<UpdatePostRequest>, UpdatePostValidation>();
             builder.Services.Configure<FireBaseImage>(builder.Configuration.GetSection("FireBaseImage"));
 
             // Auto mapper config
             builder.Services.AddAutoMapper(typeof(AccountProfile),
-                                           typeof(PostLikeProfile),                    
-                                           typeof(CommentProfile),                    
+                                           typeof(PostLikeProfile),
+                                           typeof(CommentProfile),
+                                            typeof(CustomerProfile),
+                                            typeof(PostProfile),
+                                            typeof(FashionItemProfile),
+                                            typeof(NotificationProfile),
+                                            typeof(HashTagProfile),
                                             typeof(AccountProfile),
                                             typeof(CustomerProfile),
-                                            typeof(HashtagProfile),
                                             typeof(UserRelationProfile)
                                             );
 
 
-            /*builder.Services.AddControllers().AddOData(options =>
-            {
-                options.Select().Filter().OrderBy().Expand().Count().SetMaxTop(null);
-                options.AddRouteComponents("odata", modelBuilder.GetEdmModel());
-            });*/
+            
             var app = builder.Build();
-            
+
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-    {
-        app.UseSwagger();
-        app.UseSwaggerUI();
-    }
-            
-            app.UseHttpsRedirection();
+            //if (app.Environment.IsDevelopment())
+            //{
+            app.UseSwagger();
+            app.UseSwaggerUI(); app.UseHttpsRedirection();
             app.UseAuthentication();
 
 
@@ -196,10 +211,15 @@ namespace GenZStyleApp_API {
             app.MapControllers();
 
             app.Run();
+        }
 
+
+    }
 }
-    } 
-}
+
+
+     
+
 
 
 

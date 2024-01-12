@@ -28,12 +28,12 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
         }
 
 
-        public async Task<List<GetCommentResponse>> GetCommentByPostId(int id)
+        public async Task<GetCommentResponse> GetCommentByPostId(int id)
         {
             try
             {
-                var comment = await _unitOfWork.CommentDAO.GetCommentByPostIdAsync(id);
-                return _mapper.Map<List<GetCommentResponse>>(comment);
+                var post = await _unitOfWork.PostDAO.GetPostByIdAsync(id);
+                return _mapper.Map<GetCommentResponse>(post);
             }
             catch (NotFoundException ex)
             {
@@ -51,7 +51,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
         {
             try
             {
-                var post = await _unitOfWork.PostDAO.GetPostById(PostId);
+                var post = await _unitOfWork.PostDAO.GetPostByIdAsync(PostId);
                 if (post == null)
                 {
                     throw new NotFoundException("PostId does not exist in system.");

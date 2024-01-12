@@ -21,6 +21,7 @@ using BMOS.BAL.Helpers;
 using GenZStyleAPP.BAL.DTOs.UserRelations;
 using Microsoft.Extensions.Hosting;
 using GenZStyleAPP.BAL.Helpers;
+using GenZStyleApp.BAL.Helpers;
 
 namespace GenZStyleAPP.BAL.Repository.Implementations
 {
@@ -86,7 +87,11 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 {
                     throw new BadRequestException("Email already exist in the system.");
                 }
-
+                var customerByUserName = await _unitOfWork.UserDAO.GetUserByUserNameAsync(registerRequest.UserName);
+                if (customerByUserName != null)
+                {
+                    throw new BadRequestException("UserName already exist in the system.");
+                }
                 var customerPhone = await _unitOfWork.UserDAO.GetUserByPhoneAsync(registerRequest.Phone);
                 if (customerPhone != null)
                 {
@@ -148,7 +153,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                     UserID = user.UserId,
                     Address = user.Address,
                     Avatar = user.AvatarUrl,
-                    BirthDate = user.Dob,
+                    Dob = user.Dob,
                     City = user.City,
                     Gender = user.Gender,
                     Account = _mapper.Map<List<GetAccountResponse>>(user.Accounts),
@@ -232,6 +237,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 user.Address = updateUserRequest.Address;
                 user.Phone = updateUserRequest.Phone;
                 user.Gender = updateUserRequest.Gender;
+                user.Height = updateUserRequest.Height;
                 user.Dob = updateUserRequest.Dob;
                 //if (updateCustomerRequest.PasswordHash != null)
                 //{

@@ -22,10 +22,10 @@ namespace GenZStyleApp_API.Controllers
             _getCommentRequestvalidator = validator;
         }
 
-        [HttpGet("odata/Meals/Active/Meal/{PostId}")]
+        [HttpGet("odata/Comments/CommentTotal/{PostId}")]
         public async Task<IActionResult> Get(int PostId)
         {
-            List<GetCommentResponse> result = await _commentRepository.GetCommentByPostId(PostId);
+            GetCommentResponse result = await _commentRepository.GetCommentByPostId(PostId);
             return Ok(result);
         }
 

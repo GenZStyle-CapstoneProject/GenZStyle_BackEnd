@@ -9,29 +9,24 @@ using System.Threading.Tasks;
 
 namespace GenZStyleApp.DAL.DAO
 {
-    public class NotificationDAO
+    public class FashionItemDAO
     {
         private GenZStyleDbContext _dbContext;
-        public NotificationDAO(GenZStyleDbContext dbContext)
+        public FashionItemDAO(GenZStyleDbContext dbContext)
         {
             this._dbContext = dbContext;
         }
 
-        public async Task AddNotiAsync(Notification newNoti)
-        {
-            await this._dbContext.Notifications.AddAsync(newNoti);
-        }
-        //get notifications by createat new
-        public async Task<List<Notification>> GetNotifications()
+        // Search By Fashioname
+        public async Task<List<FashionItem>> SearchByFashionName(string fashioname)
         {
             try
             {
-                List<Notification> notifications = await _dbContext.Notifications
-                    .OrderByDescending(n => n.CreateAt) 
+                List<FashionItem> fashionames = await _dbContext.FashionItems
+                    .Where(a => a.fashionName.Contains(fashioname))
                     .ToListAsync();
 
-                return notifications;
-                
+                return fashionames;
             }
             catch (Exception ex)
             {

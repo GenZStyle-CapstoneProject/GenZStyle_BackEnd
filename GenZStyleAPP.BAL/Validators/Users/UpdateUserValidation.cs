@@ -1,5 +1,6 @@
 ﻿using BMOS.BAL.Helpers;
 using FluentValidation;
+using GenZStyleApp.BAL.Helpers;
 using GenZStyleAPP.BAL.DTOs.Users;
 using GenZStyleAPP.BAL.Helpers;
 using System;
@@ -34,6 +35,13 @@ namespace GenZStyleAPP.BAL.Validators.Users
                  .NotEmpty().WithMessage("{PropertyName} is empty.")
                  .NotNull().WithMessage("{PropertyName} is null.")
                  .Length(10).WithMessage("Phone must be 10 characters.");
+            #endregion
+
+            #region Height
+            RuleFor(p => p.Height)
+                   .NotNull().WithMessage("{PropertyName} is null.")
+                   .NotEmpty().WithMessage("{PropertyName} is empty.")
+                   .ExclusiveBetween(0, 1000000000).WithMessage("{PropertyName} must be greater than 0 cm.");
             #endregion
 
             #region Gender

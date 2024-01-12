@@ -15,9 +15,9 @@ namespace GenZStyleApp_API.Controllers
     {
         private IAccountRepository _accountRepository;
         private IValidator<ChangePasswordRequest> _changePasswordValidator;
-        
 
-        public AccountsController(IAccountRepository accountRepository, 
+
+        public AccountsController(IAccountRepository accountRepository,
             IValidator<ChangePasswordRequest> changePasswordValidator)
         {
             _accountRepository = accountRepository;
@@ -38,5 +38,34 @@ namespace GenZStyleApp_API.Controllers
             return Updated(result);
         }
 
+        #region SearchByUserName
+        [HttpGet("odata/Accounts/{username}/SearchByUserName")]
+        [EnableQuery]
+        public async Task<IActionResult> SearchByUserName([FromRoute] string username)
+        {
+            try
+            {
+                List<GetAccountResponse> accountDTOs = await _accountRepository.SearchByUserName(username);
+
+                // Nếu muốn thực hiện bất kỳ xử lý hoặc kiểm tra nào đó trước khi trả kết quả, bạn có thể thêm vào đây
+
+                if (accountDTOs.Count > 0)
+                {
+                    // Thành công, trả về thông báo thành công và danh sách tài khoản
+                    return Ok(new { Message = "Tìm kiếm thành công.", Accounts = accountDTOs });
+                }
+                else
+                {
+                    // Không tìm thấy tài khoản, trả về thông báo không có kết quả
+                    return Ok(new { Message = "Không tìm thấy tài khoản nào." });
+                }
+            }
+            catch (Exception ex)
+            {
+                // Có lỗi, trả về thông báo lỗi
+                return BadRequest(new { Message = $"Lỗi: {ex.Message}" });
+            }
+            #endregion
+        }
     }
 }
