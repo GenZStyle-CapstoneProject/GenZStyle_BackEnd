@@ -1,11 +1,15 @@
 ﻿using AutoMapper;
 using GenZStyleApp.DAL.Models;
 using GenZStyleAPP.BAL.DTOs.PostLike;
+using GenZStyleAPP.BAL.Helpers;
 using GenZStyleAPP.BAL.Repository.Interfaces;
+using Microsoft.AspNetCore.Http;
 using ProjectParticipantManagement.BAL.Exceptions;
+using ProjectParticipantManagement.BAL.Heplers;
 using ProjectParticipantManagement.DAL.Infrastructures;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
@@ -24,7 +28,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
             _mapper = mapper;
         }
 
-        public async Task<GetPostLikeResponse> GetLikeByPostIdAsync(int postId)
+        public async Task<GetPostLikeResponse> GetLikeByPostIdAsync(int postId, HttpContext httpContext)
         {
             try
             {
@@ -33,22 +37,45 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 {
                     throw new NotFoundException("PostId does not exist in system.");
                 }
+                JwtSecurityToken jwtSecurityToken = TokenHelper.ReadToken(httpContext);
+                string emailFromClaim = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Email).Value;
+                var account = await _unitOfWork.AccountDAO.GetAccountByEmail(emailFromClaim);
+                
+                
+                post.TotalLike += 1;
                 Like like = new Like
                 {
+                    LikeBy = account.AccountId,
                     PostId = postId,
-                    Post = post,                    
+                    Post = post,
+                    Account = account,
+
                 };
-                
+                Notification notification = new Notification
+                {
+                    CreateAt = DateTime.Now,
+                    AccountId = post.AccountId,
+                    Message = account.Lastname + " " + "đã like bài viết của bạn",
+                    Account = account,
+                };
+
                 await _unitOfWork.LikeDAO.AddLikeAsync(like);
+                await _unitOfWork.NotificationDAO.AddNotiAsync(notification);        
                       _unitOfWork.LikeDAO.ChangeLike(post);
-                
+
                 await _unitOfWork.CommitAsync();
                 return _mapper.Map<GetPostLikeResponse>(post);
 
             }
+            catch (NotFoundException ex)
+            {
+                string error = ErrorHelper.GetErrorString("PostId", ex.Message);
+                throw new NotFoundException(error);
+            }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                string error = ErrorHelper.GetErrorString(ex.Message);
+                throw new Exception(error);
             }
         }
     }

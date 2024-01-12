@@ -14,7 +14,6 @@ namespace GenZStyleApp.DAL.Models
 
         public int CommentId { get; set; }
 
-        public int AccountId { get; set; }
         public int? ParentCommentId { get; set; }
         public int PostId { get; set; }
 
@@ -25,8 +24,8 @@ namespace GenZStyleApp.DAL.Models
         public Post Post { get; set; }
         
         
-        public Comment ParentComment { get; set; }
-        public ICollection<Comment> SubComments { get; set; }
+        public Comment? ParentComment { get; set; }
+        public ICollection<Comment>? SubComments { get; set; }
 
         public Account Account { get; set; }
 

@@ -23,7 +23,7 @@ namespace GenZStyleAPP.BAL.Validators.Posts
                  .Length(5, 120).WithMessage("{PropertyName} from {MinLength} to {MaxLength} characters.");
             #endregion
 
-            #region CreateTime
+            /*#region CreateTime
             RuleFor(p => p.CreateTime)
                    .NotNull().WithMessage("{PropertyName} is null.")
                    .Custom((expiredDate, context) =>
@@ -33,9 +33,9 @@ namespace GenZStyleAPP.BAL.Validators.Posts
                            context.AddFailure("CreateTime must be greater than or equal today.");
                        }
                    });
-            #endregion
+            #endregion*/
 
-            #region UpdateTime
+            /*#region UpdateTime
             RuleFor(p => p.UpdateTime)
                    .NotNull().WithMessage("{PropertyName} is null.")
                    .Custom((expiredDate, context) =>
@@ -45,7 +45,7 @@ namespace GenZStyleAPP.BAL.Validators.Posts
                            context.AddFailure("UpdateTime must be greater than or equal today.");
                        }
                    });
-            #endregion
+            #endregion*/
 
             #region Image
             RuleFor(p => p.Image)

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GenZStyleAPP.BAL.Heplers
+namespace GenZStyleAPP.BAL.Helpers
 {
     public class TokenHelper
     {

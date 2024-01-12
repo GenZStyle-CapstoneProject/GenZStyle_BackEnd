@@ -11,12 +11,13 @@ namespace GenZStyleApp.DAL.Models
     public class UserRelation
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-
-
+        public int Id { get; set; }
         public int FollowerId { get; set; }
 
         public int FollowingId { get; set; }
 
         public Account Account { get; set; }
+
+        
     }
 }

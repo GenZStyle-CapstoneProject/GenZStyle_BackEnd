@@ -34,7 +34,7 @@ namespace GenZStyleApp.DAL.DAO
             {
                 return await _dbContext.Comments.Include(c => c.Account)
                                                  .Include(c => c.Post)
-                                                 .Where(c => c.PostId == postid)
+                                                 .Where(co => co.PostId == postid)
                                                  .ToListAsync();
                                                  
             }

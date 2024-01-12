@@ -1,5 +1,6 @@
 ﻿using GenZStyleApp.DAL.Models;
 using GenZStyleAPP.BAL.DTOs.FireBase;
+using GenZStyleAPP.BAL.DTOs.UserRelations;
 using GenZStyleAPP.BAL.DTOs.Users;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -22,5 +23,8 @@ namespace GenZStyleAPP.BAL.Repository.Interfaces
         public Task<User> BanUserAsync(int accountId);
         public Task<User> GetUserByAccountIdAsync(int accountId);
         public Task<GetUserResponse> Register(FireBaseImage fireBaseImage,RegisterRequest registerRequest);
+
+        public Task<GetUserRelationResponse> FollowUser(int UserId, HttpContext httpContext);
+        public Task<GetFollowResponse> GetFollowByProfileIdAsync(HttpContext httpContext);
     }
 }

@@ -21,5 +21,6 @@ namespace GenZStyleAPP.BAL.Repository.Interfaces
         public Task<GetPostResponse> UpdatePostProfileByPostIdAsync(int postId,
                                                                                      FireBaseImage fireBaseImage,
                                                                                      UpdatePostRequest updatePostRequest);
+        public Task<List<GetPostResponse>> GetPostByUserFollowId(HttpContext httpContext);
     }
 }

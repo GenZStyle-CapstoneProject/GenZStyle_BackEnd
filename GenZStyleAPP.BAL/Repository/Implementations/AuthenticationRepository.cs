@@ -102,13 +102,14 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                  new Claim("Role", response.Role),
                  new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
              });
-
+                Token tokenn = await _unitOfWork.TokenDAO.GetLastToken();
+                
                 var tokenDescription = new SecurityTokenDescriptor
                 {
                     Issuer = jwtAuth.Issuer,
                     Audience = jwtAuth.Audience,
                     Subject = claims,
-                    Expires = DateTime.UtcNow.AddHours(1),
+                    Expires = DateTime.UtcNow.AddDays(5),
                     SigningCredentials = credentials,
                 };
 
@@ -118,15 +119,16 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 string refreshToken = GenerateRefreshToken();
                 Token refreshTokenModel = new Token
                 {
+                   
                     JwtID = token.Id,
                     RefreshToken = refreshToken,
                     CreatedDate = DateTime.UtcNow,
-                    ExpiredDate = DateTime.UtcNow.AddDays(5),
+                    ExpiredDate = DateTime.UtcNow.AddMinutes(5),           /*AddDays(5),*/
                     IsUsed = false,
                     IsRevoked = false,
                     Account = account,
                 };
-
+        
                 await _unitOfWork.TokenDAO.CreateTokenAsync(refreshTokenModel);
                 await _unitOfWork.CommitAsync();
 
@@ -141,8 +143,130 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 throw new Exception(error);
             }
         }
-#endregion
+        #endregion
+        public async Task<PostRecreateTokenResponse> ReCreateTokenAsync(PostRecreateTokenRequest request, JwtAuth jwtAuth)
+        {
+            #region Config
+            var jwtTokenHandler = new JwtSecurityTokenHandler();
+            var secretKeyBytes = Encoding.UTF8.GetBytes(jwtAuth.Key);
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                //Tự cấp token nên phần này bỏ qua
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                //Ký vào token
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(secretKeyBytes),
+                ValidateLifetime = false, //khong kiem tra token het han
+                ClockSkew = TimeSpan.Zero // thoi gian expired dung voi thoi gian chi dinh
+            };
+            #endregion
 
+            try
+            {
+                #region Validation
+                //Check 1: Access token is valid format
+                var tokenVerification = jwtTokenHandler.ValidateToken(request.AccessToken, tokenValidationParameters, out var validatedToken);
+
+                //Check 2: Check Alg
+                if (validatedToken is JwtSecurityToken jwtSecurityToken)
+                {
+                    var result = jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase);
+                    if (result == false)
+                    {
+                        throw new BadRequestException("Invalid token.");
+                    }
+                }
+
+                //Check 3: check accessToken expried?
+                var utcExpiredDate = long.Parse(tokenVerification.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
+                var expiredDate = DateHelper.ConvertUnixTimeToDateTime(utcExpiredDate);
+                if (expiredDate > DateTime.UtcNow)
+                {
+                    throw new BadRequestException("Access token has not yet expired.");
+                }
+
+                //Check 4: Check refresh token exist in Db
+                Token existedRefreshToken = await this._unitOfWork.TokenDAO.GetTokenByRefreshTokenAsync(request.RefreshToken);
+                if (existedRefreshToken == null)
+                {
+                    throw new NotFoundException("Refresh token does not exist.");
+                }
+
+                //Check 5: Refresh Token is used / revoked?
+                if (existedRefreshToken.IsUsed)
+                {
+                    throw new BadRequestException("Refresh token is used.");
+                }
+                if (existedRefreshToken.IsRevoked)
+                {
+                    throw new BadRequestException("Refresh token is revoked.");
+                }
+
+                //Check 6: Id of refresh token == id of access token
+                var jwtId = tokenVerification.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Jti).Value;
+                if (existedRefreshToken.JwtID.Equals(jwtId) == false)
+                {
+                    throw new Exception("Refresh token is not match with access token.");
+                }
+
+                //Check 7: refresh token is expired
+                if (existedRefreshToken.ExpiredDate < DateTime.UtcNow)
+                {
+                    throw new Exception("Refresh token expired.");
+                }
+                #endregion
+
+                #region Update old refresh token in Db
+                existedRefreshToken.IsRevoked = true;
+                existedRefreshToken.IsUsed = true;
+                this._unitOfWork.TokenDAO.UpdateToken(existedRefreshToken);
+                await this._unitOfWork.CommitAsync();
+                #endregion
+
+                #region Create new token
+                var loginResponse = new PostLoginResponse();
+                loginResponse.AccountId = existedRefreshToken.Account.AccountId;
+                loginResponse.Email = existedRefreshToken.Account.Email;
+                loginResponse.Role = existedRefreshToken.Account.User.Role.RoleName;
+
+                if (existedRefreshToken.Account.User.Role.Id == (int)RoleEnum.Role.User)
+                {
+                    var customer = await _unitOfWork.UserDAO.GetUserByAccountIdAsync(existedRefreshToken.Account.AccountId);
+                    loginResponse.FullName = customer.City;
+                }
+                /*else if (existedRefreshToken.Account.User.Role.Id == (int)RoleEnum.Role.Blogger)
+                {
+                    var staff = await _unitOfWork.StaffDAO.GetStaffDetailAsync(existedRefreshToken.Account.ID);
+                    loginResponse.FullName = staff.FullName;
+                }*/
+                else
+                {
+                    loginResponse.FullName = "Owner Store";
+                }
+
+                var newRefreshToken = await GenerateToken(loginResponse, jwtAuth, existedRefreshToken.Account);
+                #endregion
+
+                var newToken = new PostRecreateTokenResponse
+                {
+                    AccessToken = newRefreshToken.AccessToken,
+                    RefreshToken = newRefreshToken.RefreshToken,
+                };
+
+                return newToken;
+            }
+            catch (BadRequestException ex)
+            {
+                string error = ErrorHelper.GetErrorString(ex.Message);
+                throw new BadRequestException(error);
+            }
+            catch (Exception ex)
+            {
+                string error = ErrorHelper.GetErrorString(ex.Message);
+                throw new Exception(error);
+            }
+        }
         #region Generate refresh token
         private string GenerateRefreshToken()
         {

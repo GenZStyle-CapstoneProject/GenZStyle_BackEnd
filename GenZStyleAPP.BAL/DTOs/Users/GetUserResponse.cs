@@ -19,7 +19,7 @@ namespace GenZStyleAPP.BAL.DTOs.Users
         public string Phone { get; set; }
         public string Avatar { get; set; }
         public bool Gender { get; set; }
-        public DateTime BirthDate { get; set; }
+        public DateTime Dob { get; set; }
         public ICollection<GetAccountResponse> Account { get; set; }
     }
 }

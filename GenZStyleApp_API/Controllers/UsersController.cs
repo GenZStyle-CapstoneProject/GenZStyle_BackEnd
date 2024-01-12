@@ -1,10 +1,13 @@
-﻿using FluentValidation;
+﻿using BMOS.BAL.Authorization;
+using FluentValidation;
 using FluentValidation.Results;
 using GenZStyleApp.DAL.Models;
 using GenZStyleAPP.BAL.DTOs.FireBase;
+using GenZStyleAPP.BAL.DTOs.UserRelations;
 using GenZStyleAPP.BAL.DTOs.Users;
 using GenZStyleAPP.BAL.Repository.Interfaces;
 using GenZStyleAPP.BAL.Validators.Users;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
@@ -38,6 +41,7 @@ namespace GenZStyleApp_API.Controllers
         #region Register
         [HttpPost("odata/Users/Register")]
         [EnableQuery]
+        
         public async Task<IActionResult> Post([FromForm] RegisterRequest registerRequest)
        {
             ValidationResult validationResult = await _registerValidator.ValidateAsync(registerRequest);
@@ -49,6 +53,15 @@ namespace GenZStyleApp_API.Controllers
             GetUserResponse customer = await this._userRepository
                 .Register(_firebaseImageOptions.Value, registerRequest);
             return Ok();
+        }
+        #endregion
+        #region Follower
+        [HttpPost("odata/Users/Follower")]
+        [EnableQuery]
+        public async Task<IActionResult> Post(int Userid)
+        {
+            GetUserRelationResponse getUserRelation = await _userRepository.FollowUser(Userid,HttpContext);
+            return Ok(getUserRelation);
         }
         #endregion
 
@@ -213,6 +226,15 @@ namespace GenZStyleApp_API.Controllers
            
         }
         #endregion
+        
+        [EnableQuery]
+        [HttpGet("odata/UserProfile/Follow")]
+        
+        public async Task<IActionResult> ActiveProducts()
+        {
+            GetFollowResponse followResponses = await this._userRepository.GetFollowByProfileIdAsync(HttpContext);
+            return Ok(followResponses);
+        }
     }
 }
 

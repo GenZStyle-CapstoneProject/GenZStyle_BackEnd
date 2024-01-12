@@ -3,7 +3,6 @@ using BMOS.BAL.Helpers;
 using GenZStyleApp.DAL.DAO;
 using GenZStyleApp.DAL.Models;
 using GenZStyleAPP.BAL.DTOs.Accounts;
-using GenZStyleAPP.BAL.Heplers;
 using GenZStyleAPP.BAL.Repository.Interfaces;
 using Microsoft.AspNetCore.Http;
 using ProjectParticipantManagement.BAL.Exceptions;

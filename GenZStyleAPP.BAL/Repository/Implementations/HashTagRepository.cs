@@ -2,8 +2,8 @@
 using GenZStyleAPP.BAL.DTOs.Accounts;
 using GenZStyleApp.DAL.Models;
 using GenZStyleAPP.BAL.DTOs.FireBase;
-using GenZStyleAPP.BAL.DTOs.HashTag;
 using GenZStyleAPP.BAL.DTOs.Users;
+using GenZStyleAPP.BAL.Helpers;
 using GenZStyleAPP.BAL.Repository.Interfaces;
 using ProjectParticipantManagement.BAL.Exceptions;
 using ProjectParticipantManagement.BAL.Heplers;
@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GenZStyleAPP.BAL.DTOs.HashTags;
 using GenZStyleApp.BAL.Helpers;
+using GenZStyleAPP.BAL.DTOs.HashTag;
 
 namespace GenZStyleAPP.BAL.Repository.Implementations
 {
@@ -41,6 +42,11 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
             {
                 var hashtags = await _unitOfWork.HashTagDAO.GetAllHashTag();
                 return _mapper.Map<List<GetHashTagResponse>>(hashtags);
+            }
+            catch (NotFoundException ex)
+            {
+                string error = ErrorHelper.GetErrorString(ex.Message);
+                throw new NotFoundException(error);
             }
             catch (Exception ex)
             {
@@ -92,32 +98,45 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 hashtag.Image = result.Item1;
 
                 
-                Post MathchingPost = null;                 
+                /*Post MathchingPost = null;                 
                 foreach (var postById in post)
                 {
-                    if (postById.PostId ==1)
+                    if (postById.PostId == 1)
                     {
                         MathchingPost = postById;
                         break;
                     }
 
-                    return null;
-                }
+                    
+                }*/
 
-
-                HashPost hashPost = new HashPost
+                //Gắn hashtag vào bài post
+                /*HashPost hashPost = new HashPost
                 {
                     PostId = MathchingPost.PostId,
                     HashTageId = hashtag.id,
                     CreateAt = DateTime.Now,
                     UpdateAt = DateTime.Now,
+                    Post = MathchingPost,
+                    Hashtag = hashtag
+
 
                 };
-                hashtag.HashPosts.Add(hashPost);
+                hashtag.HashPosts.Add(hashPost);*/
                 await _unitOfWork.HashTagDAO.CreateHashTagAsync(hashtag);
-                await this._unitOfWork.CommitAsync();
+                await this._unitOfWork.CommitAsync();//lưu data
                 return this._mapper.Map<GetHashTagResponse>(hashtag);
 
+            }
+            catch (BadRequestException ex)
+            {
+                string fieldNameError = "";
+                if (ex.Message.ToLower().Contains("name"))
+                {
+                    fieldNameError = "Name";
+                }
+                string error = ErrorHelper.GetErrorString(fieldNameError, ex.Message);
+                throw new BadRequestException(error);
             }
             catch (Exception ex) 
             {

@@ -17,6 +17,10 @@ namespace GenZStyleApp.DAL.DAO
             this._dbContext = dbContext;
         }
 
+        public async Task AddNotiAsync(Notification newNoti)
+        {
+            await this._dbContext.Notifications.AddAsync(newNoti);
+        }
         //get notifications by createat new
         public async Task<List<Notification>> GetNotifications()
         {
@@ -27,13 +31,12 @@ namespace GenZStyleApp.DAL.DAO
                     .ToListAsync();
 
                 return notifications;
+                
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
         }
-
-
     }
 }

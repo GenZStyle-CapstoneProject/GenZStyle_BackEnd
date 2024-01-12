@@ -39,8 +39,8 @@ namespace GenZStyleApp_API.Controllers
             this._firebaseImageOptions = firebaseImageOptions;
         }
 
-        #region Get Products
-        [HttpGet("odata/Posts/GetAllPost")]
+        #region Get Posts
+        [HttpGet("odata/GetPosts")]
         [EnableQuery]
         //[PermissionAuthorize("Staff")]
         public async Task<IActionResult> Get()
@@ -207,6 +207,13 @@ namespace GenZStyleApp_API.Controllers
                 return BadRequest(ex.Message);
             }
 
+        }
+        [HttpGet("odata/GetPost/User/Follow")]
+        [EnableQuery]
+        public async Task<IActionResult> GetPostForUser()
+        {
+            List<GetPostResponse> products = await this._postRepository.GetPostByUserFollowId(HttpContext);
+            return Ok(products);
         }
         #endregion
     }

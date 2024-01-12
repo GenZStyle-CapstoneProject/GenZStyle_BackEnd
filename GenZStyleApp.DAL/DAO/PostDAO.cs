@@ -22,6 +22,7 @@ namespace GenZStyleApp.DAL.DAO
         {
             try
             {
+                
                 List<Post> posts = await _dbContext.Posts
                     .OrderByDescending( n => n.CreateTime)
                     .Include(x => x.HashPosts).ThenInclude(u => u.Hashtag)
@@ -52,12 +53,14 @@ namespace GenZStyleApp.DAL.DAO
         #endregion
 
         #region Get post by accountid
-        public async Task<Post> GetPostByAccountIdAsync(int id)
+        public async Task<List<Post>> GetPostByAccountIdAsync(int id)
         {
             try
             {
-                return await _dbContext.Posts.Include(u => u.Account)
-                    .SingleOrDefaultAsync(p => p.AccountId == id);
+                return await _dbContext.Posts.Include(p => p.Account)
+                                             .Include(p => p.HashPosts).ThenInclude( h => h.Hashtag)
+                                             .Where(p => p.AccountId == id)                     
+                                             .ToListAsync();
             }
             catch (Exception ex)
             {
@@ -124,5 +127,17 @@ namespace GenZStyleApp.DAL.DAO
                 throw new Exception(ex.Message);
             }
         }
+        public void UpdatePostComment(Post post)
+        {
+            try
+            {
+                this._dbContext.Entry<Post>(post).State = EntityState.Modified;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
     }
 }

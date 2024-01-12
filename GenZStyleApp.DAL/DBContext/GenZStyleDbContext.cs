@@ -370,18 +370,13 @@ namespace GenZStyleApp.DAL.DBContext
             modelBuilder.Entity<UserRelation>(Entity =>
             {
                 Entity.ToTable("UserRelation");
-                Entity.HasKey(e => new { e.FollowerId, e.FollowingId });
-
-
-
+                Entity.HasKey(e => new { e.Id });
 
                 Entity.HasOne(u => u.Account)
                 .WithMany(u => u.UserRelations)
                 .HasForeignKey(u => u.FollowerId);
 
-                Entity.HasOne(u => u.Account)
-                .WithMany(u => u.UserRelations)
-                .HasForeignKey(u => u.FollowingId);
+                
             });
 
             modelBuilder.Entity<FashionItem>(Entity =>
@@ -436,7 +431,7 @@ namespace GenZStyleApp.DAL.DBContext
 
                 Entity.HasOne(cm => cm.Account)
                 .WithMany(cm => cm.Comments)
-                .HasForeignKey(cm => cm.AccountId)
+                .HasForeignKey(cm => cm.CommentBy)
                 .OnDelete(DeleteBehavior.ClientSetNull);
 
 

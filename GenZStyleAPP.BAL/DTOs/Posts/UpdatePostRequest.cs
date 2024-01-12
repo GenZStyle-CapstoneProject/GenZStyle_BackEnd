@@ -9,9 +9,7 @@ namespace GenZStyleAPP.BAL.DTOs.Posts
 {
     public class UpdatePostRequest
     {
-        public DateTime CreateTime { get; set; }
-        public DateTime UpdateTime { get; set; }
-
+       
         public string Content { get; set; }
         public IFormFile? Image { get; set; }
     }

@@ -2,7 +2,7 @@
 using FluentValidation;
 using GenZStyleApp.BAL.Helpers;
 using GenZStyleAPP.BAL.DTOs.Users;
-//using GenZStyleAPP.BAL.Heplers;
+using GenZStyleAPP.BAL.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;

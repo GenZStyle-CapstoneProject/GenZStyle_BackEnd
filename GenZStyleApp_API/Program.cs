@@ -36,22 +36,31 @@ using ProjectParticipantManagement.BAL.Repositories.Interfaces;
 using ProjectParticipantManagement.DAL.Infrastructures;
 using System.Reflection;
 using System.Text;
+using GenZStyleAPP.BAL.Validators.Hashtags;
+using GenZStyleAPP.BAL.Validators.Comments;
+using GenZStyleAPP.BAL.Validators.Authentication;
+using BMOS.BAL.DTOs.Authentications;
+using GenZStyleAPP.BAL.Profiles.UserRelations;
+using GenZStyleAPP.BAL.DTOs.Posts;
+using GenZStyleAPP.BAL.DTOs.UserRelations;
 
-namespace GenZStyleApp_API {
-    public class Program { 
-    
-    public static void Main(string[] args)
+namespace GenZStyleApp_API
+{
+    public class Program
     {
-    var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+        public static void Main(string[] args)
+        {
+            var builder = WebApplication.CreateBuilder(args);
 
-    builder.Services.AddControllers()
-                .AddJsonOptions(options =>
-                {
-                    options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
-                    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
-                });
+            // Add services to the container.
+
+            builder.Services.AddControllers()
+                        .AddJsonOptions(options =>
+                        {
+                            options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+                            options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+                        });
             ;
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -66,7 +75,7 @@ namespace GenZStyleApp_API {
                 options.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",
-                    Title = "FU BMOS Shop Application API",
+                    Title = "GenZStyle Store Application API",
                     Description = "JWT Authentication API"
                 });
 
@@ -120,25 +129,28 @@ namespace GenZStyleApp_API {
 
             //ODATA
             var modelBuilder = new ODataConventionModelBuilder();
-            modelBuilder.EntitySet<GetUserResponse>("Users");
+            //xoa 1 chu s la het loi 
+            modelBuilder.EntitySet<GetUserResponse>("User");  
             modelBuilder.EntitySet<GetAccountResponse>("Accounts");
             modelBuilder.EntitySet<GetLoginResponse>("Authentications");
             modelBuilder.EntitySet<GetHashTagResponse>("HashTags");
             modelBuilder.EntitySet<GetPostLikeResponse>("PostLikes");
             modelBuilder.EntitySet<GetCommentResponse>("Comments");
-            /*modelBuilder.EntitySet<GetPostLikeResponse>("Likes");*/
+            modelBuilder.EntitySet<GetPostLikeResponse>("Likes");
             modelBuilder.EntitySet<GetPostResponse>("Posts");
-            modelBuilder.EntitySet<GetNotificationResponse>("Notifications");       
+            modelBuilder.EntitySet<GetNotificationResponse>("Notifications");
             modelBuilder.EntitySet<GetFashionItemResponse>("FashionItems");
 
 
-            /*builder.Services.AddControllers().AddOData(options => options.Select()
+
+            builder.Services.AddControllers().AddOData(options => options.Select()
                                                                          .Filter()
                                                                          .OrderBy()
                                                                          .Expand()
                                                                          .Count()
                                                                          .SetMaxTop(null)
-                                                                         .AddRouteComponents("odata", modelBuilder.GetEdmModel()));*/
+                                                                         .AddRouteComponents("odata", modelBuilder.GetEdmModel()));
+
 
 
             //Dependency Injections
@@ -160,43 +172,54 @@ namespace GenZStyleApp_API {
             builder.Services.AddScoped<IValidator<GetLoginRequest>, LoginValidation>();
             builder.Services.AddScoped<IValidator<ChangePasswordRequest>, ChangePasswordValidation>();
             builder.Services.AddScoped<IValidator<UpdateUserRequest>, UpdateUserValidation>();
+            builder.Services.AddScoped<IValidator<GetHashTagRequest>, PostHashTagRequestValidation>();
+            builder.Services.AddScoped<IValidator<GetCommentRequest>, GetCommentRequestValidator>();
+            builder.Services.AddScoped<IValidator<PostRecreateTokenRequest>, PostRecreateTokenValidation>();
+
             builder.Services.AddScoped<IValidator<AddPostRequest>, AddPostValidation>();
             builder.Services.AddScoped<IValidator<UpdatePostRequest>, UpdatePostValidation>();
             builder.Services.Configure<FireBaseImage>(builder.Configuration.GetSection("FireBaseImage"));
 
             // Auto mapper config
             builder.Services.AddAutoMapper(typeof(AccountProfile),
-                                           typeof(PostLikeProfile),                    
-                                           typeof(CommentProfile),                    
-                                            typeof(CustomerProfile),                                           
+                                           typeof(PostLikeProfile),
+                                           typeof(CommentProfile),
+                                            typeof(CustomerProfile),
                                             typeof(PostProfile),
                                             typeof(FashionItemProfile),
                                             typeof(NotificationProfile),
-                                            typeof(HashTagProfile)
+                                            typeof(HashTagProfile),
+                                            typeof(AccountProfile),
+                                            typeof(CustomerProfile),
+                                            typeof(UserRelationProfile)
                                             );
-                                            
 
+
+            
             var app = builder.Build();
 
-    // Configure the HTTP request pipeline.
-    //if (app.Environment.IsDevelopment())
-    //{
-        app.UseSwagger();
-        app.UseSwaggerUI();
-        
-    //}
-    
-    app.UseHttpsRedirection();
+            // Configure the HTTP request pipeline.
+            //if (app.Environment.IsDevelopment())
+            //{
+            app.UseSwagger();
+            app.UseSwaggerUI(); app.UseHttpsRedirection();
+            app.UseAuthentication();
 
-    app.UseAuthorization();
 
-    app.MapControllers();
+            app.UseAuthorization();
 
-    app.Run();
+            app.MapControllers();
 
+            app.Run();
+        }
+
+
+    }
 }
-    } 
-}
+
+
+     
+
 
 
 
