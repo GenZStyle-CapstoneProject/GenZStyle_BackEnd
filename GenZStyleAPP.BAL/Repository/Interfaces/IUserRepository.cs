@@ -1,5 +1,6 @@
 ﻿using GenZStyleApp.DAL.Models;
 using GenZStyleAPP.BAL.DTOs.FireBase;
+using GenZStyleAPP.BAL.DTOs.Users;
 using GenZStyleAPP.BAL.DTOs.UserRelations;
 using GenZStyleAPP.BAL.DTOs.Users;
 using Microsoft.AspNetCore.Http;

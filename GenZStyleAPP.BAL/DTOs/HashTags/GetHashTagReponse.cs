@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace GenZStyleAPP.BAL.DTOs.HashTags
 {
-    public class GetHashTagReponse
+    public class GetHashTagResponse
     {
         [Key]
         public int id { get; set; }

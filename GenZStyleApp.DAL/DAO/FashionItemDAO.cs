@@ -22,7 +22,7 @@ namespace GenZStyleApp.DAL.DAO
         {
             try
             {
-                List<FashionItem> fashionames = await _dbContext.FashionItems
+                List<FashionItem> fashionames = await _dbContext.FashionItems.Include(u => u.Post)
                     .Where(a => a.fashionName.Contains(fashioname))
                     .ToListAsync();
 

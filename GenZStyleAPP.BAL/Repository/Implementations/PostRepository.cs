@@ -100,7 +100,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
         #endregion
 
         #region GetPostByAccountIdAsync
-        public async Task<GetPostResponse> GetPostByAccountIdAsync(int id)
+        public async Task<List<GetPostResponse>> GetPostByAccountIdAsync(int id)
         {
             try
             {
@@ -109,7 +109,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 {
                     throw new NotFoundException("Account id does not exist in the system.");
                 }
-                var postDTO = _mapper.Map<GetPostResponse>(post);
+                var postDTO = _mapper.Map<List<GetPostResponse>>(post);
                 //Staff staff = await this._unitOfWork.StaffDAO.GetStaffDetailAsync(product.ModifiedBy);
                 //productDTO.ModifiedStaff = staff.FullName;
                 return postDTO;

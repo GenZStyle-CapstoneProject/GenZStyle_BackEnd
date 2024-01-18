@@ -13,6 +13,8 @@ namespace GenZStyleAPP.BAL.DTOs.Comments
         [Key]
         public int PostId { get; set; }
         public int TotalComment { get; set; }
+        
+        public int TotalLike { get; set; }
 
 
     }

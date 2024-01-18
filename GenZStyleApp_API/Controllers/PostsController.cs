@@ -104,7 +104,7 @@ namespace GenZStyleApp_API.Controllers
             
             try
             {
-                GetPostResponse post = await this._postRepository.GetPostByAccountIdAsync(accountId);
+                List<GetPostResponse> post = await this._postRepository.GetPostByAccountIdAsync(accountId);
                 if (post != null)
                 {
                     return Ok(new { Message = "Get By ID Successfully.", posts = post });

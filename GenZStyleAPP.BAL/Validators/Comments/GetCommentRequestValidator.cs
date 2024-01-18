@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using GenZStyleAPP.BAL.DTOs.Comments;
-using GenZStyleAPP.BAL.DTOs.HashTag;
 using System;
 using System.Collections.Generic;
 using System.Linq;

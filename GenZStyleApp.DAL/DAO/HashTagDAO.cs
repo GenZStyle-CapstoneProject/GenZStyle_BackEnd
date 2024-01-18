@@ -26,25 +26,27 @@ namespace GenZStyleApp.DAL.DAO
                     .ToListAsync(); 
                 
                 }
+        #endregion
         // Search By HashTagName
         public async Task<List<Hashtag>> SearchByHashTagName(string hashtagname)
         {
             try
             {
-                
-                List<Hashtag> hashtags = await _dbContext.Hashtags
-                    .Include(u => u.HashPosts)
-                    .Where(a => a.Name.Contains(hashtagname))
-                                                .ToListAsync();      
-                return hashtags;   
 
-            }catch (Exception ex)
+                List<Hashtag> hashtags = await _dbContext.Hashtags
+                    .Include(h => h.HashPosts).ThenInclude(J => J.Post)
+                    .Where(a => a.Name.Contains(hashtagname))
+                                                .ToListAsync();
+                return hashtags;
+
+            }
+            catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
-               
+
         }
-        #endregion
+
         #region Create Hashtag
         public async Task CreateHashTagAsync(Hashtag hashtag)
         {

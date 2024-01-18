@@ -7,11 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GenZStyleAPP.BAL.DTOs.HashTag
+namespace GenZStyleAPP.BAL.DTOs.HashTags
 {
     public class GetHashTagRequest
     {
-        
+
         public string Name { get; set; }
         public IFormFile Image { get; set; }
         public DateTime CreationDate { get; set; }
