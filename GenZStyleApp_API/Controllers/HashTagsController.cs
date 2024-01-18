@@ -1,9 +1,8 @@
 ﻿using FluentValidation;
 using GenZStyleAPP.BAL.DTOs.Accounts;
 using GenZStyleAPP.BAL.DTOs.FireBase;
-using GenZStyleAPP.BAL.DTOs.HashTag;
-using GenZStyleAPP.BAL.DTOs.Accounts;
 using GenZStyleAPP.BAL.DTOs.HashTags;
+using GenZStyleAPP.BAL.DTOs.Accounts;
 using GenZStyleAPP.BAL.Repository.Implementations;
 using GenZStyleAPP.BAL.Repository.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -39,7 +38,7 @@ namespace GenZStyleApp_API.Controllers
         {
             try
             {
-                List<GetHashTagReponse> hashtagDTOs = await _hashTagRepository.SearchByHashTagName(hashtag);
+                List<GetHashTagResponse> hashtagDTOs = await _hashTagRepository.SearchByHashTagName(hashtag);
 
                 // Nếu muốn thực hiện bất kỳ xử lý hoặc kiểm tra nào đó trước khi trả kết quả, bạn có thể thêm vào đây
 
@@ -79,7 +78,7 @@ namespace GenZStyleApp_API.Controllers
         public async Task<IActionResult> Post([FromForm] GetHashTagRequest hashTagRequest)
         {
             var validationResult = await _getHashTagValidator.ValidateAsync(hashTagRequest);
-            if (!validationResult.IsValid)
+            if (!validationResult.IsValid)   
             {
                 string error = ErrorHelper.GetErrorsString(validationResult);
                 throw new BadRequestException(error);

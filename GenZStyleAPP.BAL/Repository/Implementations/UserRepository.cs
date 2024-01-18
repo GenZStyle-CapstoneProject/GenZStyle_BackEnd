@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using GenZStyleAPP.BAL.DTOs.Accounts;
-using GenZStyleAPP.BAL.DTOs.Users;
 using GenZStyleApp.DAL.Models;
 using ProjectParticipantManagement.BAL.Exceptions;
 using ProjectParticipantManagement.BAL.Heplers;
@@ -22,6 +21,8 @@ using GenZStyleAPP.BAL.DTOs.UserRelations;
 using Microsoft.Extensions.Hosting;
 using GenZStyleAPP.BAL.Helpers;
 using GenZStyleApp.BAL.Helpers;
+using System.Security.Principal;
+using GenZStyleAPP.BAL.DTOs.Users;
 
 namespace GenZStyleAPP.BAL.Repository.Implementations
 {
@@ -367,6 +368,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 _unitOfWork.UserDAO.BanUser(user);
                 await this._unitOfWork.CommitAsync();
                 return _mapper.Map<User>(user);
+
             }
             catch (NotFoundException ex)
             {

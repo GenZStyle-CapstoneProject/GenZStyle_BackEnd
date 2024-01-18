@@ -1,17 +1,14 @@
 using BMOS.BAL.DTOs.JWT;
 using BMOS.BAL.Validators.Accounts;
 using FluentValidation;
-using GenZStyleApp.DAL.Models;
 using GenZStyleAPP.BAL.DTOs.Accounts;
 using GenZStyleAPP.BAL.DTOs.Comments;
 using GenZStyleAPP.BAL.DTOs.FashionItems;
 using GenZStyleAPP.BAL.DTOs.FireBase;
-using GenZStyleAPP.BAL.DTOs.HashTag;
 using GenZStyleAPP.BAL.DTOs.PostLike;
 using GenZStyleAPP.BAL.DTOs.HashTags;
 using GenZStyleAPP.BAL.DTOs.Notifications;
 using GenZStyleAPP.BAL.DTOs.Posts;
-using GenZStyleAPP.BAL.DTOs.Users;
 using GenZStyleAPP.BAL.Profiles.Accounts;
 using GenZStyleAPP.BAL.Profiles.FashionItems;
 using GenZStyleAPP.BAL.Profiles.HashTags;
@@ -41,8 +38,8 @@ using GenZStyleAPP.BAL.Validators.Comments;
 using GenZStyleAPP.BAL.Validators.Authentication;
 using BMOS.BAL.DTOs.Authentications;
 using GenZStyleAPP.BAL.Profiles.UserRelations;
-using GenZStyleAPP.BAL.DTOs.Posts;
 using GenZStyleAPP.BAL.DTOs.UserRelations;
+using GenZStyleAPP.BAL.DTOs.Users;
 
 namespace GenZStyleApp_API
 {
@@ -69,8 +66,8 @@ namespace GenZStyleApp_API
             builder.Services.AddSwaggerGen(options =>
             {
                 // using System.Reflection;
-                var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+                /*var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));*/
 
                 options.SwaggerDoc("v1", new OpenApiInfo
                 {
@@ -112,7 +109,7 @@ namespace GenZStyleApp_API
 
             }).AddJwtBearer(options =>
             {
-                options.RequireHttpsMetadata = false;
+                options.RequireHttpsMetadata = true;
                 options.SaveToken = true;
                 options.TokenValidationParameters = new TokenValidationParameters()
                 {
@@ -131,15 +128,15 @@ namespace GenZStyleApp_API
             var modelBuilder = new ODataConventionModelBuilder();
             //xoa 1 chu s la het loi 
             modelBuilder.EntitySet<GetUserResponse>("User");  
-            modelBuilder.EntitySet<GetAccountResponse>("Accounts");
-            modelBuilder.EntitySet<GetLoginResponse>("Authentications");
-            modelBuilder.EntitySet<GetHashTagResponse>("HashTags");
-            modelBuilder.EntitySet<GetPostLikeResponse>("PostLikes");
-            modelBuilder.EntitySet<GetCommentResponse>("Comments");
-            modelBuilder.EntitySet<GetPostLikeResponse>("Likes");
-            modelBuilder.EntitySet<GetPostResponse>("Posts");
-            modelBuilder.EntitySet<GetNotificationResponse>("Notifications");
-            modelBuilder.EntitySet<GetFashionItemResponse>("FashionItems");
+            modelBuilder.EntitySet<GetAccountResponse>("Account");
+            modelBuilder.EntitySet<GetLoginResponse>("Authentication");
+            modelBuilder.EntitySet<GetHashTagResponse>("HashTag");
+            modelBuilder.EntitySet<GetPostLikeResponse>("PostLike");
+            modelBuilder.EntitySet<GetCommentResponse>("Comment");
+            modelBuilder.EntitySet<GetPostLikeResponse>("Like");
+            modelBuilder.EntitySet<GetPostResponse>("Post");
+            modelBuilder.EntitySet<GetNotificationResponse>("Notification");
+            modelBuilder.EntitySet<GetFashionItemResponse>("FashionItem");
 
 
 
@@ -198,11 +195,15 @@ namespace GenZStyleApp_API
             
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            //if (app.Environment.IsDevelopment())
-            //{
             app.UseSwagger();
-            app.UseSwaggerUI(); app.UseHttpsRedirection();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                
+            });
+           
+              
+            app.UseHttpsRedirection();
             app.UseAuthentication();
 
 

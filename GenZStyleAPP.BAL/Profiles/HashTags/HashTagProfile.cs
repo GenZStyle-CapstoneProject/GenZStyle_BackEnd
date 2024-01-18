@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using GenZStyleApp.DAL.Models;
-using GenZStyleAPP.BAL.DTOs.HashTag;
+using GenZStyleAPP.BAL.DTOs.HashTags;
 using System;
 using System.Collections.Generic;
 using System.Linq;
