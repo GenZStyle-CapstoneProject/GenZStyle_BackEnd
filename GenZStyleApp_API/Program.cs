@@ -40,6 +40,9 @@ using BMOS.BAL.DTOs.Authentications;
 using GenZStyleAPP.BAL.Profiles.UserRelations;
 using GenZStyleAPP.BAL.DTOs.UserRelations;
 using GenZStyleAPP.BAL.DTOs.Users;
+using GenZStyleAPP.BAL.DTOs.Transactions.MoMo;
+using GenZStyleAPP.BAL.DTOs.Transactions;
+using GenZStyleAPP.BAL.Validators.Transactions;
 
 namespace GenZStyleApp_API
 {
@@ -172,10 +175,13 @@ namespace GenZStyleApp_API
             builder.Services.AddScoped<IValidator<GetHashTagRequest>, PostHashTagRequestValidation>();
             builder.Services.AddScoped<IValidator<GetCommentRequest>, GetCommentRequestValidator>();
             builder.Services.AddScoped<IValidator<PostRecreateTokenRequest>, PostRecreateTokenValidation>();
-
+            builder.Services.AddScoped<IValidator<PostTransactionRequest>, PostTransactionValidation>();
             builder.Services.AddScoped<IValidator<AddPostRequest>, AddPostValidation>();
             builder.Services.AddScoped<IValidator<UpdatePostRequest>, UpdatePostValidation>();
             builder.Services.Configure<FireBaseImage>(builder.Configuration.GetSection("FireBaseImage"));
+
+            // Momo config
+            builder.Services.Configure<MomoConfigModel>(builder.Configuration.GetSection("MomoAPI"));
 
             // Auto mapper config
             builder.Services.AddAutoMapper(typeof(AccountProfile),
