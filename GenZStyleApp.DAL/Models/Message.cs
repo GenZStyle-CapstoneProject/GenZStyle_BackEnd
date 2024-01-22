@@ -15,7 +15,10 @@ namespace GenZStyleApp.DAL.Models
         public int AccountId { get; set; }
 
         public int InboxId { get; set; }
-                  
+
+        public int Sender { get; set; }
+        public int Receiver { get; set; }
+
         public Boolean Seen { get; set; }
 
         public string Content { get; set; }
@@ -24,7 +27,7 @@ namespace GenZStyleApp.DAL.Models
 
         public DateTime CreateAt {  get; set; }   
         
-        public DateTime DeleteAt {  get; set; }
+        public DateTime? DeleteAt {  get; set; }
 
         public Inbox Inbox { get; set; }
 
