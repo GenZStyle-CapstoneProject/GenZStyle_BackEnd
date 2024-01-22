@@ -9,31 +9,28 @@ using System.Threading.Tasks;
 
 namespace GenZStyleApp.DAL.DAO
 {
-    public class FashionItemDAO
+    public class CategoryDAO
     {
         private GenZStyleDbContext _dbContext;
-        public FashionItemDAO(GenZStyleDbContext dbContext)
+        public CategoryDAO(GenZStyleDbContext dbContext)
         {
             this._dbContext = dbContext;
         }
 
-        // Search By Fashioname
-        public async Task<List<FashionItem>> SearchByFashionName(string fashioname)
+        #region Get category by name
+        public async Task<Category> GetPostByNameAsync(string name)
         {
             try
             {
-                List<FashionItem> fashionames = await _dbContext.FashionItems.Include(u => u.Post)
-                    .Where(a => a.fashionName.Contains(fashioname))
-                    .ToListAsync();
+                return await _dbContext.Categories
 
-                return fashionames;
+                   .SingleOrDefaultAsync(p => p.CategoryName == name);
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
         }
-
-        
+        #endregion
     }
 }
