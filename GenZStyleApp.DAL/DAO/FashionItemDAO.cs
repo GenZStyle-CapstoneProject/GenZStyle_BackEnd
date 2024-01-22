@@ -33,5 +33,7 @@ namespace GenZStyleApp.DAL.DAO
                 throw new Exception(ex.Message);
             }
         }
+
+        
     }
 }

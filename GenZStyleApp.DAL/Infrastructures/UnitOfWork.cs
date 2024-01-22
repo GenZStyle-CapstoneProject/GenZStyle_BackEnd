@@ -25,6 +25,9 @@ namespace ProjectParticipantManagement.DAL.Infrastructures
         private NotificationDAO _notificationDAO;
         private UserRelationDAO  _userRelationDAO;
         private TransactionDAO  _transactionDAO;
+        private CategoryDAO _categoryDAO;
+        private ProductDAO _productDAO;
+        
         
 
         public UnitOfWork()
@@ -182,6 +185,31 @@ namespace ProjectParticipantManagement.DAL.Infrastructures
                 return this._fashionItemDAO;
             }
         }
+
+        public CategoryDAO CategoryDAO
+        {
+            get
+            {
+                if (this._categoryDAO == null)
+                {
+                    this._categoryDAO = new CategoryDAO(this._dbContext);
+                }
+                return this._categoryDAO;
+            }
+        }
+
+        public ProductDAO ProductDAO
+        {
+            get
+            {
+                if (this._productDAO == null)
+                {
+                    this._productDAO = new ProductDAO(this._dbContext);
+                }
+                return this._productDAO;
+            }
+        }
+
 
 
 
