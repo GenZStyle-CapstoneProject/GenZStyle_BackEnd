@@ -9,40 +9,43 @@ using System.Threading.Tasks;
 
 namespace GenZStyleApp.DAL.DAO
 {
-    public class CategoryDAO
+    public class ProductDAO
     {
         private GenZStyleDbContext _dbContext;
-        public CategoryDAO(GenZStyleDbContext dbContext)
+        public ProductDAO(GenZStyleDbContext dbContext)
         {
             this._dbContext = dbContext;
         }
 
-        #region Get category by name
-        public async Task<Category> GetPostByNameAsync(string name)
+        //get all product
+        public async Task<List<Product>> GetAllProducts()
         {
             try
             {
-                return await _dbContext.Categories
 
-                   .SingleOrDefaultAsync(p => p.CategoryName == name);
+                List<Product> products = await _dbContext.Products.ToListAsync();
+                return products;
+
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
         }
-        #endregion
 
-        public async Task AddNewCategory(Category category)
+        // Add new Product
+        public async Task AddNewProduct(Product product)
         {
             try
             {
-                await _dbContext.Categories.AddAsync(category);
+                await _dbContext.Products.AddAsync(product);
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
         }
+
+
     }
 }

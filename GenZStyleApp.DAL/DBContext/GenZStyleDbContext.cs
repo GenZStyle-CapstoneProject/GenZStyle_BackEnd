@@ -42,6 +42,7 @@ namespace GenZStyleApp.DAL.DBContext
         public DbSet<FashionItem> FashionItems { get; set; }
         public DbSet<UserRelation> UserRelations { get; set; }
         public DbSet<Style> Styles { get; set; }
+        public DbSet<Product> Products { get; set; }
         public DbSet<StyleFashion> StyleFashions { get; set; }
         public DbSet<Token> Tokens { get; set; }
         public DbSet<Blogger> Bloggers { get; set; }

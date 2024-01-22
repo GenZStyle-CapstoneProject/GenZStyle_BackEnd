@@ -1,13 +1,14 @@
-﻿using System;
+﻿using GenZStyleApp.DAL.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GenZStyleApp.DAL.Models
+namespace GenZStyleAPP.BAL.DTOs.Products
 {
-    public class Product
+    public class GetProductResponse
     {
         public int Id { get; set; }
         public int AccountId { get; set; }
@@ -23,6 +24,5 @@ namespace GenZStyleApp.DAL.Models
         public virtual Account Account { get; set; }
         [ForeignKey("CategoryId")]
         public virtual Category Category { get; set; }
-
     }
 }

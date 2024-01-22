@@ -43,6 +43,9 @@ using GenZStyleAPP.BAL.DTOs.Users;
 using GenZStyleAPP.BAL.DTOs.Transactions.MoMo;
 using GenZStyleAPP.BAL.DTOs.Transactions;
 using GenZStyleAPP.BAL.Validators.Transactions;
+using GenZStyleAPP.BAL.DTOs.Products;
+using GenZStyleAPP.BAL.Validators.Products;
+using GenZStyleAPP.BAL.Profiles.Products;
 
 namespace GenZStyleApp_API
 {
@@ -140,7 +143,7 @@ namespace GenZStyleApp_API
             modelBuilder.EntitySet<GetPostResponse>("Post");
             modelBuilder.EntitySet<GetNotificationResponse>("Notification");
             modelBuilder.EntitySet<GetFashionItemResponse>("FashionItem");
-
+            modelBuilder.EntitySet<GetProductResponse>("Product");
 
 
             builder.Services.AddControllers().AddOData(options => options.Select()
@@ -166,6 +169,7 @@ namespace GenZStyleApp_API
             builder.Services.AddScoped<IPostRepository, PostRepository>();
             builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
             builder.Services.AddScoped<IFashionItemRepository, FashionItemRepository>();
+            builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.Configure<FireBaseImage>(builder.Configuration.GetSection("FireBaseImage"));
             //DI Validator
             builder.Services.AddScoped<IValidator<RegisterRequest>, RegisterValidation>();
@@ -178,6 +182,7 @@ namespace GenZStyleApp_API
             builder.Services.AddScoped<IValidator<PostTransactionRequest>, PostTransactionValidation>();
             builder.Services.AddScoped<IValidator<AddPostRequest>, AddPostValidation>();
             builder.Services.AddScoped<IValidator<UpdatePostRequest>, UpdatePostValidation>();
+            builder.Services.AddScoped<IValidator<AddProductRequest>, AddProductValidation>();
             builder.Services.Configure<FireBaseImage>(builder.Configuration.GetSection("FireBaseImage"));
 
             // Momo config
@@ -194,7 +199,8 @@ namespace GenZStyleApp_API
                                             typeof(HashTagProfile),
                                             typeof(AccountProfile),
                                             typeof(CustomerProfile),
-                                            typeof(UserRelationProfile)
+                                            typeof(UserRelationProfile),
+                                            typeof(ProductProfile)
                                             );
 
 
