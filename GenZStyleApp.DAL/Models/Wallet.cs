@@ -20,6 +20,7 @@ namespace GenZStyleApp.DAL.Models
 
         
         public Account Account { get; set; }
-        public ICollection<Transaction> Transactions { get; set; }
+
+        
     }
 }
