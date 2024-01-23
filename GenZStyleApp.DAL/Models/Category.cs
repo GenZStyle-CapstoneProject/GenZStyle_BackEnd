@@ -12,12 +12,19 @@ namespace GenZStyleApp.DAL.Models
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 
-        public int CategoriesId { get; set; }
+        public int CategoryId { get; set; }
         
+        public int StyleId { get; set; }
+
+        public int PostId { get; set; }
         public string CategoryName { get; set; }
         
         public string CategoryDescription { get; set; }
+        [ForeignKey("StyleId")]
+        public Style Style { get; set; }
+        [ForeignKey("PostId")]
+        public Post Post { get; set; }
 
-        public ICollection<FashionItem> FashionItems { get; set;}
+        
     }
 }

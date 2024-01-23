@@ -16,6 +16,8 @@ namespace GenZStyleApp.DAL.Models
 
         public int AccountId { get; set; }
 
+        public int CategoryId { get; set; }
+
         public string StyleName { get; set; }
 
         public string Description { get; set; }
@@ -24,10 +26,11 @@ namespace GenZStyleApp.DAL.Models
 
         public DateTime UpdateAt { get; set; }
 
+        [ForeignKey("AccountId")]
         public Account Account { get; set; }
 
-        public ICollection<StyleFashion> StyleFashions { get; set;}
-        
+        [ForeignKey("CategoryId")]
+        public Category Category { get; set; }
 
 
     }
