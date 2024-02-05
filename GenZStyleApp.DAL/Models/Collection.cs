@@ -12,7 +12,7 @@ namespace GenZStyleApp.DAL.Models
         public int Id { get; set; }
 
         [ForeignKey("AccountId")]
-        public int AccontId { get; set; }
+        public int AccountId { get; set; }
         
         public Account? Account { get; set; }
         [ForeignKey("CategoryId")]
@@ -20,7 +20,7 @@ namespace GenZStyleApp.DAL.Models
         
         public Category? Category { get; set; }
         
-
+        
         public string Name { get; set; }
         public string Image_url { get; set; }
         public int Type { get; set; }

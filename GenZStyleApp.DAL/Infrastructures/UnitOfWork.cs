@@ -19,16 +19,16 @@ namespace ProjectParticipantManagement.DAL.Infrastructures
         private TokenDAO _tokenDAO;
         private PostDAO _postDAO;
         private HashTagDAO _hashtagDAO;
-        private FashionItemDAO _fashionItemDAO;
+        
         private LikeDAO _likeDAO;
         private CommentDAO _commentDAO;
         private NotificationDAO _notificationDAO;
         private UserRelationDAO  _userRelationDAO;
         private TransactionDAO  _transactionDAO;
         private CategoryDAO _categoryDAO;
-        private ProductDAO _productDAO;
-        
-        
+        private ReportDAO _reportDAO;
+        private CollectionDAO _collectionDAO;
+
 
         public UnitOfWork()
         {
@@ -174,17 +174,7 @@ namespace ProjectParticipantManagement.DAL.Infrastructures
             }
         }
 
-        public FashionItemDAO FashionItemDAO
-        {
-            get
-            {
-                if (this._fashionItemDAO == null)
-                {
-                    this._fashionItemDAO = new FashionItemDAO(this._dbContext);
-                }
-                return this._fashionItemDAO;
-            }
-        }
+        
 
         public CategoryDAO CategoryDAO
         {
@@ -198,15 +188,27 @@ namespace ProjectParticipantManagement.DAL.Infrastructures
             }
         }
 
-        public ProductDAO ProductDAO
+        public ReportDAO ReportDAO
         {
             get
             {
-                if (this._productDAO == null)
+                if (this._reportDAO == null)
                 {
-                    this._productDAO = new ProductDAO(this._dbContext);
+                    this._reportDAO = new ReportDAO(this._dbContext);
                 }
-                return this._productDAO;
+                return this._reportDAO;
+            }
+        }
+
+        public CollectionDAO CollectionDAO
+        {
+            get
+            {
+                if (this._collectionDAO == null)
+                {
+                    this._collectionDAO = new CollectionDAO(this._dbContext);
+                }
+                return this._collectionDAO;
             }
         }
 

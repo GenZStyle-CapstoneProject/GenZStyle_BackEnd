@@ -3,14 +3,14 @@ using BMOS.BAL.Validators.Accounts;
 using FluentValidation;
 using GenZStyleAPP.BAL.DTOs.Accounts;
 using GenZStyleAPP.BAL.DTOs.Comments;
-using GenZStyleAPP.BAL.DTOs.FashionItems;
+
 using GenZStyleAPP.BAL.DTOs.FireBase;
 using GenZStyleAPP.BAL.DTOs.PostLike;
 using GenZStyleAPP.BAL.DTOs.HashTags;
 using GenZStyleAPP.BAL.DTOs.Notifications;
 using GenZStyleAPP.BAL.DTOs.Posts;
 using GenZStyleAPP.BAL.Profiles.Accounts;
-using GenZStyleAPP.BAL.Profiles.FashionItems;
+
 using GenZStyleAPP.BAL.Profiles.HashTags;
 using GenZStyleAPP.BAL.Profiles.Notifications;
 using GenZStyleAPP.BAL.Profiles.Posts;
@@ -43,9 +43,13 @@ using GenZStyleAPP.BAL.DTOs.Users;
 using GenZStyleAPP.BAL.DTOs.Transactions.MoMo;
 using GenZStyleAPP.BAL.DTOs.Transactions;
 using GenZStyleAPP.BAL.Validators.Transactions;
-using GenZStyleAPP.BAL.DTOs.Products;
-using GenZStyleAPP.BAL.Validators.Products;
-using GenZStyleAPP.BAL.Profiles.Products;
+using GenZStyleAPP.BAL.DTOs.Reports;
+using GenZStyleAPP.BAL.Profiles.Reports;
+using GenZStyleAPP.BAL.Validators.Reports;
+using Quartz.Impl;
+using Quartz;
+using GenZStyleApp.DAL.DBContext;
+using System.Configuration;
 
 namespace GenZStyleApp_API
 {
@@ -68,6 +72,16 @@ namespace GenZStyleApp_API
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddDbContext<GenZStyleDbContext>(opt =>
+            opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionStringDB")));
+
+            builder.Services.AddSingleton<IScheduler>(provider =>
+            {
+                var schedulerFactory = new StdSchedulerFactory();
+                return schedulerFactory.GetScheduler().Result;
+            });
+            builder.Services.AddSingleton<CheckAndDeleteJob>();
+            builder.Services.AddHostedService<QuartzHostedService>();
             #region JWT 
             builder.Services.AddSwaggerGen(options =>
             {
@@ -142,8 +156,8 @@ namespace GenZStyleApp_API
             modelBuilder.EntitySet<GetPostLikeResponse>("Like");
             modelBuilder.EntitySet<GetPostResponse>("Post");
             modelBuilder.EntitySet<GetNotificationResponse>("Notification");
-            modelBuilder.EntitySet<GetFashionItemResponse>("FashionItem");
-            modelBuilder.EntitySet<GetProductResponse>("Product");
+            modelBuilder.EntitySet<GetReportResponse>("Report");
+
 
 
             builder.Services.AddControllers().AddOData(options => options.Select()
@@ -168,8 +182,11 @@ namespace GenZStyleApp_API
             builder.Services.AddScoped<ICommentRepository, CommentRepository>();
             builder.Services.AddScoped<IPostRepository, PostRepository>();
             builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
-            builder.Services.AddScoped<IFashionItemRepository, FashionItemRepository>();
-            builder.Services.AddScoped<IProductRepository, ProductRepository>();
+            builder.Services.AddScoped<IReportRepository, ReportRepository>();
+            
+
+
+
             builder.Services.Configure<FireBaseImage>(builder.Configuration.GetSection("FireBaseImage"));
             //DI Validator
             builder.Services.AddScoped<IValidator<RegisterRequest>, RegisterValidation>();
@@ -182,7 +199,8 @@ namespace GenZStyleApp_API
             builder.Services.AddScoped<IValidator<PostTransactionRequest>, PostTransactionValidation>();
             builder.Services.AddScoped<IValidator<AddPostRequest>, AddPostValidation>();
             builder.Services.AddScoped<IValidator<UpdatePostRequest>, UpdatePostValidation>();
-            builder.Services.AddScoped<IValidator<AddProductRequest>, AddProductValidation>();
+            builder.Services.AddScoped<IValidator<AddReportRequest>, AddReportValidation>();
+
             builder.Services.Configure<FireBaseImage>(builder.Configuration.GetSection("FireBaseImage"));
 
             // Momo config
@@ -194,17 +212,18 @@ namespace GenZStyleApp_API
                                            typeof(CommentProfile),
                                             typeof(CustomerProfile),
                                             typeof(PostProfile),
-                                            typeof(FashionItemProfile),
                                             typeof(NotificationProfile),
                                             typeof(HashTagProfile),
                                             typeof(AccountProfile),
                                             typeof(CustomerProfile),
                                             typeof(UserRelationProfile),
-                                            typeof(ProductProfile)
+                                            typeof(ReportProfile)
+                                            
                                             );
 
-
             
+
+
             var app = builder.Build();
 
             app.UseSwagger();

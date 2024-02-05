@@ -41,9 +41,9 @@ namespace GenZStyleApp.DAL.DAO
         {
             try
             {
-                return await _dbContext.Posts
-                    
-                   .SingleOrDefaultAsync(p => p.PostId == id);
+                return await _dbContext.Posts.Include(p => p.Account)
+                            .Include(p => p.Comments)
+                            .SingleOrDefaultAsync(p => p.PostId == id);
             }
             catch (Exception ex)
             {
@@ -61,6 +61,23 @@ namespace GenZStyleApp.DAL.DAO
                                              .Include(p => p.HashPosts).ThenInclude( h => h.Hashtag)
                                              .Where(p => p.AccountId == id)                     
                                              .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        #endregion
+
+        #region Get post by accountid
+        public async Task<List<Post>> GetPostByReportAsync(int id)
+        {
+            try
+            {
+                // Get posts where the associated reports have IsReport set to true and more than 2 reports
+                return await _dbContext.Posts
+                    .Where(p => p.PostId == id && p.Reports.Count(r => r.IsReport) >= 2)
+                    .ToListAsync();
             }
             catch (Exception ex)
             {
@@ -116,9 +133,7 @@ namespace GenZStyleApp.DAL.DAO
         {
             try
             {
-                List<Post> posts = await _dbContext.Posts.Include(p => p.FashionItems)
-                                                                 
-                                                         .ToListAsync();
+                List<Post> posts = await _dbContext.Posts.ToListAsync();
                 return posts;
 
             }
@@ -138,6 +153,21 @@ namespace GenZStyleApp.DAL.DAO
                 throw new Exception(ex.Message);
             }
         }
+
+        #region DeletePost
+        public void DeletePost(Post post)
+        {
+            try
+            {
+                this._dbContext.Posts.Remove(post);
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        #endregion
 
     }
 }

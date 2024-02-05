@@ -84,7 +84,7 @@ namespace GenZStyleApp_API.Controllers
                 throw new BadRequestException(error);
             }
             GetHashTagResponse hashTagResponse = await _hashTagRepository.AddNewHashTag(_firebaseImageOptions.Value, hashTagRequest);
-            return Created(hashTagResponse);
+            return Ok(hashTagResponse);
         }
 
 

@@ -157,7 +157,7 @@ namespace GenZStyleApp.DAL.DAO
             try
             {
                 return await _context.Users.Include(u => u.Role)
-                                      .Include(u => u.Accounts).ThenInclude(a => a.Invoices).ThenInclude(a => a.Payments)
+                                      .Include(u => u.Accounts).ThenInclude(a => a.Invoices)
                                       .Include(u => u.Accounts).ThenInclude(a => a.IsActive == true)
                                       .Include(u => u.Accounts).ThenInclude(a => a.Likes).ThenInclude(a => a.Post)
                                       .SingleOrDefaultAsync(u => u.UserId == id);

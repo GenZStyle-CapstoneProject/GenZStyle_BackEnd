@@ -28,12 +28,12 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
         }
 
 
-        public async Task<GetCommentResponse> GetCommentByPostId(int id)
+        public async Task <List<GetCommentResponse>> GetCommentByPostId(int id)
         {
             try
             {
-                var post = await _unitOfWork.PostDAO.GetPostByIdAsync(id);
-                return _mapper.Map<GetCommentResponse>(post);
+                var post = await _unitOfWork.CommentDAO.GetCommentByPostIdAsync(id);
+                return _mapper.Map<List<GetCommentResponse>>(post);
             }
             catch (NotFoundException ex)
             {
@@ -46,8 +46,8 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 throw new Exception(error);
             }
         }
-
-        public async Task<GetCommentResponse> UpdateCommentByPostId(GetCommentRequest commentRequest ,int PostId,HttpContext httpContext )
+        
+                public async Task<GetCommentResponse> UpdateCommentByPostId(GetCommentRequest commentRequest ,int PostId,HttpContext httpContext )
         {
             try
             {

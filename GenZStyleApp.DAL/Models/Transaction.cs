@@ -20,7 +20,7 @@ namespace GenZStyleApp.DAL.Models
 
         public string TransStyle { get; set; }
         public int status { get; set; }
-        public Payment Payment { get; set; }
+        
 
         public Wallet wallet { get; set; }
 

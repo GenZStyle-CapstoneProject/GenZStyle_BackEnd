@@ -19,7 +19,7 @@ namespace GenZStyleApp_API.Controllers
         #region Like
         [HttpGet("odata/PostLikes/GetPostId/{key}")]
         [EnableQuery]
-        [PermissionAuthorize("User")]
+        //[PermissionAuthorize("User")]
         public async Task<IActionResult> Get([FromRoute] int key)
         {
             GetPostLikeResponse like = await this._likeRepository.GetLikeByPostIdAsync(key, HttpContext);

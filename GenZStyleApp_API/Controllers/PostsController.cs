@@ -216,5 +216,17 @@ namespace GenZStyleApp_API.Controllers
             return Ok(products);
         }
         #endregion
+
+        #region Delete Post 
+
+        [HttpDelete("Post/{postId}")]
+        [EnableQuery]
+        //[PermissionAuthorize("Staff")]
+        public async Task<IActionResult> Delete([FromRoute] int postId)
+        {
+            await this._postRepository.DeletePostAsync(postId, this.HttpContext);
+            return NoContent();
+        }
+        #endregion
     }
 }
