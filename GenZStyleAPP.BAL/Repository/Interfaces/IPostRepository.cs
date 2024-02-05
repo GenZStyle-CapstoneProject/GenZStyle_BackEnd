@@ -22,5 +22,6 @@ namespace GenZStyleAPP.BAL.Repository.Interfaces
                                                                                      FireBaseImage fireBaseImage,
                                                                                      UpdatePostRequest updatePostRequest);
         public Task<List<GetPostResponse>> GetPostByUserFollowId(HttpContext httpContext);
+        public Task DeletePostAsync(int id, HttpContext httpContext);
     }
 }

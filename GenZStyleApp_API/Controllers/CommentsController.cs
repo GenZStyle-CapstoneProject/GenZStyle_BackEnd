@@ -22,10 +22,16 @@ namespace GenZStyleApp_API.Controllers
             _getCommentRequestvalidator = validator;
         }
 
-        [HttpGet("odata/Comments/CommentTotal/{PostId}")]
-        public async Task<IActionResult> Get(int PostId)
+
+
+
+
+
+
+        [HttpGet("odata/Comments/{PostId}")]
+        public async Task<IActionResult> GetAllComment(int PostId)
         {
-            GetCommentResponse result = await _commentRepository.GetCommentByPostId(PostId);
+            List<GetCommentResponse> result = await _commentRepository.GetCommentByPostId(PostId);
             return Ok(result);
         }
 
@@ -41,7 +47,7 @@ namespace GenZStyleApp_API.Controllers
                 throw new BadRequestException(error);
             }
             GetCommentResponse getCommentResponse = await this._commentRepository.UpdateCommentByPostId(commentRequest, key, HttpContext);
-            return Created(getCommentResponse);
+            return Ok(getCommentResponse);
         }
 
 

@@ -1,5 +1,5 @@
 ﻿using GenZStyleAPP.BAL.DTOs.Accounts;
-using GenZStyleAPP.BAL.DTOs.FashionItems;
+
 using GenZStyleAPP.BAL.DTOs.PostLike;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
@@ -22,7 +22,7 @@ namespace GenZStyleAPP.BAL.DTOs.Postss
         public string Content { get; set; }
         public string Image { get; set; }
         public GetAccountResponse Account { get; set; }
-        public ICollection<GetFashionItemResponse> FashionItems { get; set; }
+        
         public ICollection<GetPostLikeResponse> Likes { get; set; }
 
     }

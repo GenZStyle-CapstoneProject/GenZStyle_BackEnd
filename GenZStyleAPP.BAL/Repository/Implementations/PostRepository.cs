@@ -168,6 +168,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 Post post = this._mapper.Map<Post>(addPostRequest);
 
                 post.AccountId = accountStaff.AccountId;
+
                 post.Content = addPostRequest.Content;
                 post.CreateTime = DateTime.Now;
                 post.UpdateTime = DateTime.Now;
@@ -229,6 +230,19 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 #endregion
                 await _unitOfWork.PostDAO.AddNewPost(post);
                 await this._unitOfWork.CommitAsync();
+                // Sau khi thêm Post thành công, cập nhật thông tin trong Collection
+                Collection collection = new Collection
+                {
+                    Account = accountStaff,
+                    CategoryId = 1, // Chỉ là ví dụ, hãy thay đổi logic dựa vào yêu cầu của bạn
+                    Name = post.Content, // Sử dụng nội dung của bài Post làm tên trong Collection (hãy thay đổi nếu cần)
+                    Image_url = post.Image, // Sử dụng hình ảnh của bài Post làm hình ảnh trong Collection (hãy thay đổi nếu cần)
+                    Type = 1 // Chỉ là ví dụ, hãy thay đổi logic dựa vào yêu cầu của bạn
+                };
+
+                await _unitOfWork.CollectionDAO.AddNewCollection(collection);
+                await _unitOfWork.CommitAsync();
+
                 return this._mapper.Map<GetPostResponse>(post);
 
             }
@@ -255,7 +269,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 }
 
                 post.Content = updatePostRequest.Content;
-                
+
 
                 //if (updateCustomerRequest.PasswordHash != null)
                 //{
@@ -306,7 +320,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 var account = await _unitOfWork.AccountDAO.GetAccountByEmail(emailFromClaim);
 
                 List<Post> getPostResponses = new List<Post>();
-                
+
                 HashSet<int> uniqueFollowingIds = new HashSet<int>();
                 var listRelation = await _unitOfWork.userRelationDAO.GetFollowing(account.AccountId);
                 foreach (var userRelation in listRelation)
@@ -320,10 +334,10 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
 
                 }
                 foreach (int followingId in uniqueFollowingIds)
-                        {
-                            var post = await _unitOfWork.PostDAO.GetPostByAccountIdAsync(followingId);
-                            getPostResponses.AddRange(post);
-                        }
+                {
+                    var post = await _unitOfWork.PostDAO.GetPostByAccountIdAsync(followingId);
+                    getPostResponses.AddRange(post);
+                }
                 return this._mapper.Map<List<GetPostResponse>>(getPostResponses);
 
             }
@@ -332,6 +346,52 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 throw new Exception(ex.Message);
             }
         }
+
+        #region DeletePostAsync
+        public async Task DeletePostAsync(int id, HttpContext httpContext)
+        {
+            try
+            {
+                try
+                {
+                    //JwtSecurityToken jwtSecurityToken = TokenHelper.ReadToken(httpContext);
+                    //string emailFromClaim = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Email).Value;
+                    //var accountStaff = await _unitOfWork.AccountDAO.GetAccountByEmail(emailFromClaim);
+                    var post = await _unitOfWork.PostDAO.GetPostByIdAsync(id);
+                    if (post == null)
+                    {
+                        throw new NotFoundException("User id does not exist in the system.");
+                    }
+                    //product.Status = (int)ProductEnum.Status.INACTIVE;
+                    //if (product.ProductMeals != null && product.ProductMeals.Count() > 0)
+                    //{
+                    //    foreach (var productMeal in product.ProductMeals)
+                    //    {
+                    //        productMeal.Meal.Status = (int)MealEnum.Status.INACTIVE;
+                    //    }
+                    //}
+
+                    //product.ModifiedBy = accountStaff.ID;
+                    _unitOfWork.PostDAO.DeletePost(post);
+                    await _unitOfWork.CommitAsync();
+
+                }
+                catch (NotFoundException ex)
+                {
+                    string error = ErrorHelper.GetErrorString("Post Id", ex.Message);
+                    throw new NotFoundException(error);
+                }
+            }
+            
+            catch (Exception ex)
+            {
+                string error = ErrorHelper.GetErrorString(ex.Message);
+                throw new Exception(error);
+            }
+        }
+        #endregion
     }
-    
+
+
 }
+

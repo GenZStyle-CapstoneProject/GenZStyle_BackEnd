@@ -1,6 +1,5 @@
 ﻿using GenZStyleApp.DAL.DBContext;
 using GenZStyleApp.DAL.Models;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,31 +8,25 @@ using System.Threading.Tasks;
 
 namespace GenZStyleApp.DAL.DAO
 {
-    public class FashionItemDAO
+    public class CollectionDAO
     {
         private GenZStyleDbContext _dbContext;
-        public FashionItemDAO(GenZStyleDbContext dbContext)
+        public CollectionDAO(GenZStyleDbContext dbContext)
         {
             this._dbContext = dbContext;
         }
 
-        // Search By Fashioname
-        public async Task<List<FashionItem>> SearchByFashionName(string fashioname)
+        // Add new collection
+        public async Task AddNewCollection(Collection collection)
         {
             try
             {
-                List<FashionItem> fashionames = await _dbContext.FashionItems.Include(u => u.Post)
-                    .Where(a => a.fashionName.Contains(fashioname))
-                    .ToListAsync();
-
-                return fashionames;
+                await _dbContext.Collections.AddAsync(collection);
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
         }
-
-        
     }
 }

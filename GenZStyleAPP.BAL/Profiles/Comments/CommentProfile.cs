@@ -14,7 +14,7 @@ namespace GenZStyleAPP.BAL.Profiles.Comments
 
         public CommentProfile() 
         {
-            CreateMap<Post, GetCommentResponse>().ReverseMap(); 
+            CreateMap<Comment, GetCommentResponse>().ReverseMap(); 
         }
         
     }
