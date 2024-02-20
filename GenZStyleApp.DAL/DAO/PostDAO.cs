@@ -133,7 +133,8 @@ namespace GenZStyleApp.DAL.DAO
         {
             try
             {
-                List<Post> posts = await _dbContext.Posts.ToListAsync();
+                List<Post> posts = await _dbContext.Posts.Include(u => u.HashPosts).ThenInclude(u => u.Hashtag)
+                                        .ToListAsync();
                 return posts;
 
             }

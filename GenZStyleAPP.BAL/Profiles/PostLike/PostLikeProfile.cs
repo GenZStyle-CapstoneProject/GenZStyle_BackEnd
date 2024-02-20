@@ -15,7 +15,8 @@ namespace GenZStyleAPP.BAL.Profiles.PostLike
 
         public PostLikeProfile()
         {
-            CreateMap<Post ,GetPostLikeResponse>().ReverseMap();  
+            CreateMap<Post ,GetPostLikeResponse>().ReverseMap();
+            CreateMap<Like, GetPostLikeResponse>().ReverseMap();
         }
     }
 }

@@ -14,7 +14,8 @@ namespace GenZStyleAPP.BAL.DTOs.PostLike
     {
         [Key]
         public int PostId { get; set; }
-        public int TotalLike { get; set; }
-        
+        public int LikeBy { get; set; }
+
+        public Account Account { get; set; }
     }
 }
