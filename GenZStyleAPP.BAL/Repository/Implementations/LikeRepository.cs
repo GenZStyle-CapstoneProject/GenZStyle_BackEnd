@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using GenZStyleApp.DAL.Models;
+using GenZStyleAPP.BAL.DTOs.Accounts;
 using GenZStyleAPP.BAL.DTOs.PostLike;
+using GenZStyleAPP.BAL.DTOs.Reports;
 using GenZStyleAPP.BAL.Helpers;
 using GenZStyleAPP.BAL.Repository.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -26,6 +28,20 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
         {
             _unitOfWork = (UnitOfWork)unitOfWork;
             _mapper = mapper;
+        }
+
+        public async Task<List<GetPostLikeResponse>> GetAllAccountByLikes(int postId)
+        {
+            try
+            {
+                List<Like> likes = await this._unitOfWork.LikeDAO.GetAllAccountByLikes(postId);
+                return this._mapper.Map<List<GetPostLikeResponse>>(likes);
+            }
+            catch (Exception ex)
+            {
+                string error = ErrorHelper.GetErrorString(ex.Message);
+                throw new Exception(error);
+            }
         }
 
         public async Task<GetPostLikeResponse> GetLikeByPostIdAsync(int postId, HttpContext httpContext)

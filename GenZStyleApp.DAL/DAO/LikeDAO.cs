@@ -18,6 +18,24 @@ namespace GenZStyleApp.DAL.DAO
             _dbContext = dbContext;
         }
 
+        //get likes
+        public async Task<List<Like>> GetAllAccountByLikes(int postId)
+        {
+            try
+            {
+                List<Like> likes = await _dbContext.Likes
+                    .Include(l => l.Account).ThenInclude(l => l.User)
+                    .Where(l => l.PostId == postId)
+                    .ToListAsync();
+
+                return likes;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public async Task AddLikeAsync(Like like)
         {
             try
