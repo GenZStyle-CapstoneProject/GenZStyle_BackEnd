@@ -16,8 +16,7 @@ namespace GenZStyleApp.DAL.Models
 
         public int AccountId { get; set; }
 
-
-        public string LastMessage { get; set; }
+        public string Name { get; set; }
 
         public Account Account { get; set; }
         

@@ -23,15 +23,19 @@ using GenZStyleAPP.BAL.Helpers;
 using GenZStyleApp.BAL.Helpers;
 using System.Security.Principal;
 using GenZStyleAPP.BAL.DTOs.Users;
+using Microsoft.AspNetCore.Identity;
+using Org.BouncyCastle.Asn1.Ocsp;
 
 namespace GenZStyleAPP.BAL.Repository.Implementations
 {
     public class UserRepository : IUserRepository
     {
+       
         private UnitOfWork _unitOfWork;
         private IMapper _mapper;
-        public UserRepository(IUnitOfWork unitOfWork, IMapper mapper)
+        public UserRepository( IUnitOfWork unitOfWork, IMapper mapper)
         {
+            
             _unitOfWork = (UnitOfWork)unitOfWork;
             _mapper = mapper;
         }
@@ -101,7 +105,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
 
                 // assign registerRequest to account
                 Account account = new Account
-                {
+                {   
                     Email = registerRequest.Email,
                     PasswordHash = registerRequest.PasswordHash,
                     Firstname = registerRequest.FirstName,
@@ -126,12 +130,15 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 };
 
                 
-
-                // Upload image to firebase
+                if(registerRequest.Avatar != null) 
+                {
+                    // Upload image to firebase
                 FileHelper.SetCredentials(fireBaseImage);
                 FileStream fileStream = FileHelper.ConvertFormFileToStream(registerRequest.Avatar);
                 Tuple<string, string> result = await FileHelper.UploadImage(fileStream, "User");
-                user.AvatarUrl = result.Item1;
+                user.AvatarUrl = result.Item1; 
+                }
+                
                 
                 
                 Wallet wallet = new Wallet()
@@ -143,6 +150,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 await _unitOfWork.UserDAO.AddNewUser(user);
                 await this._unitOfWork.WalletDAO.CreateWalletAsync(wallet);
 
+                
                 //Save to Database
                 await _unitOfWork.CommitAsync();
 

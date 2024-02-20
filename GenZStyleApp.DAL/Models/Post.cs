@@ -27,12 +27,14 @@ namespace GenZStyleApp.DAL.Models
         public string Image {  get; set; }
 
         public Account Account { get; set; }
-        public ICollection<Category> Categorys { get; set; }
+        public ICollection<Category> Categories { get; set; }
         public ICollection<Like> Likes { get; set;}
         public ICollection<HashPost> HashPosts { get; set;}
         
         public ICollection<Comment> Comments { get;}
 
-        public ICollection<Report> Reports { get; set; }
+        public ICollection<Report> Reports { get; set;}
+
+        
     }
 }

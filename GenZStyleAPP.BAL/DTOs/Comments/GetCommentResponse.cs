@@ -10,13 +10,15 @@ namespace GenZStyleAPP.BAL.DTOs.Comments
 {
     public class GetCommentResponse
     {
-        [Key]
+        [Key]      
         public int CommentId { get; set; }
         public DateTime CreateAt { get; set; }
         public string Content { get; set; }
+
         public int CommentBy { get; set; }
         public Post Post { get; set; }
-        public Account Account { get; set; }
+
+        public Account account { get; set; }
 
     }
 }

@@ -45,5 +45,17 @@ namespace GenZStyleApp.DAL.DAO
         }
         #endregion
 
+        public void UpdateWallet(Wallet wallet)
+        {
+            try
+            {
+                this._dbContext.Entry<Wallet>(wallet).State = EntityState.Modified;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message, ex);
+            }
+        }
+
     }
 }

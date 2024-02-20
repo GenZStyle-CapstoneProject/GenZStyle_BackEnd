@@ -34,15 +34,22 @@ namespace ProjectParticipantManagement.WebAPI.Controllers
         [EnableQuery]
         [HttpPost("odata/authentications/login")]
         public async Task<IActionResult> Login([FromBody] GetLoginRequest account)
-        {
-            ValidationResult validationResult = await this._authenticationValidator.ValidateAsync(account);
+        {   try 
+            {
+             ValidationResult validationResult = await this._authenticationValidator.ValidateAsync(account);
             if (!validationResult.IsValid)
             {
                 string error = ErrorHelper.GetErrorsString(validationResult);
                 throw new BadRequestException(error);
             }
             var result = await this._authenticationRepository.LoginAsync(account,_jwtAuthOptions.Value );
-            return Ok(result);
+            return Ok(result); 
+            }
+            catch (Exception ex) 
+            {
+                return BadRequest(ex.Message);
+            }
+            
         }
 
         #region Recreate token
@@ -50,7 +57,8 @@ namespace ProjectParticipantManagement.WebAPI.Controllers
         [HttpPost("odata/authentications/recreate-token")]
         public async Task<IActionResult> RecreateToken([FromBody] PostRecreateTokenRequest request)
         {
-            var validationResult = await _postRecreateTokenValidator.ValidateAsync(request);
+            try {
+                var validationResult = await _postRecreateTokenValidator.ValidateAsync(request);
             if (!validationResult.IsValid)
             {
                 string error = ErrorHelper.GetErrorsString(validationResult);
@@ -58,7 +66,14 @@ namespace ProjectParticipantManagement.WebAPI.Controllers
             }
 
             var result = await _authenticationRepository.ReCreateTokenAsync(request, _jwtAuthOptions.Value);
-            return Ok(result);
+            return Ok(result); 
+            
+            }
+            catch (Exception e) 
+            {
+               return BadRequest(e);
+            }
+            
         }
         #endregion
     }

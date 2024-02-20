@@ -42,8 +42,8 @@ namespace GenZStyleApp.DAL.DAO
             try
             {
                 return await _dbContext.Posts.Include(p => p.Account)
-                            .Include(p => p.Comments)
-                            .SingleOrDefaultAsync(p => p.PostId == id);
+                    .Include(p => p.Comments)
+                   .SingleOrDefaultAsync(p => p.PostId == id);
             }
             catch (Exception ex)
             {

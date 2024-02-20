@@ -18,5 +18,7 @@ namespace GenZStyleApp.DAL.Models
         public string Image { get; set; }
 
         public ICollection<Invoice> Invoices { get; set;}
+
+        public virtual ICollection<PackageRegistration> PackageRegistrations { get;}
     }
 }

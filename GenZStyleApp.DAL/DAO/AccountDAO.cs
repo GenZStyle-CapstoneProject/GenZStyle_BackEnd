@@ -62,6 +62,7 @@ namespace GenZStyleApp.DAL.DAO
             try
             {
                 return await this._dbContext.Accounts
+                                    .Include(a => a.User)
                                     .Include(u => u.Posts)
                                     .SingleOrDefaultAsync(a => a.Email.Equals(email) && a.IsActive == true );
             }

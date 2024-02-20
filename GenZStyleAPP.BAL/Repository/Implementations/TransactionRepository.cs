@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using GenZStyleApp.DAL.Enums;
 using GenZStyleApp.DAL.Models;
+using GenZStyleAPP.BAL.DTOs.Invoices;
 using GenZStyleAPP.BAL.DTOs.Transactions;
 using GenZStyleAPP.BAL.DTOs.Transactions.MoMo;
 using GenZStyleAPP.BAL.Heplers;
@@ -46,16 +47,17 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 var orderId = DateTime.Now.Ticks.ToString();
                 var wallet = await _unitOfWork.WalletDAO.GetWalletByAccountIdAsync(account.AccountId);
 
-                Transaction transaction = new Transaction
+                Invoice invoice = new Invoice
                 {
-                    TransactionDate = DateTime.Now,
-                    Amount = model.Amount,                  
-                    TransStyle = TransactionEnum.TransactionType.DEPOSIT.ToString(),
-                    status = (int)TransactionEnum.RechangeStatus.PENDING,
-                    wallet = wallet!
+                    RechargeID = orderId,
+                    Date = DateTime.Now,
+                    Total = model.Amount,
+                    PaymentType = TransactionEnum.TransactionType.DEPOSIT.ToString(),
+                    Status = (int)TransactionEnum.RechangeStatus.PENDING,
+                    Wallet = wallet!
                 };
 
-                await _unitOfWork.TransactionDAO.CreateWalletTransactionAsync(transaction);
+                await _unitOfWork.InvoiceDAO.CreateInvoiceAsync(invoice);
                 await _unitOfWork.CommitAsync();
                 #endregion
 
@@ -94,7 +96,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 if (response.IsSuccessful)
                 {
                     var responseContent = JsonConvert.DeserializeObject<PostTransactionMomoResponse>(response.Content!);
-                    var walletResponse = _mapper.Map<GetTransactionResponse>(transaction);
+                    var walletResponse = _mapper.Map<GetTransactionResponse>(invoice);
                     walletResponse.PayUrl = responseContent!.PayUrl;
                     walletResponse.Deeplink = responseContent!.Deeplink;
                     walletResponse.QrCodeUrl = responseContent!.QrCodeUrl;
@@ -112,6 +114,106 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
             {
                 string error = ErrorHelper.GetErrorString(ex.Message);
                 throw new NotFoundException(error);
+            }
+            catch (Exception ex)
+            {
+                string error = ErrorHelper.GetErrorString(ex.Message);
+                throw new Exception(error);
+            }
+        }
+        #endregion
+
+        #region Listen notification from Momo
+        public async Task<GetTransactionResponse> PaymentNotificationAsync(string id, MomoConfigModel _config)
+        {
+            try
+            {
+                #region Validation
+
+                var invoice = await _unitOfWork.InvoiceDAO.GetInvoiceByRechargeId(id);
+                if (invoice == null)
+                {
+                    throw new NotFoundException("Transaction does not exist.");
+                }
+
+                if (invoice.Status == (int)TransactionEnum.RechangeStatus.SUCCESSED ||
+                    invoice.Status == (int)TransactionEnum.RechangeStatus.FAILED)
+                {
+                    throw new BadRequestException("This transaction has been processed.");
+                }
+
+                #region Query transaction
+                var requestId = invoice.RechargeID + "id";
+                var rawData = $"accessKey={_config.AccessKey}&orderId={invoice.RechargeID}&partnerCode={_config.PartnerCode}&requestId={requestId}";
+                var signature = EncodeHelper.ComputeHmacSha256(rawData, _config.SecretKey!);
+
+                var client = new RestClient(_config.PayGate! + "/query");
+                var request = new RestRequest() { Method = Method.Post };
+                request.AddHeader("Content-Type", "application/json; charset=UTF-8");
+
+                QueryTransactionMomoRequest queryTransaction = new QueryTransactionMomoRequest
+                {
+                    partnerCode = _config.PartnerCode,
+                    requestId = requestId,
+                    orderId = invoice.RechargeID,
+                    lang = _config.Lang,
+                    signature = signature
+
+                };
+
+                request.AddParameter("application/json", JsonConvert.SerializeObject(queryTransaction), ParameterType.RequestBody);
+                var response = await client.ExecuteAsync(request);
+
+                var responseResult = JsonConvert.DeserializeObject<QueryTransactionMomoResponse>(response.Content!);
+                #endregion
+
+                // Check Amount and [Currency = fasle] 
+                if (responseResult!.Amount != invoice.Total)
+                {
+                    throw new BadRequestException("Amount of transaction and notification does not matched!");
+                }
+
+                // Check legit of signature - coming soon
+                #endregion
+
+                #region Update wallettransaction and wallet (if success)
+                // ResultCode = 0: giao dịch thành công
+                // ResultCode = 9000: giao dịch được cấp quyền (authorization) thành công
+                if (responseResult.ResultCode == 0 || responseResult.ResultCode == 9000)
+                {
+                    invoice.Status = (int)TransactionEnum.RechangeStatus.SUCCESSED;
+                    _unitOfWork.InvoiceDAO.UpdateInvoice(invoice);
+
+                    // If amount = null, amount = default value of type
+                    invoice.Wallet.Balance += responseResult.Amount.GetValueOrDefault(0m);
+                    _unitOfWork.WalletDAO.UpdateWallet(invoice.Wallet);
+                    await _unitOfWork.CommitAsync();
+
+                    return _mapper.Map<GetTransactionResponse>(invoice);
+                }
+                else if (responseResult.ResultCode == 1000)
+                {
+                    throw new BadRequestException("Transaction is initiated, waiting for user confirmation!");
+                }
+                else
+                {
+                    invoice.Status = (int)TransactionEnum.RechangeStatus.FAILED;
+                    _unitOfWork.InvoiceDAO.UpdateInvoice(invoice);
+                    await _unitOfWork.CommitAsync();
+
+                    throw new BadRequestException("Recharge failed!");
+                }
+                #endregion
+            }
+            catch (NotFoundException ex)
+            {
+                string error = ErrorHelper.GetErrorString(ex.Message);
+                throw new NotFoundException(error);
+            }
+            catch (BadRequestException ex)
+            {
+                string error = ErrorHelper.GetErrorString(ex.Message);
+                throw new BadRequestException(error);
             }
             catch (Exception ex)
             {
