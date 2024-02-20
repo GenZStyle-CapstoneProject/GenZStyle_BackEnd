@@ -43,6 +43,18 @@ using GenZStyleAPP.BAL.DTOs.Users;
 using GenZStyleAPP.BAL.DTOs.Transactions.MoMo;
 using GenZStyleAPP.BAL.DTOs.Transactions;
 using GenZStyleAPP.BAL.Validators.Transactions;
+using GenZStyleApp_API.SignalRHubs;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using GenZStyleApp.DAL.DBContext;
+using GenZStyleAPP.BAL.Models;
+using GenZStyleApp.DAL.Models;
+using GenZStyleApp_API.SignalRHubs;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using GenZStyleApp.DAL.DBContext;
+using GenZStyleAPP.BAL.Models;
+using GenZStyleApp.DAL.Models;
 using GenZStyleAPP.BAL.DTOs.Reports;
 using GenZStyleAPP.BAL.Profiles.Reports;
 using GenZStyleAPP.BAL.Validators.Reports;
@@ -187,6 +199,8 @@ namespace GenZStyleApp_API
 
 
 
+            
+            builder.Services.AddScoped<IEmailRepository, EmailRepository>();
             builder.Services.Configure<FireBaseImage>(builder.Configuration.GetSection("FireBaseImage"));
             //DI Validator
             builder.Services.AddScoped<IValidator<RegisterRequest>, RegisterValidation>();
@@ -199,8 +213,10 @@ namespace GenZStyleApp_API
             builder.Services.AddScoped<IValidator<PostTransactionRequest>, PostTransactionValidation>();
             builder.Services.AddScoped<IValidator<AddPostRequest>, AddPostValidation>();
             builder.Services.AddScoped<IValidator<UpdatePostRequest>, UpdatePostValidation>();
+            builder.Services.AddScoped<GenZStyleAPP.BAL.Models.EmailConfiguration>();
             builder.Services.AddScoped<IValidator<AddReportRequest>, AddReportValidation>();
 
+            builder.Services.AddScoped<GenZStyleAPP.BAL.Models.EmailConfiguration>();
             builder.Services.Configure<FireBaseImage>(builder.Configuration.GetSection("FireBaseImage"));
 
             // Momo config
@@ -216,12 +232,43 @@ namespace GenZStyleApp_API
                                             typeof(HashTagProfile),
                                             typeof(AccountProfile),
                                             typeof(CustomerProfile),
-                                            typeof(UserRelationProfile),
-                                            typeof(ReportProfile)
-                                            
+                                            typeof(UserRelationProfile)
                                             );
-
+            //*/ For Entity Framework
+            var configuration = builder.Configuration;
+            builder.Services.AddDbContext<GenZStyleDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnectionStringDB")));
+            builder.Services.AddSignalR();
+            //Add Config for Required Email
+            builder.Services.Configure<IdentityOptions>(
+                opts => opts.SignIn.RequireConfirmedEmail = true
+                );
+            /*//Add Email Configs
+            var emailConfig = configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
+            builder.Services.AddSingleton(emailConfig);
+            // For Identity
+            builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<GenZStyleDbContext>()
+                .AddDefaultTokenProviders();
+                                            typeof(UserRelationProfile),
+                                            typeof(ReportProfile);
+                                            
+                                            );*/
+            //*/ For Entity Framework
             
+            builder.Services.AddDbContext<GenZStyleDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnectionStringDB")));
+            builder.Services.AddSignalR();
+            //Add Config for Required Email
+            builder.Services.Configure<IdentityOptions>(
+                opts => opts.SignIn.RequireConfirmedEmail = true
+                );
+            //Add Email Configs
+            var emailConfig = configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
+            builder.Services.AddSingleton(emailConfig);
+            // For Identity
+            builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<GenZStyleDbContext>()
+                .AddDefaultTokenProviders();
+
 
 
             var app = builder.Build();
@@ -241,6 +288,7 @@ namespace GenZStyleApp_API
             app.UseAuthorization();
 
             app.MapControllers();
+            app.MapHub<ChatHub>("/Chat");
 
             app.Run();
         }

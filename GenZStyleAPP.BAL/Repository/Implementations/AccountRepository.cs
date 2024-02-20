@@ -82,5 +82,17 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
             }
         }
 
+        public async Task<Account> FindAccountByEmail(string email)
+        {
+            try
+            {
+                var account = await _unitOfWork.AccountDAO.GetAccountByEmail(email);
+                return account;
+            }catch(Exception ex) 
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
     }
 }

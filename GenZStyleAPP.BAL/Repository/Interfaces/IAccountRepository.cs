@@ -1,4 +1,5 @@
-﻿using GenZStyleAPP.BAL.DTOs.Accounts;
+﻿using GenZStyleApp.DAL.Models;
+using GenZStyleAPP.BAL.DTOs.Accounts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,5 +12,11 @@ namespace GenZStyleAPP.BAL.Repository.Interfaces
     {
         public Task<GetAccountResponse> ChangPassword(int accountId, ChangePasswordRequest changePasswordRequest);
         public Task<List<GetAccountResponse>> SearchByUserName(string username);
+
+        public  Task<Account> FindAccountByEmail(string email);
+
+
+
+
     }
 }

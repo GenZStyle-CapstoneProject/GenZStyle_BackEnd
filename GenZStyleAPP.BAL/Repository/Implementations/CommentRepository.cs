@@ -46,8 +46,9 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 throw new Exception(error);
             }
         }
-        
-                public async Task<GetCommentResponse> UpdateCommentByPostId(GetCommentRequest commentRequest ,int PostId,HttpContext httpContext )
+  
+
+        public async Task<GetCommentResponse> UpdateCommentByPostId(GetCommentRequest commentRequest ,int PostId,HttpContext httpContext )
         {
             try
             {

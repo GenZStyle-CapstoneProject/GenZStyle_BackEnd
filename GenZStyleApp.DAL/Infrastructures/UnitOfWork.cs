@@ -29,6 +29,10 @@ namespace ProjectParticipantManagement.DAL.Infrastructures
         private ReportDAO _reportDAO;
         private CollectionDAO _collectionDAO;
 
+        private MessageDAO  _messageDAO;
+        private PackageDAO _packageDAO;
+        private InvoiceDAO _invoiceDAO;
+        
 
         public UnitOfWork()
         {
@@ -46,6 +50,17 @@ namespace ProjectParticipantManagement.DAL.Infrastructures
                     _roleDAO = new RoleDAO(_dbContext);
                 }
                 return _roleDAO;
+            }
+        }
+        public MessageDAO MessageDAO
+        {
+            get
+            {
+                if (_messageDAO == null)
+                {
+                    _messageDAO = new MessageDAO(_dbContext);
+                }
+                return _messageDAO;
             }
         }
         public TransactionDAO TransactionDAO
@@ -200,6 +215,7 @@ namespace ProjectParticipantManagement.DAL.Infrastructures
             }
         }
 
+        
         public CollectionDAO CollectionDAO
         {
             get
@@ -211,47 +227,28 @@ namespace ProjectParticipantManagement.DAL.Infrastructures
                 return this._collectionDAO;
             }
         }
-
-
-
-
-
-        /*public EmployeeDAO EmployeeDAO
+        public PackageDAO packageDAO
         {
             get
             {
-                if(this._employeeDAO == null)
+                if (_packageDAO == null)
                 {
-                    this._employeeDAO = new EmployeeDAO(this._dbContext);
+                    _packageDAO = new PackageDAO(_dbContext);
                 }
-                return this._employeeDAO;
+                return _packageDAO;
             }
         }
-
-        public DepartmentDAO DepartmentDAO
+        public InvoiceDAO InvoiceDAO
         {
             get
             {
-                if(this._departmentDAO == null)
+                if (_invoiceDAO == null)
                 {
-                    this._departmentDAO = new DepartmentDAO(this._dbContext);
+                    _invoiceDAO = new InvoiceDAO(_dbContext);
                 }
-                return this._departmentDAO;
+                return _invoiceDAO;
             }
         }
-
-        public CompanyProjectDAO CompanyProjectDAO
-        {
-            get
-            {
-                if(this._companyProjectDAO == null)
-                {
-                    this._companyProjectDAO = new CompanyProjectDAO(this._dbContext);
-                }
-                return this._companyProjectDAO;
-            }
-        }*/
-
         public void Commit()
         {
             _dbContext.SaveChanges();

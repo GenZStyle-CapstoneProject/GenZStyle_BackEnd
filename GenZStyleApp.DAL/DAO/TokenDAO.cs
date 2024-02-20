@@ -54,7 +54,22 @@ namespace BMOS.DAL.DAOs
         {
             try
             {
-                await this._dbContext.Tokens.AddAsync(token);
+                var existingToken = await this._dbContext.Tokens.FindAsync(token.ID);
+
+
+                if (existingToken != null)
+                {
+                    // Cập nhật thông tin của existingToken nếu cần
+                    this._dbContext.Entry(existingToken).CurrentValues.SetValues(token);
+                }
+                else
+                {
+                    // Thêm mới nếu không có đối tượng có cùng ID
+                    await this._dbContext.Tokens.AddAsync(token);
+                    
+                }
+                
+                
             }
             catch (Exception ex)
             {

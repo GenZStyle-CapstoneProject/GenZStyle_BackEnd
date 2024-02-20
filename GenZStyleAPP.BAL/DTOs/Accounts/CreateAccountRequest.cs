@@ -14,5 +14,6 @@ namespace GenZStyleAPP.BAL.DTOs.Accounts
         public string Username { get; set; }
         public string PasswordHash { get; set; }
         
+        public string RePassWord { get; set; }
     }
 }

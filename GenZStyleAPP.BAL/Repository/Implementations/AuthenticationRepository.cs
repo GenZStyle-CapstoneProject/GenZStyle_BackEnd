@@ -59,12 +59,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
             {
                 string error = ErrorHelper.GetErrorString(ex.Message);
                 throw new BadRequestException(error);
-            }
-            catch (Exception ex)
-            {
-                string error = ErrorHelper.GetErrorString(ex.Message);
-                throw new Exception(error);
-            }
+            }            
         }
         private bool IsAdmin(GetLoginRequest account)
         {
@@ -119,7 +114,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 string refreshToken = GenerateRefreshToken();
                 Token refreshTokenModel = new Token
                 {
-                   
+                    ID = account.AccountId,
                     JwtID = token.Id,
                     RefreshToken = refreshToken,
                     CreatedDate = DateTime.UtcNow,

@@ -1,4 +1,5 @@
 ﻿using BMOS.BAL.Authorization;
+using Firebase.Auth;
 using FluentValidation;
 using FluentValidation.Results;
 using GenZStyleApp.DAL.Models;
@@ -8,6 +9,9 @@ using GenZStyleAPP.BAL.DTOs.Users;
 using GenZStyleAPP.BAL.Repository.Interfaces;
 using GenZStyleAPP.BAL.Validators.Users;
 using Microsoft.AspNetCore.Http;
+using GenZStyleAPP.BAL.Models;
+using GenZStyleAPP.BAL.Repository.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
@@ -15,27 +19,39 @@ using Microsoft.Extensions.Options;
 using ProjectParticipantManagement.BAL.Exceptions;
 using ProjectParticipantManagement.BAL.Heplers;
 using System.Text.Json;
+using Microsoft.AspNet.SignalR.Hosting;
+using GenZStyleApp_API.Models;
+
 namespace GenZStyleApp_API.Controllers
 {
-    //[Route("api/[controller]/[action]")]
-    //[ApiController]
+    [Route("api/[controller]/[action]")]
+    [ApiController]
     public class UsersController : ODataController
     {
+        private readonly UserManager<IdentityUser> _userManager;
+        private IAccountRepository _AccountRepository;
         private IUserRepository _userRepository;
         private IValidator<RegisterRequest> _registerValidator;
         private IValidator<UpdateUserRequest> _updateUserValidator;
         private IOptions<FireBaseImage> _firebaseImageOptions;
-        public UsersController(IUserRepository userRepository,
+        private readonly IEmailRepository _emailRepository;
+
+        public UsersController(UserManager<IdentityUser> userManager,
+            IUserRepository userRepository,
+            IAccountRepository accountRepository,
+             IEmailRepository emailRepository,
             IValidator<RegisterRequest> registerValidator,
             IValidator<UpdateUserRequest> updateUserValidator,
             IOptions<FireBaseImage> firebaseImageOptions
             )
-        {
-
+        {   
+            this._emailRepository = emailRepository;
+            this._userManager = userManager;
             this._userRepository = userRepository;
             this._registerValidator = registerValidator;
             this._updateUserValidator = updateUserValidator;
             this._firebaseImageOptions = firebaseImageOptions; 
+            this._AccountRepository = accountRepository;
         }
 
         #region Register
@@ -43,16 +59,52 @@ namespace GenZStyleApp_API.Controllers
         [EnableQuery]
         
         public async Task<IActionResult> Post([FromForm] RegisterRequest registerRequest)
-       {
-            ValidationResult validationResult = await _registerValidator.ValidateAsync(registerRequest);
-            if (!validationResult.IsValid)
+       {    try 
             {
-                string error = ErrorHelper.GetErrorsString(validationResult);
-                throw new BadRequestException(error);
+                ValidationResult validationResult = await _registerValidator.ValidateAsync(registerRequest);
+                    if (!validationResult.IsValid)
+                    {
+                        string error = ErrorHelper.GetErrorsString(validationResult);
+                        throw new BadRequestException(error);
+                    }
+                         GetUserResponse customer = await this._userRepository
+                        .Register(_firebaseImageOptions.Value, registerRequest);
+
+                IdentityUser user = new()
+                {
+                    Email = registerRequest.Email,
+                    SecurityStamp = Guid.NewGuid().ToString(),
+                    UserName = registerRequest.UserName,
+                    TwoFactorEnabled = true
+                };
+                //Add Token to Verify the email....
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var confirmationLink = Url.Action(nameof(ConfirmEmail), "Users", new { token, email = user.Email }, Request.Scheme);
+                var message = new GenZStyleAPP.BAL.Models.Message(new string[] { user.Email! }, "Confirmation email link", confirmationLink!);
+                _emailRepository.SendEmail(message);
+                
+                return StatusCode(StatusCodes.Status200OK,
+                    new Response { Status ="Success" ,Message = $"User created & Email sent to {user.Email} Successfully" });
             }
-            GetUserResponse customer = await this._userRepository
-                .Register(_firebaseImageOptions.Value, registerRequest);
-            return Ok();
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            
+        }
+        [HttpGet("ConfirmEmail")]
+        public async Task<IActionResult> ConfirmEmail(string token, string email)
+        {
+            var user = await _AccountRepository.FindAccountByEmail(email);
+            if (user != null)
+            {
+                
+                    return StatusCode(StatusCodes.Status200OK,
+                      new Response { Status = "Success", Message = "Email Verified Successfully" });
+                
+            }
+            return StatusCode(StatusCodes.Status500InternalServerError,
+                       new Response { Status = "Error", Message = "This User Doesnot exist!" });
         }
         #endregion
         #region Follower
@@ -72,7 +124,7 @@ namespace GenZStyleApp_API.Controllers
         {
             try
             {
-                List<User> users = await this._userRepository.GetUsersAsync();
+                List<GenZStyleApp.DAL.Models.User> users = await this._userRepository.GetUsersAsync();
                 return Ok(new
                 {
                     Status = "Get List Success",
@@ -92,7 +144,7 @@ namespace GenZStyleApp_API.Controllers
         {
             try
             {
-                User user = await this._userRepository.GetActiveUser(userId);
+                GenZStyleApp.DAL.Models.User user = await this._userRepository.GetActiveUser(userId);
 
                 // Kiểm tra nếu user không tồn tại
                 if (user == null)
@@ -128,7 +180,7 @@ namespace GenZStyleApp_API.Controllers
                     string error = ErrorHelper.GetErrorsString(validationResult);
                     throw new BadRequestException(error);
                 }
-                User user = await this._userRepository.UpdateUserProfileByAccountIdAsync(key,
+                GenZStyleApp.DAL.Models.User user = await this._userRepository.UpdateUserProfileByAccountIdAsync(key,
                                                                                                                     _firebaseImageOptions.Value,
                                                                                                                     updateUserRequest);
 
@@ -169,7 +221,7 @@ namespace GenZStyleApp_API.Controllers
         {
             try
             {
-                User user = await this._userRepository.BanUserAsync(key);
+                GenZStyleApp.DAL.Models.User user = await this._userRepository.BanUserAsync(key);
                 if(user != null)
                 {
                     return Ok(new
@@ -204,7 +256,7 @@ namespace GenZStyleApp_API.Controllers
         {
             try
             {
-                User user = await this._userRepository.GetUserByAccountIdAsync(key);
+                GenZStyleApp.DAL.Models.User user = await this._userRepository.GetUserByAccountIdAsync(key);
 
                 // Kiểm tra xem user có tồn tại hay không
                 if (user == null)
