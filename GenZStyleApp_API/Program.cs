@@ -200,6 +200,7 @@ namespace GenZStyleApp_API
             builder.Services.AddScoped<IValidator<AddPostRequest>, AddPostValidation>();
             builder.Services.AddScoped<IValidator<UpdatePostRequest>, UpdatePostValidation>();
             builder.Services.AddScoped<IValidator<AddReportRequest>, AddReportValidation>();
+            builder.Services.AddScoped<IValidator<AddReporterRequest>, AddReporterValidation>();
 
             builder.Services.Configure<FireBaseImage>(builder.Configuration.GetSection("FireBaseImage"));
 
