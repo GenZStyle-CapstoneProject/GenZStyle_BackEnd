@@ -12,7 +12,8 @@ namespace GenZStyleAPP.BAL.DTOs.Reports
     {
         public int Id { get; set; }
         public int AccountId { get; set; }
-        public int PostId { get; set; }
+        public int? PostId { get; set; }
+        public int? ReporterId { get; set; }
         public string ReportName { get; set; }
         public bool IsReport { get; set; }
         [ForeignKey("AccountId")]
