@@ -1,5 +1,7 @@
 ﻿using GenZStyleApp.DAL.Models;
 using GenZStyleApp.DAL.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -8,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace GenZStyleApp.DAL.DBContext
 {
@@ -27,27 +30,27 @@ namespace GenZStyleApp.DAL.DBContext
         public DbSet<User> Users { get; set; }
         public DbSet<Like> Likes { get; set; }
         public DbSet<Post> Posts { get; set; }
-        public DbSet<Payment> Payments { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<Wallet> Wallets { get; set; }
         public DbSet<Notification> Notifications { get; set; }
-
         public DbSet<Invoice> Invoices { get; set; }
         public DbSet<Package> Packages { get; set; }
         public DbSet<Inbox> Inboxes { get; set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<InboxPaticipant> InboxPaticipants { get; set; }
         public DbSet<Comment> Comments { get; set; }
-        public DbSet<Category> Categories { get; set; }
-        public DbSet<FashionItem> FashionItems { get; set; }
+        public DbSet<Category> Categories { get; set; }       
         public DbSet<UserRelation> UserRelations { get; set; }
-        public DbSet<Style> Styles { get; set; }
-        public DbSet<Product> Products { get; set; }
-        public DbSet<StyleFashion> StyleFashions { get; set; }
+        public DbSet<Style> Styles { get; set; }        
         public DbSet<Token> Tokens { get; set; }
         public DbSet<Blogger> Bloggers { get; set; }
         public DbSet<Hashtag> Hashtags { get; set; }
-        public DbSet<HashPost> HashPost { get; set; }
+        public DbSet<HashPost> HashPosts { get; set; }
+        public DbSet<PackageRegistration> packageRegistrations { get; set; }
+        public DbSet<Collection> Collections { get; set; }
+        public DbSet<Report> Reports { get; set; }
+
+
 
 
 
@@ -77,7 +80,7 @@ namespace GenZStyleApp.DAL.DBContext
         {
             modelBuilder.Entity<Account>(e =>
             {
-                e.ToTable("Account");
+                e.ToTable("Account");                
                 e.Property(e => e.AccountId)
                 .ValueGeneratedOnAdd();
                 e.Property(acc => acc.Username).IsUnicode(true).HasMaxLength(50);
@@ -112,6 +115,14 @@ namespace GenZStyleApp.DAL.DBContext
                 Entity.Property(r => r.RoleName).IsUnicode(true).HasMaxLength(50);
 
             });
+            
+
+            
+            /*modelBuilder.Entity<PackageRegistration>(Entity =>
+            {
+                Entity.HasNoKey();
+
+            });*/
 
             modelBuilder.Entity<Hashtag>(Entity =>
             {
@@ -123,7 +134,7 @@ namespace GenZStyleApp.DAL.DBContext
 
             modelBuilder.Entity<Token>(Entity =>
             {
-                Entity.ToTable("Token");
+                Entity.ToTable("Token");                
                 Entity.Property(r => r.JwtID).IsUnicode(true).HasMaxLength(258);
                 Entity.Property(r => r.RefreshToken).IsUnicode(true).HasMaxLength(258);
                 Entity.Property(r => r.CreatedDate).HasColumnType("datetime");
@@ -185,7 +196,7 @@ namespace GenZStyleApp.DAL.DBContext
 
                 e.HasOne(In => In.Package)
                 .WithMany(In => In.Invoices)
-                .HasForeignKey(In => In.packageId)
+                .HasForeignKey(In => In.PackageId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
 
 
@@ -202,20 +213,7 @@ namespace GenZStyleApp.DAL.DBContext
 
             });
 
-            modelBuilder.Entity<Payment>(Entity =>
-            {
-                Entity.ToTable("Payment");
-                Entity.Property(pa => pa.PaymentId)
-                .ValueGeneratedOnAdd();
-                Entity.Property(pa => pa.PaymentMethod).IsUnicode(true).HasMaxLength(50);
-                Entity.Property(pa => pa.Amount).HasColumnType("decimal(18, 2)").IsRequired();
-                Entity.Property(pa => pa.PaymentDate).HasColumnType("datetime");
-
-                Entity.HasOne(pa => pa.Invoice)
-                .WithMany(pa => pa.Payments)
-                .HasForeignKey(pa => pa.InvoiceId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
-            });
+            
 
             modelBuilder.Entity<Transaction>(e =>
             {
@@ -227,15 +225,7 @@ namespace GenZStyleApp.DAL.DBContext
                 e.Property(us => us.TransactionDate).HasColumnType("datetime");
 
 
-                e.HasOne(us => us.Payment)
-                .WithMany(us => us.Transactions)
-                .HasForeignKey(us => us.PaymentId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
-
-                e.HasOne(us => us.Payment)
-                .WithMany(us => us.Transactions)
-                .HasForeignKey(us => us.PaymentId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+                
             }
             );
 
@@ -337,7 +327,7 @@ namespace GenZStyleApp.DAL.DBContext
                 Entity.Property(m => m.InboxId)
                 .ValueGeneratedOnAdd();
 
-                Entity.Property(m => m.LastMessage).IsUnicode(true).HasMaxLength(50);
+                
 
                 Entity.HasOne(m => m.Account)
                 .WithOne(m => m.Inbox)
@@ -380,30 +370,26 @@ namespace GenZStyleApp.DAL.DBContext
                 
             });
 
-            modelBuilder.Entity<FashionItem>(Entity =>
+            /*modelBuilder.Entity<FashionItem>(Entity =>
             {
                 Entity.ToTable("FashionItem");
                 Entity.Property(fa => fa.FashionId)
                 .ValueGeneratedOnAdd();
                 Entity.Property(fa => fa.fashionName).IsUnicode(true).HasMaxLength(50);
                 Entity.Property(fa => fa.fashionDescription).IsUnicode(true).HasMaxLength(50);
-                Entity.Property(fa => fa.Image).IsUnicode(true).HasMaxLength(50);
+                Entity.Property(fa => fa.Image).IsUnicode(true).HasMaxLength(int.MaxValue);
                 Entity.Property(fa => fa.Cost).HasColumnType("decimal(18, 2)").IsRequired();
 
-                Entity.HasOne(fa => fa.Category)
-                .WithMany(fa => fa.FashionItems)
-                .HasForeignKey(fa => fa.CategoryId);
+                Entity.HasOne(fa => fa.Category);
+                
+                
 
-                Entity.HasOne(fa => fa.Post)
-                .WithMany(fa => fa.FashionItems)
-                .HasForeignKey(fa => fa.PostId);
+                
 
-            });
+            });*/
             modelBuilder.Entity<Category>(Entity =>
             {
-                Entity.ToTable("Category");
-                Entity.Property(fa => fa.CategoriesId)
-                .ValueGeneratedOnAdd();
+                Entity.ToTable("Category");               
                 Entity.Property(fa => fa.CategoryName).IsUnicode(true).HasMaxLength(50);
                 Entity.Property(fa => fa.CategoryDescription).IsUnicode(true).HasMaxLength(50);
 
@@ -456,24 +442,7 @@ namespace GenZStyleApp.DAL.DBContext
 
 
             });
-            modelBuilder.Entity<StyleFashion>(Entity =>
-            {
-                Entity.ToTable("StyleFashion");
-                Entity.HasKey(sf => new { sf.StyleId, sf.FashionId });
-
-                Entity.Property(sf => sf.CreateAt).HasColumnType("datetime");
-                Entity.Property(sf => sf.UpdateAt).HasColumnType("datetime");
-
-                modelBuilder.Entity<StyleFashion>()
-                .HasOne(it => it.FashionItem)
-                .WithMany(a => a.StyleFashions)
-                .HasForeignKey(it => it.FashionId);
-
-                modelBuilder.Entity<StyleFashion>()
-                    .HasOne(it => it.Style)
-                    .WithMany(b => b.StyleFashions)
-                    .HasForeignKey(it => it.StyleId);
-            });
+            
             modelBuilder.Entity<HashPost>(Entity =>
             {
                 Entity.ToTable("HashPost");

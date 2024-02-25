@@ -14,19 +14,19 @@ namespace GenZStyleAPP.BAL.Validators.Users
         private const int MAX_BYTES = 2048000;
         public RegisterValidation()
         {
-            #region FullName
+            /*#region FullName
             RuleFor(c => c.FullName)
                  .NotEmpty().WithMessage("{PropertyName} is empty.")
                  .NotNull().WithMessage("{PropertyName} is null.")
                  .Length(5, 80).WithMessage("{PropertyName} from {MinLength} to {MaxLength} characters.");
-            #endregion
+            #endregion*/
 
-            #region Address
+            /*#region Address
             RuleFor(c => c.Address)
                  .NotEmpty().WithMessage("{PropertyName} is empty.")
                  .NotNull().WithMessage("{PropertyName} is null.")
                  .Length(5, 120).WithMessage("{PropertyName} from {MinLength} to {MaxLength} characters.");
-            #endregion
+            #endregion*/
 
             #region Email
             RuleFor(c => c.Email)
@@ -50,10 +50,10 @@ namespace GenZStyleAPP.BAL.Validators.Users
                  .Length(8, 10).WithMessage("{PropertyName} from {MinLength} to {MaxLength} characters.");
             #endregion*/
 
-            #region Gender
+            /*#region Gender
             RuleFor(c => c.Gender)
                 .Must(x => x == true || x == false).WithMessage("{PropertyName} must be either true or false.");
-            #endregion
+            #endregion*/
 
             #region BirthDate
             RuleFor(c => c.Dob)
@@ -63,16 +63,16 @@ namespace GenZStyleAPP.BAL.Validators.Users
                    .Must(date => DateHelper.IsValidBirthday(date)).WithMessage("{PropertyName} must greater than 13 years old.");
             #endregion
 
-            #region Avatar
+            /*#region Avatar
             RuleFor(p => p.Avatar)
                    .NotEmpty().WithMessage("{PropertyName} is empty.")
                    .NotNull().WithMessage("{PropertyName} is null.");
             RuleFor(p => p.Avatar)
                    .ChildRules(pro => pro.RuleFor(img => img.Length).ExclusiveBetween(0, MAX_BYTES)
                    .WithMessage($"Image is required file length greater than 0 and less than {MAX_BYTES / 1024 / 1024} MB"));
-            /*RuleFor(p => p.Avatar)
-                   .ChildRules(pro => pro.RuleFor(img => img.FileName).Must(FileHelper.HaveSupportedFileType).WithMessage("Avatar is required extension type .png, .jpg, .jpeg"));*/
-            #endregion
+            *//*RuleFor(p => p.Avatar)
+                   .ChildRules(pro => pro.RuleFor(img => img.FileName).Must(FileHelper.HaveSupportedFileType).WithMessage("Avatar is required extension type .png, .jpg, .jpeg"));*//*
+            #endregion*/
         }
     }
 }

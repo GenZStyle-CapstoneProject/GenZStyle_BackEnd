@@ -1,10 +1,11 @@
 ﻿using GenZStyleApp.DAL.Models;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GenZStyleApp.DAL.Models
 {
-    public class Account
+    public class Account 
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 
@@ -15,8 +16,8 @@ namespace GenZStyleApp.DAL.Models
 
         public int WalletId { get; set; }
         public string Email { get; set; }
-        public string Firstname { get; set; }
-        public string Lastname { get; set; }
+        public string? Firstname { get; set; }
+        public string? Lastname { get; set; }
         public string Username { get; set; }
         public string PasswordHash { get; set; }
         public bool IsVip { get; set; }
@@ -40,6 +41,8 @@ namespace GenZStyleApp.DAL.Models
 
         public virtual ICollection<InboxPaticipant> InboxPaticipants { get; set; }
         public virtual ICollection<Style> Styles { get; set; }
+        [NotMapped]
+        public ICollection<PackageRegistration> PackageRegistrations { get; set; }
 
         
 

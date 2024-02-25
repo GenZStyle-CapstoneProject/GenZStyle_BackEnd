@@ -11,8 +11,9 @@ namespace GenZStyleApp.DAL.Models
 {
     public class Token
     {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        
         public int ID { get; set; }
+        /*public int AccountId { get; set; }*/
         public string JwtID { get; set; }
         public string RefreshToken { get; set; }
         public DateTime CreatedDate { get; set; }
