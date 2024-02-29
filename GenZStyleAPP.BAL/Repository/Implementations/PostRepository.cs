@@ -192,39 +192,43 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 #endregion
 
                 // Process hashtags
-                foreach (string hashtagName in addPostRequest.Hashtags)
+                if (addPostRequest.Hashtags != null && addPostRequest.Hashtags.Any())
                 {
-                    List<Hashtag> existingHashtags = await _unitOfWork.HashTagDAO.SearchByHashTagName(hashtagName);
-
-                    if (existingHashtags == null || existingHashtags.Count == 0)
+                    foreach (string hashtagName in addPostRequest.Hashtags)
                     {
-                        Hashtag newHashtag = new Hashtag
+                        List<Hashtag> existingHashtags = await _unitOfWork.HashTagDAO.SearchByHashTagName(hashtagName);
+
+                        if (existingHashtags == null || existingHashtags.Count == 0)
                         {
-                            Name = hashtagName,
-                            // Set other properties as needed
-                        };
+                            Hashtag newHashtag = new Hashtag
+                            {
+                                Name = hashtagName,
+                                // Set other properties as needed
+                            };
 
-                        existingHashtags = new List<Hashtag> { newHashtag };
-                    }
+                            existingHashtags = new List<Hashtag> { newHashtag };
+                        }
 
-                    if (post.HashPosts == null)
-                    {
-                        post.HashPosts = new List<HashPost>();
-                    }
-
-                    foreach (Hashtag existingHashtag in existingHashtags)
-                    {
-                        HashPost hashPost = new HashPost
+                        if (post.HashPosts == null)
                         {
-                            Post = post,
-                            Hashtag = existingHashtag,
-                            CreateAt = DateTime.Now,
-                            UpdateAt = DateTime.Now
-                        };
+                            post.HashPosts = new List<HashPost>();
+                        }
 
-                        post.HashPosts.Add(hashPost);
+                        foreach (Hashtag existingHashtag in existingHashtags)
+                        {
+                            HashPost hashPost = new HashPost
+                            {
+                                Post = post,
+                                Hashtag = existingHashtag,
+                                CreateAt = DateTime.Now,
+                                UpdateAt = DateTime.Now
+                            };
+
+                            post.HashPosts.Add(hashPost);
+                        }
                     }
                 }
+
 
 
                 #endregion

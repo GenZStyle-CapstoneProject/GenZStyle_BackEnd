@@ -13,6 +13,6 @@ namespace GenZStyleAPP.BAL.DTOs.Posts
         //public int AccountId { get; set; }
         public string Content { get; set; }
         public IFormFile Image { get; set; }
-        public List<string> Hashtags { get; set; }
+        public List<string>? Hashtags { get; set; }
     }
 }

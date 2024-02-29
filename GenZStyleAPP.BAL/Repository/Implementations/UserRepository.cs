@@ -114,7 +114,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                     IsActive = true,
                     IsVip = true,
                 };
-                await _unitOfWork.AccountDAO.AddAccountAsync(account);
+                
 
                 // assign registerRequest to user
                 User user = new User
@@ -138,17 +138,20 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 Tuple<string, string> result = await FileHelper.UploadImage(fileStream, "User");
                 user.AvatarUrl = result.Item1; 
                 }
-                
-                
-                
+
+
+
                 Wallet wallet = new Wallet()
-                    {
-                        Account = account,
-                        Balance = 0,
-                        CreatDate = DateTime.Now 
-                    };
+                {
+                    Account = account,
+                    Balance = 0,
+                    CreatDate = DateTime.Now,
+                    
+                };
+                await _unitOfWork.WalletDAO.CreateWalletAsync(wallet);               
+                await _unitOfWork.AccountDAO.AddAccountAsync(account);
                 await _unitOfWork.UserDAO.AddNewUser(user);
-                await this._unitOfWork.WalletDAO.CreateWalletAsync(wallet);
+                
 
                 
                 //Save to Database

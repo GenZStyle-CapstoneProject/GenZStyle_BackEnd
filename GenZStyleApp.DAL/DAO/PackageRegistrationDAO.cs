@@ -8,26 +8,25 @@ using System.Threading.Tasks;
 
 namespace GenZStyleApp.DAL.DAO
 {
-    public class TransactionDAO
+    public class PackageRegistrationDAO
     {
         private GenZStyleDbContext _dbContext;
-        public TransactionDAO(GenZStyleDbContext dbContext)
+        public PackageRegistrationDAO(GenZStyleDbContext dbContext)
         {
             this._dbContext = dbContext;
         }
 
-        #region Create wallet transaction
-        public async Task CreateWalletTransactionAsync(Transaction wallet)
+
+        public async Task AddNewPackageRegistration(PackageRegistration packageRegistration)
         {
             try
             {
-                await this._dbContext.Transactions.AddAsync(wallet);
+                await _dbContext.packageRegistrations.AddAsync(packageRegistration);
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
         }
-        #endregion
     }
 }

@@ -19,10 +19,12 @@ namespace GenZStyleApp_API.Controllers
 
 
         public TransactionsController (IOptions<MomoConfigModel> optionsMomo,
-                                        IValidator<PostTransactionRequest> postTransactionValidator)
+                                        IValidator<PostTransactionRequest> postTransactionValidator,
+                                        ITransactionRepository transactionRepository)
         {
             _optionsMomo = optionsMomo;
             _postTransactionValidator = postTransactionValidator;
+            _transactionRepository = transactionRepository;
         }
         #region Creat wallet transaction(Momo)
         [HttpPost("odata/WalletTransactions/CreateMomoTransaction")]

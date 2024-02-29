@@ -12,15 +12,11 @@ namespace GenZStyleApp.DAL.Models
         public int Id { get; set; }
 
         [ForeignKey("AccountId")]
-        public int AccountId { get; set; }
-        
+        public int AccountId { get; set; }        
         public Account? Account { get; set; }
         [ForeignKey("CategoryId")]
-        public int CategoryId { get; set; }
-        
-        public Category? Category { get; set; }
-        
-        
+        public int CategoryId { get; set; }        
+        public Category? Category { get; set; }                
         public string Name { get; set; }
         public string Image_url { get; set; }
         public int Type { get; set; }

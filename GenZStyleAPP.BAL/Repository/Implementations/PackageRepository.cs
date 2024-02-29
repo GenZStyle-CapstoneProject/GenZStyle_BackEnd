@@ -35,8 +35,8 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
         {
             try
             {   var role = await _unitOfWork.RoleDAO.GetRoleAsync((int)RoleEnum.Role.Blogger);
-                var Package = await _unitOfWork.packageDAO.GetPackageByIdAsync(PackageId);
-                if (Package == null)
+                var Packages = await _unitOfWork.packageDAO.GetPackageByIdAsync(PackageId);
+                if (Packages == null)
                 {
                     throw new NotFoundException("Package does not exist");
                 }
@@ -48,15 +48,35 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 var user = await _unitOfWork.UserDAO.GetUserByEmailAsync(emailFromClaim);
                 var walletCustomer = await _unitOfWork.WalletDAO.GetWalletByAccountIdAsync(account.AccountId);
 
-                var registrationFee = Package.Cost; 
+                var registrationFee = Packages.Cost; 
 
                 if (walletCustomer.Balance < registrationFee)
                 {
                     throw new BadRequestException("Your account balance is not enough for package registration.");
                 }
+                // Trừ số dư ví của khách hàng
+                walletCustomer.Balance -= registrationFee;
+                _unitOfWork.WalletDAO.UpdateWallet(walletCustomer);
+
+                // Update role 
+                user.Role = role; // Change to the new role
+                _unitOfWork.UserDAO.UpdateUser(user);
+                // Lưu thông tin đăng ký gói dịch vụ vào cơ sở dữ liệu
+                var packageRegistration = new PackageRegistration
+                {   
+                    AccountId = account.AccountId,
+                    PackageId = PackageId,
+                    RegistrationDate = DateTime.Now,
+                    Account = account,
+                    Package = Packages
+                    // Các thông tin khác của đăng ký gói dịch vụ nếu cần
+                };
                 // Tạo giao dịch ví cho đăng ký gói dịch vụ
                 var registrationTransaction = new Invoice
                 {
+                    AccountId = account.AccountId,
+                    WalletId = walletCustomer.WalletId,
+                    PackageId = PackageId,
                     RechargeID = DateTime.Now.Ticks.ToString(),
                     Date = DateTime.Now,
                     Total = registrationFee,
@@ -65,36 +85,16 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                     Status = (int)TransactionEnum.RechangeStatus.SUCCESSED,
                     Wallet = walletCustomer
                 };
-
                 // Thực hiện ghi log và cập nhật số dư ví
                 await _unitOfWork.InvoiceDAO.CreateInvoiceAsync(registrationTransaction);
+                /*Packages.PackageRegistrations.Add(packageRegistration);*/
 
-                // Trừ số dư ví của khách hàng
-                walletCustomer.Balance -= registrationFee;
-                _unitOfWork.WalletDAO.UpdateWallet(walletCustomer);
-
-                // Update role 
-                user.Role = role; // Change to the new role
-                _unitOfWork.UserDAO.UpdateUser(user);
-
-                
-
-                // Lưu thông tin đăng ký gói dịch vụ vào cơ sở dữ liệu
-                var packageRegistration = new PackageRegistration
-                {
-                    AccountId = account.AccountId,
-                    PackageId = PackageId,
-                    RegistrationDate = DateTime.Now
-                    // Các thông tin khác của đăng ký gói dịch vụ nếu cần
-                };
-                Package.PackageRegistrations.Add(packageRegistration);
-
-                //await _unitOfWork.PackageRegistrationDAO.CreatePackageRegistrationAsync(packageRegistration);
+                await _unitOfWork.PackageRegistrationDAO.AddNewPackageRegistration(packageRegistration);
                 
                 // Save and update changes in the database
                 await _unitOfWork.CommitAsync();
                 // Trả về thông tin gói dịch vụ sau khi đăng ký thành công
-                return _mapper.Map<GetPackageResponse>(Package);
+                return _mapper.Map<GetPackageResponse>(Packages);
 
 
             }

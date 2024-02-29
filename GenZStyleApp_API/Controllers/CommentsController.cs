@@ -34,7 +34,7 @@ namespace GenZStyleApp_API.Controllers
             List<GetCommentResponse> result = await _commentRepository.GetCommentByPostId(PostId);
             return Ok(result);
         }
-
+        
         [EnableQuery]
         [HttpPost("odata/Comments/{key}")]
 

@@ -33,8 +33,8 @@ namespace GenZStyleApp.DAL.DAO
         {
             try
             {
-                return await this._dbContext.Wallets.Include(w => w.Account).ThenInclude(a => a.AccountId == accountId)
-                                                    .SingleOrDefaultAsync();
+                return await this._dbContext.Wallets.Where(a => a.Account.AccountId == accountId)
+                                                                            .SingleOrDefaultAsync();
                                                         
 
             }

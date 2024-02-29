@@ -156,7 +156,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
             }
         }
 
-        private async Task CheckAndDeletePost(int postId)
+        private async Task CheckAndDeletePost(int? postId)
         {
             using (var scope = _serviceProvider.CreateScope())
             {
