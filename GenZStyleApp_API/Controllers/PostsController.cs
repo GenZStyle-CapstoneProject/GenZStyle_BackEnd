@@ -163,7 +163,8 @@ namespace GenZStyleApp_API.Controllers
                 return Ok(new
                 {
                     Status = "Add Post Success",
-                    Data = Created(post)
+                    Data = Created(post),
+                    
                 });
             }
             catch (Exception ex)
