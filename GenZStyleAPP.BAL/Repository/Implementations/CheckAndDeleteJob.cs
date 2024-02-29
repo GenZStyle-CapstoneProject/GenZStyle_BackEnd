@@ -3,7 +3,7 @@ using System;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
-using GenZStyleApp.DAL.DBContext;
+using GenZStyleApp.DAL.Models;
 //using YourNamespace.Models;
 
 

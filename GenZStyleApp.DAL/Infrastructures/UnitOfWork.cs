@@ -1,6 +1,6 @@
 ﻿using BMOS.DAL.DAOs;
 using GenZStyleApp.DAL.DAO;
-using GenZStyleApp.DAL.DBContext;
+using GenZStyleApp.DAL.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

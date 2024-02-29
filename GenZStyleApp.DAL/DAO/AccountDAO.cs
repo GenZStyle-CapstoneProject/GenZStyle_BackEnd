@@ -1,5 +1,4 @@
-﻿using GenZStyleApp.DAL.DBContext;
-using GenZStyleApp.DAL.Enums;
+﻿using GenZStyleApp.DAL.Enums;
 using GenZStyleApp.DAL.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
