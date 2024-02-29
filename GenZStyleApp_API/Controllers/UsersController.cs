@@ -19,7 +19,7 @@ using Microsoft.Extensions.Options;
 using ProjectParticipantManagement.BAL.Exceptions;
 using ProjectParticipantManagement.BAL.Heplers;
 using System.Text.Json;
-using Microsoft.AspNet.SignalR.Hosting;
+
 using GenZStyleApp_API.Models;
 
 namespace GenZStyleApp_API.Controllers
