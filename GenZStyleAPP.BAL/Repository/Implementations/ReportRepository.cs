@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using GenZStyleApp.BAL.Helpers;
-using GenZStyleApp.DAL.DBContext;
 using GenZStyleApp.DAL.Models;
 using GenZStyleAPP.BAL.DTOs.FireBase;
 using GenZStyleAPP.BAL.DTOs.Posts;
@@ -201,7 +200,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
             }
         }
 
-        private async Task CheckAndDeletePost(int postId)
+        private async Task CheckAndDeletePost(int? postId)
         {
             using (var scope = _serviceProvider.CreateScope())
             {

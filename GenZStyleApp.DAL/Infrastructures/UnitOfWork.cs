@@ -1,6 +1,6 @@
 ﻿using BMOS.DAL.DAOs;
 using GenZStyleApp.DAL.DAO;
-using GenZStyleApp.DAL.DBContext;
+using GenZStyleApp.DAL.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +24,6 @@ namespace ProjectParticipantManagement.DAL.Infrastructures
         private CommentDAO _commentDAO;
         private NotificationDAO _notificationDAO;
         private UserRelationDAO  _userRelationDAO;
-        private TransactionDAO  _transactionDAO;
         private CategoryDAO _categoryDAO;
         private ReportDAO _reportDAO;
         private CollectionDAO _collectionDAO;
@@ -32,6 +31,7 @@ namespace ProjectParticipantManagement.DAL.Infrastructures
         private MessageDAO  _messageDAO;
         private PackageDAO _packageDAO;
         private InvoiceDAO _invoiceDAO;
+        private PackageRegistrationDAO _packageRegistrationDAO;
         
 
         public UnitOfWork()
@@ -63,17 +63,7 @@ namespace ProjectParticipantManagement.DAL.Infrastructures
                 return _messageDAO;
             }
         }
-        public TransactionDAO TransactionDAO
-        {
-            get
-            {
-                if (_transactionDAO == null)
-                {
-                    _transactionDAO = new TransactionDAO(_dbContext);
-                }
-                return _transactionDAO;
-            }
-        }
+        
         public UserRelationDAO userRelationDAO
         {
             get
@@ -247,6 +237,17 @@ namespace ProjectParticipantManagement.DAL.Infrastructures
                     _invoiceDAO = new InvoiceDAO(_dbContext);
                 }
                 return _invoiceDAO;
+            }
+        }
+        public PackageRegistrationDAO PackageRegistrationDAO
+        {
+            get
+            {
+                if (_packageRegistrationDAO == null)
+                {
+                    _packageRegistrationDAO = new PackageRegistrationDAO(_dbContext);
+                }
+                return _packageRegistrationDAO;
             }
         }
         public void Commit()

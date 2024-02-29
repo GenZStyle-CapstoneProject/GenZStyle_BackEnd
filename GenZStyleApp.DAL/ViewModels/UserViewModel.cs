@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GenZStyleApp.DAL.Models.ViewModels
+namespace GenZStyleApp.DAL.ViewModels
 {
     public class UserViewModel
     {

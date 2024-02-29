@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using GenZStyleApp.DAL.Models;
-using GenZStyleApp.DAL.Models.ViewModels;
+using GenZStyleApp.DAL.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;

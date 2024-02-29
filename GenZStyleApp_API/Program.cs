@@ -46,22 +46,19 @@ using GenZStyleAPP.BAL.Validators.Transactions;
 using GenZStyleApp_API.SignalRHubs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
-using GenZStyleApp.DAL.DBContext;
 using GenZStyleAPP.BAL.Models;
 using GenZStyleApp.DAL.Models;
 using GenZStyleApp_API.SignalRHubs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
-using GenZStyleApp.DAL.DBContext;
 using GenZStyleAPP.BAL.Models;
-using GenZStyleApp.DAL.Models;
 using GenZStyleAPP.BAL.DTOs.Reports;
 using GenZStyleAPP.BAL.Profiles.Reports;
 using GenZStyleAPP.BAL.Validators.Reports;
 using Quartz.Impl;
 using Quartz;
-using GenZStyleApp.DAL.DBContext;
 using System.Configuration;
+using GenZStyleAPP.BAL.Profiles.Packages;
 
 namespace GenZStyleApp_API
 {
@@ -195,6 +192,8 @@ namespace GenZStyleApp_API
             builder.Services.AddScoped<IPostRepository, PostRepository>();
             builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
             builder.Services.AddScoped<IReportRepository, ReportRepository>();
+            builder.Services.AddScoped<IPackageRepository, PackageRepository>();
+            builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
             
 
 
@@ -233,8 +232,9 @@ namespace GenZStyleApp_API
                                             typeof(HashTagProfile),
                                             typeof(AccountProfile),
                                             typeof(CustomerProfile),
-                                            typeof(UserRelationProfile)
-                                            );
+                                            typeof(UserRelationProfile),
+                                            typeof(PackageProfiless)
+                                            ); ;
             //*/ For Entity Framework
             var configuration = builder.Configuration;
             builder.Services.AddDbContext<GenZStyleDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnectionStringDB")));
@@ -269,7 +269,7 @@ namespace GenZStyleApp_API
             builder.Services.AddIdentity<IdentityUser, IdentityRole>()
                 .AddEntityFrameworkStores<GenZStyleDbContext>()
                 .AddDefaultTokenProviders();
-
+            
 
 
             var app = builder.Build();

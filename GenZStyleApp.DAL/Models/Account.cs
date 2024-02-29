@@ -24,7 +24,8 @@ namespace GenZStyleApp.DAL.Models
 
         public Inbox Inbox { get; set; }
         public User User { get; set; }
-
+        
+        [ForeignKey("WalletId")]
         public Wallet Wallet { get; set; }
 
         public virtual ICollection<Invoice> Invoices { get; set; }

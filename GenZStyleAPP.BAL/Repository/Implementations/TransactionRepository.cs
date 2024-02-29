@@ -48,7 +48,10 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 var wallet = await _unitOfWork.WalletDAO.GetWalletByAccountIdAsync(account.AccountId);
 
                 Invoice invoice = new Invoice
-                {
+                {   
+                    AccountId = account.AccountId,
+                    WalletId = wallet.WalletId,
+                    PackageId = 1,
                     RechargeID = orderId,
                     Date = DateTime.Now,
                     Total = model.Amount,

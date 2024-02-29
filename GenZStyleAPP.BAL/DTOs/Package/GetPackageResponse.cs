@@ -15,8 +15,6 @@ namespace GenZStyleAPP.BAL.DTOs.Package
         public int PackageId { get; set; }
         public string PackageName { get; set; }
         public decimal Cost { get; set; }
-        public string Image { get; set; }
-
-        public ICollection<GetInvoiceResponse> Invoices { get; set; }
+        public string Image { get; set; }        
     }
 }

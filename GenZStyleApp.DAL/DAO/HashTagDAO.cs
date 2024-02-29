@@ -1,5 +1,4 @@
-﻿using GenZStyleApp.DAL.DBContext;
-using GenZStyleApp.DAL.Models;
+﻿using GenZStyleApp.DAL.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

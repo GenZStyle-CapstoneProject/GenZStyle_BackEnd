@@ -1,5 +1,4 @@
-﻿using GenZStyleApp.DAL.DBContext;
-using GenZStyleApp.DAL.Models;
+﻿using GenZStyleApp.DAL.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -33,8 +32,8 @@ namespace GenZStyleApp.DAL.DAO
         {
             try
             {
-                return await this._dbContext.Wallets.Include(w => w.Account).ThenInclude(a => a.AccountId == accountId)
-                                                    .SingleOrDefaultAsync();
+                return await this._dbContext.Wallets.Where(a => a.Account.AccountId == accountId)
+                                                                            .SingleOrDefaultAsync();
                                                         
 
             }

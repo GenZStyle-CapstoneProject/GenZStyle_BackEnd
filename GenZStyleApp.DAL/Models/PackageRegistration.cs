@@ -11,9 +11,9 @@ namespace GenZStyleApp.DAL.Models
 {
     public class PackageRegistration
     {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        /*[Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 
-        public int Id { get; set; }
+        public int Id { get; set; }*/
 
         public int AccountId { get; set; }
 
