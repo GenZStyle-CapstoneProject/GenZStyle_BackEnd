@@ -15,6 +15,6 @@ namespace GenZStyleAPP.BAL.DTOs.HashTags
         public string Name { get; set; }
         public string Image { get; set; }
         public DateTime CreationDate { get; set; }
-       
+        //public virtual ICollection<HashPost> HashPosts { get; set; }
     }
 }

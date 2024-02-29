@@ -22,12 +22,14 @@ namespace GenZStyleApp_API.Controllers
         private IReportRepository _reportRepository;
         private IOptions<FireBaseImage> _firebaseImageOptions;
         private IValidator<AddReportRequest> _reportValidator;
+        private IValidator<AddReporterRequest> _reporterValidator;
 
-        public ReportsController(IReportRepository reportRepository, IOptions<FireBaseImage> firebaseImageOptions, IValidator<AddReportRequest> reportValidator)
+        public ReportsController(IReportRepository reportRepository, IOptions<FireBaseImage> firebaseImageOptions, IValidator<AddReportRequest> reportValidator, IValidator<AddReporterRequest> reporterValidator)
         {
             _reportRepository = reportRepository;
             _firebaseImageOptions = firebaseImageOptions;
             _reportValidator = reportValidator;
+            _reporterValidator = reporterValidator;
         }
 
 
@@ -83,7 +85,36 @@ namespace GenZStyleApp_API.Controllers
                     string error = ErrorHelper.GetErrorsString(resultValid);
                     throw new BadRequestException(error);
                 }
-                GetReportResponse report = await this._reportRepository.CreateNewReportAsync(addReportRequest, HttpContext);
+                GetReportResponse report = await this._reportRepository.CreateNewReportByPostIdAsync(addReportRequest, HttpContext);
+                return Ok(new
+                {
+                    Status = "Add Report Success",
+                    Data = Created(report)
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+        #endregion
+
+        #region Create New Report
+        [HttpPost("odata/Report/AddNewReportByReporter")]
+        [EnableQuery]
+        //[PermissionAuthorize("Staff")]
+        public async Task<IActionResult> AddReportByReporter([FromForm] AddReporterRequest addReportsRequest)
+        {
+            try
+            {
+                var resultValid = await _reporterValidator.ValidateAsync(addReportsRequest);
+                if (!resultValid.IsValid)
+                {
+                    string error = ErrorHelper.GetErrorsString(resultValid);
+                    throw new BadRequestException(error);
+                }
+                GetReportResponse report = await this._reportRepository.CreateNewReportByReporterIdAsync(addReportsRequest, HttpContext);
                 return Ok(new
                 {
                     Status = "Add Report Success",

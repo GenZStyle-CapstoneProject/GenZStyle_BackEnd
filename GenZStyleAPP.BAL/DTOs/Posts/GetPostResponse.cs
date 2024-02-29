@@ -26,10 +26,10 @@ namespace GenZStyleAPP.BAL.DTOs.Posts
 
         public string Content { get; set; }
         public string Image { get; set; }
-        public ICollection<HashPost> HashPosts { get; set; }
-        /*public GetAccountResponse Account { get; set; }*/
-        
+        //public ICollection<HashPost> HashPosts { get; set; }
+        //public GetAccountResponse Account { get; set; }
 
-        /*public ICollection<GetPostLikeResponse> Likes { get; set; }*/
+        public List<string>? Hashtags { get; set; }
+        public ICollection<GetPostLikeResponse> Likes { get; set; }
     }
 }

@@ -18,7 +18,7 @@ namespace GenZStyleApp.DAL.Models
         public bool IsReport { get; set; }
         [ForeignKey("AccountId")]
         public Account Account { get; set; }
-        [ForeignKey("PostId")]
+        
         public Post Post { get; set; }
 
     }

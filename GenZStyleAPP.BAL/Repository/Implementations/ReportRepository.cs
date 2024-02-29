@@ -74,7 +74,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
         }
 
         #region CreateNewReportAsync
-        public async Task<GetReportResponse> CreateNewReportAsync(AddReportRequest addReportRequest, HttpContext httpContext)
+        public async Task<GetReportResponse> CreateNewReportByPostIdAsync(AddReportRequest addReportRequest, HttpContext httpContext)
         {
             try
             {
@@ -97,8 +97,53 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                     {
                         AccountId = accountStaff.AccountId,
                         PostId = addReportRequest.PostId,
+                        ReporterId = null,
                         ReportName = addReportRequest.ReportName,
-                        IsReport = true,
+                        IsReport = false,
+                        Account = accountStaff
+                    };
+
+                    await _unitOfWork.ReportDAO.AddNewReport(report);
+                }
+
+                await _unitOfWork.CommitAsync();
+                return this._mapper.Map<GetReportResponse>(report);
+            }
+            catch (Exception ex)
+            {
+                string error = ErrorHelper.GetErrorString(ex.Message);
+                throw new Exception(error);
+            }
+        }
+        #endregion
+
+        #region CreateNewReportAsync
+        public async Task<GetReportResponse> CreateNewReportByReporterIdAsync(AddReporterRequest addReportRequest, HttpContext httpContext)
+        {
+            try
+            {
+                JwtSecurityToken jwtSecurityToken = TokenHelper.ReadToken(httpContext);
+                string emailFromClaim = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Email).Value;
+                var accountStaff = await _unitOfWork.AccountDAO.GetAccountByEmail(emailFromClaim);
+
+                Report existingReport = await _unitOfWork.ReportDAO.GetReportByName(addReportRequest.ReportName);
+
+                Report report;
+
+                if (existingReport != null)
+                {
+                    report = existingReport;
+                }
+                else
+                {
+                    // Create a new report
+                    report = new Report
+                    {
+                        AccountId = accountStaff.AccountId,
+                        PostId = null,
+                        ReporterId = addReportRequest.ReporterId,
+                        ReportName = addReportRequest.ReportName,
+                        IsReport = false,
                         Account = accountStaff
                     };
 
@@ -139,7 +184,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                     await this._unitOfWork.CommitAsync();
 
                     // Check and delete post immediately if needed
-                    await CheckAndDeletePost(report.PostId);
+                    await CheckAndDeletePost(report.PostId.Value);
 
                     // Assuming you want to return a response for the report
                     return _mapper.Map<List<GetReportResponse>>(new List<Report> { report });
