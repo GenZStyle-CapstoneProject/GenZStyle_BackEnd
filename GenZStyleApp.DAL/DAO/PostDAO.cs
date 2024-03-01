@@ -41,8 +41,8 @@ namespace GenZStyleApp.DAL.DAO
             try
             {
                 return await _dbContext.Posts.Include(p => p.Account)
-                    .Include(p => p.Comments)
-                   .SingleOrDefaultAsync(p => p.PostId == id);
+                    
+                    .SingleOrDefaultAsync(p => p.PostId == id);
             }
             catch (Exception ex)
             {
@@ -132,7 +132,7 @@ namespace GenZStyleApp.DAL.DAO
         {
             try
             {
-                List<Post> posts = await _dbContext.Posts.Include(u => u.HashPosts).ThenInclude(u => u.Hashtag)
+                List<Post> posts = await _dbContext.Posts.Include(u => u.HashPosts).ThenInclude(x => x.Hashtag)
                                         .ToListAsync();
                 return posts;
 

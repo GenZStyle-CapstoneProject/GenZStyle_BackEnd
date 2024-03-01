@@ -9,6 +9,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GenZStyleAPP.BAL.DTOs.HashPosts;
 
 namespace GenZStyleAPP.BAL.DTOs.Posts
 {
@@ -26,7 +27,7 @@ namespace GenZStyleAPP.BAL.DTOs.Posts
 
         public string Content { get; set; }
         public string Image { get; set; }
-        //public ICollection<HashPost> HashPosts { get; set; }
+        public ICollection<GetHashPostsResponse> HashPosts { get; set; }
         //public GetAccountResponse Account { get; set; }
 
         public List<string>? Hashtags { get; set; }

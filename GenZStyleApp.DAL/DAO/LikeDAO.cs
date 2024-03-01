@@ -23,7 +23,7 @@ namespace GenZStyleApp.DAL.DAO
             try
             {
                 List<Like> likes = await _dbContext.Likes
-                    .Include(l => l.Account).ThenInclude(l => l.User)
+                    .Include(l => l.Account)
                     .Where(l => l.PostId == postId)
                     .ToListAsync();
 
