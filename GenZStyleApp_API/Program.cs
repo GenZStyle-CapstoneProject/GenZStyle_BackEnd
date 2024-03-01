@@ -58,6 +58,8 @@ using GenZStyleAPP.BAL.Validators.Reports;
 using Quartz.Impl;
 using Quartz;
 using System.Configuration;
+using GenZStyleAPP.BAL.DTOs.HashPosts;
+using GenZStyleAPP.BAL.Profiles.HashPosts;
 using GenZStyleAPP.BAL.Profiles.Packages;
 
 namespace GenZStyleApp_API
@@ -166,6 +168,7 @@ namespace GenZStyleApp_API
             modelBuilder.EntitySet<GetPostResponse>("Post");
             modelBuilder.EntitySet<GetNotificationResponse>("Notification");
             modelBuilder.EntitySet<GetReportResponse>("Report");
+            modelBuilder.EntitySet<GetHashPostsResponse>("HashPost");
 
 
 
@@ -233,6 +236,9 @@ namespace GenZStyleApp_API
                                             typeof(AccountProfile),
                                             typeof(CustomerProfile),
                                             typeof(UserRelationProfile),
+                                            typeof(HashPostProfile)
+                                            );
+                                            typeof(UserRelationProfile),
                                             typeof(PackageProfiless)
                                             ); ;
             //*/ For Entity Framework
@@ -264,7 +270,7 @@ namespace GenZStyleApp_API
                 );
             //Add Email Configs
             var emailConfig = configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
-            builder.Services.AddSingleton(emailConfig);
+            //builder.Services.AddSingleton(emailConfig);
             // For Identity
             builder.Services.AddIdentity<IdentityUser, IdentityRole>()
                 .AddEntityFrameworkStores<GenZStyleDbContext>()

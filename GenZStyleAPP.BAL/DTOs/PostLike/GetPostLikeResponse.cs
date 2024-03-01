@@ -16,6 +16,6 @@ namespace GenZStyleAPP.BAL.DTOs.PostLike
         public int PostId { get; set; }
         public int LikeBy { get; set; }
 
-        public Account Account { get; set; }
+        public GetAccountResponse Account { get; set; }
     }
 }

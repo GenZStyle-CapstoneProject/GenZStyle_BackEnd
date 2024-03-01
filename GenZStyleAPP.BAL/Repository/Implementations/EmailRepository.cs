@@ -6,9 +6,8 @@ using System.Linq;
 using MimeKit;
 using System.Text;
 using System.Threading.Tasks;
+
 using MailKit.Net.Smtp;
-
-
 namespace GenZStyleAPP.BAL.Repository.Implementations
 {
     public class EmailRepository : IEmailRepository
