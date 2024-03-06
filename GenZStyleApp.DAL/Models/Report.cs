@@ -11,11 +11,12 @@ namespace GenZStyleApp.DAL.Models
     {
         public int Id { get; set; }
         public int AccountId { get; set; } // người report
-
+        
         public int? ReporterId { get; set; } //người bị report
         public int? PostId { get; set; }
         public string ReportName { get; set; }
-        public bool IsReport { get; set; }
+        public string Status { get; set; }
+        public int IsStatusReport { get; set; }
         [ForeignKey("AccountId")]
         public Account Account { get; set; }
         

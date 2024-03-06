@@ -1,4 +1,5 @@
-﻿using GenZStyleApp.DAL.Models;
+﻿using GenZStyleApp.DAL.DBContext;
+using GenZStyleApp.DAL.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -73,9 +74,9 @@ namespace GenZStyleApp.DAL.DAO
         {
             try
             {
-                // Get posts where the associated reports have IsReport set to true and more than 2 reports
+                // Lấy các bài đăng mà các báo cáo liên quan có IsStatusReport được đặt thành true và có ít nhất 2 báo cáo
                 return await _dbContext.Posts
-                    .Where(p => p.PostId == id && p.Reports.Count(r => r.IsReport) >= 2)
+                    .Where(p => p.PostId == id && p.Reports.Count(r => r.IsStatusReport == 1) >= 2)
                     .ToListAsync();
             }
             catch (Exception ex)
@@ -132,10 +133,14 @@ namespace GenZStyleApp.DAL.DAO
         {
             try
             {
-                List<Post> posts = await _dbContext.Posts.Include(u => u.HashPosts).ThenInclude(x => x.Hashtag)
-                                        .ToListAsync();
-                return posts;
+                List<Post> posts = await _dbContext.Posts
+                    .Include(e => e.Likes)
+                    .Include(i => i.Account)
+                    .ThenInclude(a => a.User) // Include User within Account
+                    .Include(u => u.HashPosts).ThenInclude(x => x.Hashtag)
+                    .ToListAsync();
 
+                return posts;
             }
             catch (Exception ex)
             {
