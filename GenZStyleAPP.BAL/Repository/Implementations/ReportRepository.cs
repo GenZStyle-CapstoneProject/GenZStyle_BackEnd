@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using GenZStyleApp.BAL.Helpers;
+using GenZStyleApp.DAL.DBContext;
 using GenZStyleApp.DAL.Models;
 using GenZStyleAPP.BAL.DTOs.FireBase;
 using GenZStyleAPP.BAL.DTOs.Posts;
@@ -35,12 +36,19 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
             _serviceProvider = serviceProvider;
         }
 
-        public async Task<List<GetReportResponse>> GetAllReports()
+        public async Task<List<GetReportResponse>> GetPostReports()
         {
             try
             {
                 List<Report> reports = await this._unitOfWork.ReportDAO.GetAllReposts();
-                return this._mapper.Map<List<GetReportResponse>>(reports);
+
+                // Lọc danh sách báo cáo theo bài đăng sử dụng LINQ
+                var postReports = reports.Where(r => r.PostId != null).ToList();
+
+                // Sử dụng AutoMapper để ánh xạ danh sách báo cáo đã lọc sang các GetReportResponse tương ứng
+                var mappedPostReports = this._mapper.Map<List<GetReportResponse>>(postReports);
+
+                return mappedPostReports;
             }
             catch (Exception ex)
             {
@@ -48,6 +56,93 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 throw new Exception(error);
             }
         }
+
+        public async Task<List<GetReportResponse>> GetUserReports()
+        {
+            try
+            {
+                List<Report> reports = await this._unitOfWork.ReportDAO.GetAllReposts();
+
+                // Lọc danh sách báo cáo theo người bị báo cáo sử dụng LINQ
+                var userReports = reports.Where(r => r.ReporterId != null).ToList();
+
+                // Sử dụng AutoMapper để ánh xạ danh sách báo cáo đã lọc sang các GetReportResponse tương ứng
+                var mappedUserReports = this._mapper.Map<List<GetReportResponse>>(userReports);
+
+                return mappedUserReports;
+            }
+            catch (Exception ex)
+            {
+                string error = ErrorHelper.GetErrorString(ex.Message);
+                throw new Exception(error);
+            }
+        }
+
+        public async Task<List<GetReportResponse>> GetPostReportsByReportId(int reportId)
+        {
+            try
+            {
+                // Lấy báo cáo theo reportId
+                Report report = await this._unitOfWork.ReportDAO.GetReportByReportIdAsync(reportId);
+
+                if (report == null || report.PostId == null)
+                {
+                    throw new NotFoundException("No post reports found for the specified report.");
+                }
+
+                // Lấy tất cả các báo cáo liên quan đến cùng một bài đăng
+                List<Report> reports = await this._unitOfWork.ReportDAO.GetReportByPostIdAsync(report.PostId.Value);
+
+                // Sử dụng AutoMapper để ánh xạ danh sách báo cáo sang các GetReportResponse tương ứng
+                var mappedReports = this._mapper.Map<List<GetReportResponse>>(reports);
+
+                return mappedReports;
+            }
+            catch (NotFoundException ex)
+            {
+                string error = ErrorHelper.GetErrorString(ex.Message);
+                throw new NotFoundException(error);
+            }
+            catch (Exception ex)
+            {
+                string error = ErrorHelper.GetErrorString(ex.Message);
+                throw new Exception(error);
+            }
+        }
+
+        public async Task<List<GetReportResponse>> GetUserReportsByReportId(int reportId)
+        {
+            try
+            {
+                // Lấy báo cáo theo reportId
+                Report report = await this._unitOfWork.ReportDAO.GetReportByReportIdAsync(reportId);
+
+                if (report == null || report.ReporterId == null)
+                {
+                    throw new NotFoundException("No user reports found for the specified report.");
+                }
+
+                // Lấy tất cả các báo cáo liên quan đến cùng một người bị báo cáo
+                List<Report> reports = await this._unitOfWork.ReportDAO.GetReportsByReporterId(report.ReporterId.Value);
+
+                // Sử dụng AutoMapper để ánh xạ danh sách báo cáo sang các GetReportResponse tương ứng
+                var mappedReports = this._mapper.Map<List<GetReportResponse>>(reports);
+
+                return mappedReports;
+            }
+            catch (NotFoundException ex)
+            {
+                string error = ErrorHelper.GetErrorString(ex.Message);
+                throw new NotFoundException(error);
+            }
+            catch (Exception ex)
+            {
+                string error = ErrorHelper.GetErrorString(ex.Message);
+                throw new Exception(error);
+            }
+        }
+
+
 
         public async Task<GetReportResponse> GetActiveReportName(string reportname)
         {
@@ -98,7 +193,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                         PostId = addReportRequest.PostId,
                         ReporterId = null,
                         ReportName = addReportRequest.ReportName,
-                        IsReport = false,
+                        //IsReport = false,
                         Account = accountStaff
                     };
 
@@ -142,7 +237,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                         PostId = null,
                         ReporterId = addReportRequest.ReporterId,
                         ReportName = addReportRequest.ReportName,
-                        IsReport = false,
+                        //IsReport = false,
                         Account = accountStaff
                     };
 
@@ -160,7 +255,11 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
         }
         #endregion
 
-        //ban report
+
+       
+
+
+
         public async Task<List<GetReportResponse>> BanReportAsync(int reportId)
         {
             try
@@ -173,11 +272,14 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                     throw new NotFoundException("ReportId does not exist in the system.");
                 }
 
-                // Check if the report has IsReport set to false
-                if (!report.IsReport)
+                // Check if the report has IsStatusReport set to 0 (not accepted)
+                if (report.IsStatusReport == 0)
                 {
-                    // Set IsReport to true for the report
-                    report.IsReport = true;
+                    // Set IsStatusReport to 1 for the report (accepted)
+                    report.IsStatusReport = 1;
+
+                    // Cập nhật trạng thái thành "Active"
+                     report.Status = "Active";
                     _unitOfWork.ReportDAO.AcceptReport(report);
 
                     await this._unitOfWork.CommitAsync();
@@ -212,80 +314,103 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                     .SingleOrDefault(p => p.PostId == postId);
 
                 // Check if the post exists and has enough reports
-                if (postToDelete != null && postToDelete.Reports.Count(r => r.IsReport) >= 2)
+                if (postToDelete != null && postToDelete.Reports.Count(r => r.IsStatusReport == 1) >= 2)
                 {
-                    //// Keep the IDs of the reports to retain
-                    //var reportIdsToKeep = postToDelete.Reports.Where(r => r.IsReport).Select(r => r.Id).ToList();
-
                     // Remove the post
                     dbContext.Posts.Remove(postToDelete);
 
                     // Save changes to the database
                     dbContext.SaveChanges();
-
-                    //// Create copies of the reports to retain
-                    //var reportsToKeep = dbContext.Reports
-                    //    .Where(r => reportIdsToKeep.Contains(r.Id))
-                    //    .Select(r => new Report
-                    //    {
-                    //        //ReportId = r.ReportId,
-                    //        ReportName = r.ReportName,
-                    //        IsReport = r.IsReport,
-                    //        // Set PostId to default(int) to detach it from any Post
-                    //        PostId = default,
-                    //        // Copy other properties as needed
-                    //    })
-                    //    .ToList();
-
-                    //// Add the modified reports back to the database
-                    //dbContext.Reports.AddRange(reportsToKeep);
-                    //dbContext.SaveChanges();
                 }
             }
         }
 
-    
 
+        //public async Task<List<GetReportResponse>> RestoreReportAsync(int reportId)
+        //{
+        //    try
+        //    {
+        //        // Lấy báo cáo từ cơ sở dữ liệu
+        //        var report = await _unitOfWork.ReportDAO.GetReportByReportIdAsync(reportId);
 
+        //        if (report == null)
+        //        {
+        //            throw new NotFoundException("ReportId does not exist in the system.");
+        //        }
 
+                
 
+        //        if (report.IsStatusReport == 0)
+        //        {
+        //            // Set IsStatusReport to 1 for the report (accepted)
+        //            report.IsStatusReport = 2;
+        //            _unitOfWork.ReportDAO.AcceptReport(report);
 
-}
+        //            await this._unitOfWork.CommitAsync();
 
-            //private async Task AutoDeletePostsAsync(int reportId)
-            //{
-            //    try
-            //    {
-            //        // Get the associated report
-            //        Report report = await _unitOfWork.ReportDAO.GetReportByReportIdAsync(reportId);
+                  
 
-            //        if (report != null && report.Post != null)
-            //        {
-            //            // Get the PostId from the associated report
-            //            int postId = report.Post.PostId;
+        //            // Assuming you want to return a response for the report
+        //            return _mapper.Map<List<GetReportResponse>>(new List<Report> { report });
+        //        }
+        //        else
+        //        {
+        //            throw new InvalidOperationException("The report is already banned.");
+        //        }
 
-            //            // Check if there are more than 2 reports for the post
-            //            if (report.Post.Reports.Count(r => r.IsReport) >= 2)
-            //            {
-            //                // Delete the post
-            //                Post postToDelete = await _unitOfWork.PostDAO.GetPostByIdAsync(postId);
-            //                if (postToDelete != null)
-            //                {
-            //                    _unitOfWork.PostDAO.DeletePost(postToDelete);
-            //                    await _unitOfWork.CommitAsync();
-            //                }
-            //            }
-            //        }
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        string error = ErrorHelper.GetErrorString(ex.Message);
-            //        throw new Exception(error);
-            //    }
-            //}
-
+                
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        string error = ErrorHelper.GetErrorString(ex.Message);
+        //        throw new Exception(error);
+        //    }
+        //}
 
         
+
+
+
+
+
+
+
+    }
+
+    //private async Task AutoDeletePostsAsync(int reportId)
+    //{
+    //    try
+    //    {
+    //        // Get the associated report
+    //        Report report = await _unitOfWork.ReportDAO.GetReportByReportIdAsync(reportId);
+
+    //        if (report != null && report.Post != null)
+    //        {
+    //            // Get the PostId from the associated report
+    //            int postId = report.Post.PostId;
+
+    //            // Check if there are more than 2 reports for the post
+    //            if (report.Post.Reports.Count(r => r.IsReport) >= 2)
+    //            {
+    //                // Delete the post
+    //                Post postToDelete = await _unitOfWork.PostDAO.GetPostByIdAsync(postId);
+    //                if (postToDelete != null)
+    //                {
+    //                    _unitOfWork.PostDAO.DeletePost(postToDelete);
+    //                    await _unitOfWork.CommitAsync();
+    //                }
+    //            }
+    //        }
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        string error = ErrorHelper.GetErrorString(ex.Message);
+    //        throw new Exception(error);
+    //    }
+    //}
+
+
+
 
 
     //#region DeleteReport

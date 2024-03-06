@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using GenZStyleApp.DAL.Models;
+using GenZStyleApp.DAL.DBContext;
 //using YourNamespace.Models;
 
 
@@ -25,10 +26,10 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<GenZStyleDbContext>();
 
-                // Lấy danh sách bài Post có ít nhất 2 báo cáo và IsReport là true
+                // Lấy danh sách bài Post có ít nhất 2 báo cáo và IsStatusReport là 1
                 var postsToDelete = dbContext.Posts
                     .Include(p => p.Reports)
-                    .Where(p => p.Reports.Count(r => r.IsReport) >= 2 && p.Reports.All(r => r.IsReport))
+                    .Where(p => p.Reports.Count(r => r.IsStatusReport == 1) >= 2 && p.Reports.All(r => r.IsStatusReport == 1))
                     .ToList();
 
                 // Xóa bài Post
@@ -43,23 +44,22 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
 
             return Task.CompletedTask;
         }
-
-        //public void CheckAndDeletePost(GenZStyleDbContext dbContext)
-        //{
-        //    // Lấy danh sách bài Post có ít nhất 2 báo cáo và IsReport là true
-        //    var postsToDelete = dbContext.Posts
-        //        .Include(p => p.Reports)
-        //        .Where(p => p.Reports.Count(r => r.IsReport) >= 2 && p.Reports.All(r => r.IsReport))
-        //        .ToList();
-
-        //    // Xóa bài Post
-        //    foreach (var post in postsToDelete)
-        //    {
-        //        dbContext.Posts.Remove(post);
-        //    }
-
-        //    // Lưu thay đổi vào cơ sở dữ liệu
-        //    dbContext.SaveChanges();
-        //}
     }
+    //public void CheckAndDeletePost(GenZStyleDbContext dbContext)
+    //{
+    //    // Lấy danh sách bài Post có ít nhất 2 báo cáo và IsReport là true
+    //    var postsToDelete = dbContext.Posts
+    //        .Include(p => p.Reports)
+    //        .Where(p => p.Reports.Count(r => r.IsReport) >= 2 && p.Reports.All(r => r.IsReport))
+    //        .ToList();
+
+    //    // Xóa bài Post
+    //    foreach (var post in postsToDelete)
+    //    {
+    //        dbContext.Posts.Remove(post);
+    //    }
+
+    //    // Lưu thay đổi vào cơ sở dữ liệu
+    //    dbContext.SaveChanges();
+    //}
 }

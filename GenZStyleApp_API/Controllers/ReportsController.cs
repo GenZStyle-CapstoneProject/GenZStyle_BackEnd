@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.OData.Routing.Controllers;
 using Microsoft.Extensions.Options;
 using ProjectParticipantManagement.BAL.Exceptions;
 using ProjectParticipantManagement.BAL.Heplers;
+using static GenZStyleAPP.BAL.Repository.Implementations.ReportRepository;
 
 namespace GenZStyleApp_API.Controllers
 {
@@ -33,15 +34,82 @@ namespace GenZStyleApp_API.Controllers
         }
 
 
-        #region Get AllReports
-        [HttpGet("odata/Reports/Active/GetAllReport")]
+        [HttpGet("odata/Reports/Active/GetAllReportByPost")]
         [EnableQuery]
-        public async Task<IActionResult> GetAllReports()
+        public async Task<IActionResult> GetAllReportByPost()
         {
-            List<GetReportResponse> reports = await this._reportRepository.GetAllReports();
-            return Ok(reports);
+            List<GetReportResponse> postReports = await this._reportRepository.GetPostReports();
+
+
+            return Ok(postReports);
         }
-        #endregion
+
+        [HttpGet("odata/Reports/Active/GetAllReportByUser")]
+        [EnableQuery]
+        public async Task<IActionResult> GetAllReportByUser()
+        {
+            
+            List<GetReportResponse> userReports = await this._reportRepository.GetUserReports();
+
+            return Ok(userReports);
+        }
+
+        [HttpGet("odata/Reports/Active/GetPostReportsByReportId/{reportID}")]
+        //[EnableQuery(MaxExpansionDepth = 3)]
+        public async Task<IActionResult> GetPostReportsByReportId(int reportID)
+        {
+            try
+            {
+                List<GetReportResponse> report = await this._reportRepository.GetPostReportsByReportId(reportID);
+
+                // Kiểm tra nếu user không tồn tại
+                if (report == null)
+                {
+                    return BadRequest("User not found. Please provide a valid userId.");
+                }
+
+                return Ok(new
+                {
+                    Message = "Get Report By ReportID Success",
+                    Data = report
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+
+        }
+
+        [HttpGet("odata/Reports/Active/GetUserReportsByReportId/{reportId}")]
+        //[EnableQuery(MaxExpansionDepth = 3)]
+        public async Task<IActionResult> GetUserReportsByReportId(int reportId)
+        {
+            try
+            {
+                List<GetReportResponse> report = await this._reportRepository.GetUserReportsByReportId(reportId);
+
+                // Kiểm tra nếu user không tồn tại
+                if (report == null)
+                {
+                    return BadRequest("User not found. Please provide a valid userId.");
+                }
+
+                return Ok(new
+                {
+                    Message = "Get Report By ReportID Success",
+                    Data = report
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+
+        }
+
 
         [HttpGet("odata/Reports/Active/Report/{reportname}")]
         //[EnableQuery(MaxExpansionDepth = 3)]
@@ -70,6 +138,38 @@ namespace GenZStyleApp_API.Controllers
 
 
         }
+        //[HttpGet("odata/Reports/Active/ProcessReportStatusAsync/{reportId}")]
+        ////[EnableQuery(MaxExpansionDepth = 3)]
+        //public async Task<IActionResult> ProcessReportStatusAsync(int reportId, ReportAction reportAction)
+        //{
+        //    try
+        //    {
+        //        // Gọi phương thức xử lý trạng thái báo cáo từ repository hoặc service
+        //        List<GetReportResponse> result = await _reportRepository.ProcessReportStatusAsync(reportId, reportAction);
+
+        //        // Kiểm tra nếu kết quả không rỗng thì trả về danh sách báo cáo
+        //        if (result != null && result.Count > 0)
+        //        {
+        //            return Ok(result);
+        //        }
+        //        else
+        //        {
+        //            // Trả về thông báo nếu không có báo cáo nào được xử lý
+        //            return NotFound("No reports found for the given reportId.");
+        //        }
+        //    }
+        //    catch (NotFoundException ex)
+        //    {
+        //        return NotFound(ex.Message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, ex.Message);
+        //    }
+
+
+        //}
+
 
         #region Create New Report
         [HttpPost("odata/Report/AddNewReport")]
@@ -163,7 +263,7 @@ namespace GenZStyleApp_API.Controllers
             }
         }
 
-    
+
         //#region Delete Report
 
         //[HttpDelete("Report/{postId}")]

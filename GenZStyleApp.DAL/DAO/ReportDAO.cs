@@ -1,4 +1,5 @@
-﻿using GenZStyleApp.DAL.Models;
+﻿using GenZStyleApp.DAL.DBContext;
+using GenZStyleApp.DAL.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -73,7 +74,20 @@ namespace GenZStyleApp.DAL.DAO
             }
         }
 
-            public async Task<Report> GetReportByReportIdAsync(int reportId)
+        public async Task<List<Report>> GetReportsByReporterId(int reporterId)
+        {
+            try
+            {
+
+                return await _dbContext.Reports.Where(u => u.ReporterId == reporterId).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<Report> GetReportByReportIdAsync(int reportId)
             {
                 try
                 {
@@ -91,12 +105,12 @@ namespace GenZStyleApp.DAL.DAO
             try
             {
                 return await _dbContext.Reports
-                    .Where(report => report.IsReport)
+                    .Where(report => report.IsStatusReport == 1) // Lọc ra các báo cáo có IsStatusReport là 1
                     .ToListAsync();
             }
             catch (Exception ex)
             {
-                // Handle exceptions accordingly
+                // Xử lý các ngoại lệ một cách phù hợp
                 throw new Exception(ex.Message);
             }
         }
