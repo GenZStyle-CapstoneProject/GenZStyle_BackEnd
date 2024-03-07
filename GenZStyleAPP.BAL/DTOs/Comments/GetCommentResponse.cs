@@ -16,9 +16,9 @@ namespace GenZStyleAPP.BAL.DTOs.Comments
         public string Content { get; set; }
 
         public int CommentBy { get; set; }
-        public Post Post { get; set; }
+        /*public Post Post { get; set; }*/
 
-        public Account account { get; set; }
+        /*public Account account { get; set; }*/
 
     }
 }

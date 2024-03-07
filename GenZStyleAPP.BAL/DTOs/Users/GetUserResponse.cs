@@ -12,14 +12,13 @@ namespace GenZStyleAPP.BAL.DTOs.Users
     {
         [Key]
         public int UserID { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Address { get; set; }
-        public string City { get; set; }
-        public string Phone { get; set; }
-        public string Avatar { get; set; }
+        public string? Address { get; set; }
+        public string? City { get; set; }
+        public string? Phone { get; set; }
+        public decimal? Height { get; set; }
+        public string? AvatarUrl { get; set; }
         public bool? Gender { get; set; }
-        public DateTime Dob { get; set; }
-        public ICollection<GetAccountResponse> Account { get; set; }
+        public DateTime? Dob { get; set; }
+        public ICollection<GetAccountResponse> Accounts { get; set; }
     }
 }

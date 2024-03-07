@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GenZStyleAPP.BAL.DTOs.Accounts;
 
 namespace GenZStyleAPP.BAL.Repository.Interfaces
 {
@@ -16,13 +17,13 @@ namespace GenZStyleAPP.BAL.Repository.Interfaces
     {
       
         public Task DeleteUserAsync(int id, HttpContext httpContext);
-        public Task<List<User>> GetUsersAsync();
-        public Task<User> GetActiveUser(int userId);
-        public Task<User> UpdateUserProfileByAccountIdAsync(int accountId,
+        public Task<List<GetUserResponse>> GetUsersAsync();
+        public Task<GetUserResponse> GetActiveUser(int userId);
+        public Task<GetUserResponse> UpdateUserProfileByAccountIdAsync(int accountId,
                                                                                      FireBaseImage fireBaseImage,
                                                                                      UpdateUserRequest updateUserRequest);
-        public Task<User> BanUserAsync(int accountId);
-        public Task<User> GetUserByAccountIdAsync(int accountId);
+        public Task<GetAccountResponse> BanUserAsync(int accountId);
+        public Task<GetUserResponse> GetUserByAccountIdAsync(int accountId);
         public Task<GetUserResponse> Register(FireBaseImage fireBaseImage,RegisterRequest registerRequest);
 
         public Task<GetUserRelationResponse> FollowUser(int UserId, HttpContext httpContext);

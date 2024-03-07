@@ -16,6 +16,8 @@ namespace GenZStyleApp.DAL.Models
 
         public int FollowingId { get; set; }
 
+        public bool isFollow {  get; set; }
+
         public Account Account { get; set; }
 
         

@@ -22,10 +22,9 @@ namespace GenZStyleAPP.BAL.DTOs.Postss
         public string Content { get; set; }
         public string Image { get; set; }
         public GetAccountResponse Account { get; set; }
+        public List<string>? Hashtags { get; set; }
 
-
-        
-        //public ICollection<GetPostLikeResponse> Likes { get; set; }
+        public ICollection<GetPostLikeResponse> Likes { get; set; }
 
     }
 }

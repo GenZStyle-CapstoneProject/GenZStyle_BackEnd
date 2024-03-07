@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GenZStyleAPP.BAL.DTOs.Users;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -55,6 +56,11 @@ namespace BMOS.BAL.Helpers
             var dateTimeInterval = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             dateTimeInterval = dateTimeInterval.AddSeconds(utcExpiredDate).ToUniversalTime();
             return dateTimeInterval;
+        }
+
+        internal static bool IsValidBirthday(UpdateUserRequest date)
+        {
+            throw new NotImplementedException();
         }
         #endregion
     }

@@ -33,8 +33,8 @@ namespace GenZStyleApp.DAL.Models
         
         public ICollection<Comment> Comments { get;}
 
-        public ICollection<Report> Reports { get; set;}
+        public ICollection<Report> Reports { get; set; }
 
-        
+
     }
 }

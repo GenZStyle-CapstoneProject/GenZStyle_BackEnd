@@ -53,21 +53,34 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 JwtSecurityToken jwtSecurityToken = TokenHelper.ReadToken(httpContext);
                 string emailFromClaim = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Email).Value;
                 var account = await _unitOfWork.AccountDAO.GetAccountByEmail(emailFromClaim);
-
-                UserRelation userRelation = new UserRelation
+                GetUserRelationResponse getUserRelation = new GetUserRelationResponse();
+                var follow = await _unitOfWork.userRelationDAO.GetFollowByPostIdAndAccount(account.AccountId, UserId);
+                if (follow != null)
                 {
-                    FollowerId = account.AccountId,
-                    FollowingId = UserId,
-                    Account = account,                    
-                };
-                
-                if (userRelation.FollowingId == userRelation.FollowerId) 
-                {
-                    throw new NotFoundException("AccountId has duplicate in system.");
+                    follow.FollowerId = account.AccountId;
+                    follow.FollowingId = UserId;
+                    follow.isFollow = !follow.isFollow;
+                    await _unitOfWork.userRelationDAO.ChangeLike(follow);
                 }
-                await _unitOfWork.userRelationDAO.AddFollowAsync(userRelation);
+                else {
+                    
+                    UserRelation userRelation = new UserRelation
+                    {
+                        FollowerId = account.AccountId,
+                        FollowingId = UserId,
+                        isFollow = true,
+                        Account = account,                    
+                    };
+
+                    if (userRelation.FollowingId == userRelation.FollowerId)
+                    {
+                        throw new NotFoundException("AccountId has duplicate in system.");
+                    }
+                    await _unitOfWork.userRelationDAO.AddFollowAsync(userRelation);                   
+                    getUserRelation = _mapper.Map<GetUserRelationResponse>(userRelation);
+                }
                 await _unitOfWork.CommitAsync();
-                return _mapper.Map<GetUserRelationResponse>(userRelation);
+                return getUserRelation;
             }
             catch (NotFoundException ex)
             {
@@ -125,6 +138,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                     Dob = registerRequest.Dob,
                     Gender = registerRequest.Gender,
                     Phone = registerRequest.Phone,
+                    Height = registerRequest.Height,
                     Role = role,
                     Accounts = new List<Account> { account },
                 };
@@ -144,7 +158,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 Wallet wallet = new Wallet()
                 {
                     Account = account,
-                    Balance = 0,
+                    Balance = 5000000,
                     CreatDate = DateTime.Now,
                     
                 };
@@ -162,13 +176,14 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 return new GetUserResponse
                 {
                     Phone = user.Phone,
+                    Height = user.Height,
                     UserID = user.UserId,
                     Address = user.Address,
-                    Avatar = user.AvatarUrl,
+                    AvatarUrl = user.AvatarUrl,
                     Dob = user.Dob,
                     City = user.City,
                     Gender = user.Gender,
-                    Account = _mapper.Map<List<GetAccountResponse>>(user.Accounts),
+                    Accounts = _mapper.Map<List<GetAccountResponse>>(user.Accounts),
                 };
             }
             catch (BadRequestException ex)
@@ -192,14 +207,14 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
             }
         }
 
-        
 
-        public async Task<List<User>> GetUsersAsync()
+
+        public async Task<List<GetUserResponse>> GetUsersAsync()
         {
             try
             {
                 List<User> users = await this._unitOfWork.UserDAO.GetAllUser();
-                return this._mapper.Map<List<User>>(users);
+                return this._mapper.Map<List<GetUserResponse>>(users);
             }
             catch (Exception ex)
             {
@@ -208,7 +223,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
             }
         }
 
-        public async Task<User> GetActiveUser(int userId)
+        public async Task<GetUserResponse> GetActiveUser(int userId)
         {
             try
             {
@@ -217,7 +232,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 {
                     throw new NotFoundException("User does not exist in the system.");
                 }
-                return this._mapper.Map<User>(user);
+                return this._mapper.Map<GetUserResponse>(user);
             }
             catch (NotFoundException ex)
             {
@@ -232,7 +247,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
         }
 
         #region UpdateUserProfileByAccountIdAsync
-        public async Task<User> UpdateUserProfileByAccountIdAsync(int accountId,
+        public async Task<GetUserResponse> UpdateUserProfileByAccountIdAsync(int accountId,
                                                                                      FireBaseImage fireBaseImage,
                                                                                      UpdateUserRequest updateUserRequest)
         {
@@ -270,7 +285,9 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
 
                 _unitOfWork.UserDAO.UpdateUser(user);
                 await this._unitOfWork.CommitAsync();
-                return _mapper.Map<User>(user);
+                
+                
+                return  this._mapper.Map<GetUserResponse>(user);
             }
 
             catch (NotFoundException ex)
@@ -329,7 +346,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
 
 
         #region GetUserByAccountIdAsync
-        public async Task<User> GetUserByAccountIdAsync(int accountId)
+        public async Task<GetUserResponse> GetUserByAccountIdAsync(int accountId)
         {
             try
             {
@@ -339,7 +356,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                     throw new NotFoundException("AccountId does not exist in system");
                 }
                 
-                return _mapper.Map<User>(user);
+                return _mapper.Map<GetUserResponse>(user);
             }
             catch (NotFoundException ex)
             {
@@ -356,7 +373,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
 
         #endregion
         //ban user
-        public async Task<User> BanUserAsync(int accountId)
+        public async Task<GetAccountResponse> BanUserAsync(int accountId)
         {
             try
             {
@@ -378,7 +395,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
 
                 _unitOfWork.UserDAO.BanUser(user);
                 await this._unitOfWork.CommitAsync();
-                return _mapper.Map<User>(user);
+                return _mapper.Map<GetAccountResponse>(user);
 
             }
             catch (NotFoundException ex)
@@ -403,12 +420,26 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 var account = await _unitOfWork.AccountDAO.GetAccountByEmail(emailFromClaim);
 
 
-                 var followers =  await this._unitOfWork.userRelationDAO.GetFollower(account.AccountId);
-                 var followings  =  await this._unitOfWork.userRelationDAO.GetFollowing(account.AccountId);
+                var followers =  await this._unitOfWork.userRelationDAO.GetFollower(account.AccountId);// người này được bao nhiêu người follow 
+                var UserRelationn = _mapper.Map<List<GetUserRelationResponse>>(followers);
+                var followerAccounts = new List<GetAccountResponse>(); // Danh sách các tài khoản của người theo dõi
+                foreach (var follower in UserRelationn)
+                {
+                    followerAccounts.Add(follower.Account);
+                }
+                var followings  =  await this._unitOfWork.userRelationDAO.GetFollowing(account.AccountId);//người này đang follow bao nhiêu người
+                var UserRelationnn = _mapper.Map<List<GetUserRelationResponse>>(followings);
+                var followingAccounts = new List<GetAccountResponse>(); // Danh sách các tài khoản của người theo dõi
+                foreach (var following in UserRelationnn)
+                {
+                    followingAccounts.Add(following.Account);
+                }
                 GetFollowResponse followResponse = new GetFollowResponse
                 {
-                    Follower = followers.Count,
-                    Followering = followings.Count
+                    /*Follower = followers.Count,
+                    Followering = followings.Count,*/
+                    Followers = followerAccounts,
+                    Following = followingAccounts
                 };
 
                 return followResponse;

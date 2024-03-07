@@ -8,15 +8,15 @@ using System.Text;
 using System.Threading.Tasks;
 
 using MailKit.Net.Smtp;
+using static System.Net.Mime.MediaTypeNames;
+
 namespace GenZStyleAPP.BAL.Repository.Implementations
 {
     public class EmailRepository : IEmailRepository
     {   
-        private readonly EmailConfiguration _emailConfig;
-        public EmailRepository(EmailConfiguration emailConfig) 
-        { 
-            _emailConfig = emailConfig; 
-        }
+        public readonly EmailConfiguration _emailConfig;
+        public EmailRepository(EmailConfiguration emailConfig) => _emailConfig = emailConfig;
+        
         
         public void SendEmail(Message message)
         {
@@ -27,13 +27,40 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
         private MimeMessage CreateEmailMessage(Message message)
         {
             var emailMessage = new MimeMessage();
-            emailMessage.From.Add(new MailboxAddress("email", _emailConfig.From));
-            emailMessage.To.AddRange(message.To);
+
+            // Kiểm tra và thêm địa chỉ email người gửi
+            if (!string.IsNullOrEmpty(_emailConfig.From))
+            {
+                emailMessage.From.Add(new MailboxAddress("email", _emailConfig.From));
+            }
+            else
+            {
+                throw new ArgumentNullException(nameof(_emailConfig.From), "Địa chỉ email người gửi không được để trống.");
+            }
+
+            // Kiểm tra và thêm địa chỉ email người nhận
+            if (message.To != null)
+            {
+                emailMessage.To.AddRange(message.To);
+            }
+            else
+            {
+                throw new ArgumentNullException(nameof(message.To), "Không có địa chỉ email người nhận được cung cấp.");
+            }
+
+            // Thêm chủ đề và nội dung email
             emailMessage.Subject = message.Subject;
             emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Text) { Text = message.Content };
 
             return emailMessage;
         }
+        /*var emailMessage = new MimeMessage();
+        emailMessage.From.Add(new MailboxAddress("email", _emailConfig.From));
+            emailMessage.To.AddRange(message.To);
+            emailMessage.Subject = message.Subject;
+            emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Text) { Text = message.Content };
+
+            return emailMessage;*/
 
         private void Send(MimeMessage mailMessage)
         {

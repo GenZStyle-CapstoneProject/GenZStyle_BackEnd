@@ -29,13 +29,13 @@ namespace GenZStyleApp.DAL.DAO
 
         }
 
-        public async Task<List<UserRelation>> GetFollower (int userId)
+        public async Task<List<UserRelation>> GetFollower (int accoundId)
         {
             try
             {
 
                 return await _dbContext.UserRelations.Include(u => u.Account)
-                                              .Where(u => u.FollowingId == userId).ToListAsync();
+                                              .Where(u => u.FollowingId == accoundId).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -50,6 +50,31 @@ namespace GenZStyleApp.DAL.DAO
 
                 return await _dbContext.UserRelations.Include(u => u.Account)
                                               .Where(u => u.FollowerId == userId).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public async Task<UserRelation> GetFollowByPostIdAndAccount(int FollowerId, int FollowingId)
+        {
+            try
+            {
+                return await this._dbContext.UserRelations.Include(l => l.Account)
+                .Where(l => l.FollowerId == FollowerId && l.FollowingId == FollowingId)
+                .SingleOrDefaultAsync();
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception();
+            }
+        }
+        public async Task ChangeLike(UserRelation userRelation)
+        {
+            try
+            {
+                this._dbContext.Entry<UserRelation>(userRelation).State = EntityState.Modified;
             }
             catch (Exception ex)
             {
