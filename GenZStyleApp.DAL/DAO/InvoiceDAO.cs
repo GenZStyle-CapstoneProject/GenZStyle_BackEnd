@@ -35,7 +35,7 @@ namespace GenZStyleApp.DAL.DAO
             try 
             {
                 return await _dbContext.Invoices.Where(I => I.RechargeID == rechargeId)
-                                                .Include(I => I.Account)                                
+                                                .Include(I => I.Account).ThenInclude(a => a.User).ThenInclude(u => u.Role)                                
                                                 .FirstOrDefaultAsync(); 
             }
             catch (Exception ex) 

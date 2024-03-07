@@ -21,6 +21,8 @@ using ProjectParticipantManagement.BAL.Heplers;
 using System.Text.Json;
 
 using GenZStyleApp_API.Models;
+using GenZStyleAPP.BAL.DTOs.Accounts;
+using System.Runtime.InteropServices;
 
 namespace GenZStyleApp_API.Controllers
 {
@@ -79,8 +81,12 @@ namespace GenZStyleApp_API.Controllers
                 };
                 //Add Token to Verify the email....
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                var confirmationLink = Url.Action(nameof(ConfirmEmail), "Users", new { token, email = user.Email }, Request.Scheme);
+                // Sử dụng giao thức HTTPS với domain trên Azure
+                var scheme = "https";
+                var confirmationLink = Url.Action(nameof(ConfirmEmail), "Users", new { token, email = user.Email }, scheme);
                 var message = new GenZStyleAPP.BAL.Models.Message(new string[] { user.Email! }, "Confirmation email link", confirmationLink!);
+                /*var confirmationLink = Url.Action(nameof(ConfirmEmail), "Users", new { token, email = user.Email }, Request.Scheme);
+                var message = new GenZStyleAPP.BAL.Models.Message(new string[] { user.Email! }, "Confirmation email link", confirmationLink!);*/
                 _emailRepository.SendEmail(message);
                 
                 return StatusCode(StatusCodes.Status200OK,
@@ -124,7 +130,7 @@ namespace GenZStyleApp_API.Controllers
         {
             try
             {
-                List<GenZStyleApp.DAL.Models.User> users = await this._userRepository.GetUsersAsync();
+                List<GetUserResponse> users = await this._userRepository.GetUsersAsync();
                 return Ok(new
                 {
                     Status = "Get List Success",
@@ -144,7 +150,7 @@ namespace GenZStyleApp_API.Controllers
         {
             try
             {
-                GenZStyleApp.DAL.Models.User user = await this._userRepository.GetActiveUser(userId);
+                GetUserResponse user = await this._userRepository.GetActiveUser(userId);
 
                 // Kiểm tra nếu user không tồn tại
                 if (user == null)
@@ -180,10 +186,13 @@ namespace GenZStyleApp_API.Controllers
                     string error = ErrorHelper.GetErrorsString(validationResult);
                     throw new BadRequestException(error);
                 }
-                GenZStyleApp.DAL.Models.User user = await this._userRepository.UpdateUserProfileByAccountIdAsync(key,
+                GetUserResponse user = await this._userRepository.UpdateUserProfileByAccountIdAsync(key,
                                                                                                                     _firebaseImageOptions.Value,
                                                                                                                     updateUserRequest);
 
+                user.City ??= "NULL";
+                user.Address ??= "NULL";
+                user.Height ??= 0;
                 return Ok(new
                 {
                     Status = "Update User Success",
@@ -221,7 +230,7 @@ namespace GenZStyleApp_API.Controllers
         {
             try
             {
-                GenZStyleApp.DAL.Models.User user = await this._userRepository.BanUserAsync(key);
+                GetAccountResponse user = await this._userRepository.BanUserAsync(key);
                 if(user != null)
                 {
                     return Ok(new
@@ -256,7 +265,7 @@ namespace GenZStyleApp_API.Controllers
         {
             try
             {
-                GenZStyleApp.DAL.Models.User user = await this._userRepository.GetUserByAccountIdAsync(key);
+                GetUserResponse user = await _userRepository.GetUserByAccountIdAsync(key);
 
                 // Kiểm tra xem user có tồn tại hay không
                 if (user == null)
@@ -264,7 +273,13 @@ namespace GenZStyleApp_API.Controllers
                     return NotFound("User not found. Please provide a valid AccountId.");
                 }
 
-                // Nếu mọi thứ đều hợp lệ, trả về status thành công và dữ liệu user
+                // **Sửa đổi để đảm bảo City, Address, Height luôn hiển thị**
+
+                user.City ??= "NULL";
+                user.Address ??= "NULL";
+                user.Height ??= 0;
+
+                // Trả về status thành công và dữ liệu user
                 return Ok(new
                 {
                     Status = "Get User By AccountId Success",
@@ -275,10 +290,9 @@ namespace GenZStyleApp_API.Controllers
             {
                 return BadRequest(ex.Message);
             }
-           
         }
         #endregion
-        
+
         [EnableQuery]
         [HttpGet("odata/UserProfile/Follow")]
         

@@ -1,9 +1,14 @@
 ﻿using AutoMapper;
 using Firebase.Auth;
 using GenZStyleApp.BAL.Helpers;
+using GenZStyleApp.DAL.DAO;
 using GenZStyleApp.DAL.Models;
 using GenZStyleAPP.BAL.DTOs.Accounts;
+using GenZStyleAPP.BAL.DTOs.Comments;
 using GenZStyleAPP.BAL.DTOs.FireBase;
+using GenZStyleAPP.BAL.DTOs.HashPosts;
+using GenZStyleAPP.BAL.DTOs.HashTags;
+using GenZStyleAPP.BAL.DTOs.PostLike;
 using GenZStyleAPP.BAL.DTOs.Posts;
 using GenZStyleAPP.BAL.DTOs.Users;
 using GenZStyleAPP.BAL.Helpers;
@@ -13,6 +18,7 @@ using Microsoft.Extensions.Hosting;
 using ProjectParticipantManagement.BAL.Exceptions;
 using ProjectParticipantManagement.BAL.Heplers;
 using ProjectParticipantManagement.DAL.Infrastructures;
+using RestSharp;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -61,8 +67,54 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
         {
             try
             {
-                List<Post> posts = await this._unitOfWork.PostDAO.GetActivePosts();
-                return this._mapper.Map<List<GetPostResponse>>(posts);
+                List<Post> posts = await _unitOfWork.PostDAO.GetActivePosts();
+
+                List<GetPostResponse> postResponses = new List<GetPostResponse>();
+
+                foreach (var post in posts)
+                {
+                    // Tạo danh sách HashTags cho mỗi Post
+                    List<GetHashPostsResponse> hashPosts = post.HashPosts.Select(hashPost => new GetHashPostsResponse
+                    {
+                        PostId = hashPost.PostId,
+                        HashTageId = hashPost.HashTageId,
+                        CreateAt = hashPost.CreateAt,
+                        UpdateAt = hashPost.UpdateAt,
+                        Hashtag = _mapper.Map<GetHashTagResponse>(hashPost.Hashtag)
+                    }).ToList();
+
+                    // Tạo danh sách GetPostLikeResponse từ post.Likes
+                    List<GetPostLikeResponse> likes = post.Likes.Select(like => new GetPostLikeResponse
+                    {
+                        PostId = like.PostId,
+                        LikeBy = like.LikeBy,
+                        isLike = like.isLike,
+                        // Thực hiện mapping thông tin từ Account sang GetAccountResponse
+                        Account = _mapper.Map<GetAccountResponse>(like.Account)
+                        
+                    }).ToList();
+
+                    // Map thông tin từ Post sang GetPostResponse
+                    GetPostResponse postResponse = new GetPostResponse
+                    {
+                        PostId = post.PostId,
+                        AccountId = post.AccountId,
+                        CreateTime = post.CreateTime,
+                        UpdateTime = post.UpdateTime,
+                        Content = post.Content,
+                        Image = post.Image,
+                        /*HashPosts = hashPosts,*/
+                        Likes = likes,
+                       /* Account = _mapper.Map<GetAccountResponse>(post.Account)*/// Phần này cần điều chỉnh tùy vào cách bạn muốn xử lý Likes
+                    };
+
+                    // Tạo danh sách Hashtags từ HashPosts
+                    postResponse.Hashtags = hashPosts.Select(h => h.Hashtag.Name).ToList();
+
+                    postResponses.Add(postResponse);
+                }
+
+                return postResponses;
             }
             catch (Exception ex)
             {
@@ -79,11 +131,33 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 var post = await _unitOfWork.PostDAO.GetPostByIdAsync(id);
                 if (post == null)
                 {
-                    throw new NotFoundException("Product id does not exist in the system.");
+                    throw new NotFoundException("PostId id does not exist in the system.");
                 }
+
+                // Lấy danh sách người like cho post
+                var likes = await this._unitOfWork.LikeDAO.GetAllAccountByLikes(id);
+
                 var postDTO = _mapper.Map<GetPostResponse>(post);
-                //Staff staff = await this._unitOfWork.StaffDAO.GetStaffDetailAsync(product.ModifiedBy);
-                //productDTO.ModifiedStaff = staff.FullName;
+                // Gán danh sách người like vào postDTO, chỉ lấy thông tin cần thiết của account
+                postDTO.Likes = likes.Select(like => new GetPostLikeResponse
+                {
+                    PostId = like.PostId,
+                    LikeBy = like.LikeBy,
+                    Account = new GetAccountResponse
+                    {
+                        AccountId = like.Account.AccountId,
+                        UserId = like.Account.UserId,
+                        InboxId = like.Account.InboxId,
+                        WalletId = like.Account.WalletId,
+                        Email = like.Account.Email,
+                        Firstname = like.Account.Firstname,
+                        Lastname = like.Account.Lastname,
+                        Username = like.Account.Username,
+                        PasswordHash = like.Account.PasswordHash,
+                        IsVip = like.Account.IsVip,
+                        IsActive = like.Account.IsActive
+                    }
+                }).ToList();
                 return postDTO;
             }
             catch (NotFoundException ex)
@@ -246,8 +320,16 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
 
                 await _unitOfWork.CollectionDAO.AddNewCollection(collection);
                 await _unitOfWork.CommitAsync();
+                GetPostResponse response = this._mapper.Map<GetPostResponse>(post);
+                
+                // Lấy danh sách hashtag và thêm vào GetPostResponse
+                if (addPostRequest.Hashtags != null)
+                {
+                    List<string> hashtags = post.HashPosts.Select(hp => hp.Hashtag.Name).ToList();
+                    response.Hashtags = hashtags;
+                }
 
-                return this._mapper.Map<GetPostResponse>(post);
+                return response;
 
             }
             catch (Exception ex)

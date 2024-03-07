@@ -67,7 +67,9 @@ namespace GenZStyleApp.DAL.DAO
         {
             try
             {
-                List<User> users = await _dbContext.Users.ToListAsync();
+                List<User> users = await _dbContext.Users
+                    .Include(u => u.Accounts)
+                    .ToListAsync();
                 return users;
 
             }

@@ -21,13 +21,13 @@ namespace GenZStyleApp.DAL.Models
         public string? AvatarUrl { get; set; }
 
         public string? Address { get; set; }
-        public string Phone { get; set; }
+        public string? Phone { get; set; }
         public decimal? Height { get; set; }
         public bool? Gender { get; set; }
-        public DateTime Dob { get; set; }
+        public DateTime? Dob { get; set; }
 
-        public Role Role { get; set; }
-        public ICollection<Account> Accounts { get; set; }
+        public Role? Role { get; set; }
+        public ICollection<Account>? Accounts { get; set; }
 
 
 

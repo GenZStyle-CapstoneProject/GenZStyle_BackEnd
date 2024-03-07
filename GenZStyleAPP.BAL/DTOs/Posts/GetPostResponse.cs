@@ -23,12 +23,12 @@ namespace GenZStyleAPP.BAL.DTOs.Posts
 
 
         public DateTime CreateTime { get; set; }
-        public DateTime UpdateTime { get; set; }
+        public DateTime? UpdateTime { get; set; }
 
         public string Content { get; set; }
         public string Image { get; set; }
-        public ICollection<GetHashPostsResponse> HashPosts { get; set; }
-        //public GetAccountResponse Account { get; set; }
+        /*public ICollection<GetHashPostsResponse> HashPosts { get; set; }*/
+        /*public GetAccountResponse Account { get; set; }*/
 
         public List<string>? Hashtags { get; set; }
         public ICollection<GetPostLikeResponse> Likes { get; set; }

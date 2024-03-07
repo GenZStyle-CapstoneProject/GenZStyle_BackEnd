@@ -15,6 +15,10 @@ namespace GenZStyleAPP.BAL.Profiles.Users
 
             CreateMap<User, GetUserResponse>().ReverseMap();
             CreateMap<User, UpdateUserRequest>().ReverseMap();
+            CreateMap<User, GetUserPost>()
+                .ForMember(dest => dest.avatar, opt => opt.MapFrom(src => src.AvatarUrl))
+                .ReverseMap();
+            
         }
         
     }

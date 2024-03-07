@@ -56,31 +56,44 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 JwtSecurityToken jwtSecurityToken = TokenHelper.ReadToken(httpContext);
                 string emailFromClaim = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Email).Value;
                 var account = await _unitOfWork.AccountDAO.GetAccountByEmail(emailFromClaim);
-                
-                
+
+                var like = await _unitOfWork.LikeDAO.GetLikeByPostIdAndAccount(postId, account.AccountId);
                 post.TotalLike += 1;
-                Like like = new Like
+                Like likes = new Like
                 {
                     LikeBy = account.AccountId,
                     PostId = postId,
+                    /*isLike = (like.isLike == true) ? false : (like.isLike != null ? like.isLike : true),*/
+                    isLike = like != null ? !like.isLike : true,
                     Post = post,
                     Account = account,
 
                 };
-                Notification notification = new Notification
-                {
-                    CreateAt = DateTime.Now,
-                    AccountId = post.AccountId,
-                    Message = account.Lastname + " " + "đã like bài viết của bạn",
-                    Account = account,
-                };
 
-                await _unitOfWork.LikeDAO.AddLikeAsync(like);
-                await _unitOfWork.NotificationDAO.AddNotiAsync(notification);        
-                      _unitOfWork.LikeDAO.ChangeLike(post);
+                if (like != null)
+                {
+                    likes.isLike = !like.isLike;                   
+                }
+                
+                if (likes.isLike == true) 
+                {
+                    Notification notification = new Notification
+                    {
+                        CreateAt = DateTime.Now,
+                        AccountId = post.AccountId,
+                        Message = account.Lastname + " " + "đã like bài viết của bạn",
+                        Account = account,
+                    };
+
+                    await _unitOfWork.NotificationDAO.AddNotiAsync(notification);
+                }
+
+
+                await _unitOfWork.LikeDAO.AddLikeAsync(likes);
+                _unitOfWork.LikeDAO.ChangeLike(post);
 
                 await _unitOfWork.CommitAsync();
-                return _mapper.Map<GetPostLikeResponse>(post);
+                return _mapper.Map<GetPostLikeResponse>(likes);
 
             }
             catch (NotFoundException ex)

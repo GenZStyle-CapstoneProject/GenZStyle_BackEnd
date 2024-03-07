@@ -28,21 +28,21 @@ namespace GenZStyleApp.DAL.Models
         [ForeignKey("WalletId")]
         public Wallet Wallet { get; set; }
 
-        public virtual ICollection<Invoice> Invoices { get; set; }
-        public virtual ICollection<Token> Tokens { get; set; }
+        public virtual ICollection<Invoice>? Invoices { get; set; }
+        public virtual ICollection<Token>? Tokens { get; set; }
 
-        public virtual ICollection<Post> Posts { get; set; }
-        public virtual ICollection<Comment> Comments { get; set; }
-        public virtual ICollection<Like> Likes { get; set; }
-        public virtual ICollection<Notification> Notifications { get; set; }
+        public virtual ICollection<Post>? Posts { get; set; }
+        public virtual ICollection<Comment>? Comments { get; set; }
+        public virtual ICollection<Like>? Likes { get; set; }
+        public virtual ICollection<Notification>? Notifications { get; set; }
 
-        public virtual ICollection<UserRelation> UserRelations { get; set; }
-        public virtual ICollection<Message> Messages { get; set; }
+        public virtual ICollection<UserRelation>? UserRelations { get; set; }
+        public virtual ICollection<Message>? Messages { get; set; }
 
-        public virtual ICollection<InboxPaticipant> InboxPaticipants { get; set; }
-        public virtual ICollection<Style> Styles { get; set; }
+        public virtual ICollection<InboxPaticipant>? InboxPaticipants { get; set; }
+        public virtual ICollection<Style>? Styles { get; set; }
         [NotMapped]
-        public ICollection<PackageRegistration> PackageRegistrations { get; set; }
+        public ICollection<PackageRegistration>? PackageRegistrations { get; set; }
 
         
 
