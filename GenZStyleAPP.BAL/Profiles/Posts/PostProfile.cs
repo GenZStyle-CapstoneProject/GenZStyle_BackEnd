@@ -19,11 +19,13 @@ namespace GenZStyleAPP.BAL.Profiles.Posts
             //CreateMap<Post, GetPostResponse>().ForMember(dest => dest.FashionItems, opt => opt.MapFrom(src => src.FashionItems)).ReverseMap();
             CreateMap<Post, UpdatePostRequest>().ReverseMap();
             CreateMap<Post, GetPostResponse>().ReverseMap();
+            CreateMap<Post, GetPostForSearch>().ReverseMap();
             /*CreateMap<Post, GetCommentResponse>().ReverseMap();*/
 
             CreateMap<Post, GetCommentResponse>()
     .ForMember(dest => dest.CommentBy, opt => opt.MapFrom(src => src.AccountId))
     .ReverseMap();
+
 
 
         }

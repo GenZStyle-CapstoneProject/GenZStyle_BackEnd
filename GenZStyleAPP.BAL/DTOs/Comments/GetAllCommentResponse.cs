@@ -1,4 +1,5 @@
 ﻿using GenZStyleApp.DAL.Models;
+using GenZStyleAPP.BAL.DTOs.Posts;
 using System;
 using System.Collections.Generic;
 using System.Linq;

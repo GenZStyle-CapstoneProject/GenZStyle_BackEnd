@@ -11,6 +11,8 @@ using ProjectParticipantManagement.BAL.Heplers;
 
 namespace GenZStyleApp_API.Controllers
 {
+    [ApiController]
+    [Route("[controller]/[action]")]
     public class AccountsController : ODataController
     {
         private IAccountRepository _accountRepository;
@@ -39,14 +41,14 @@ namespace GenZStyleApp_API.Controllers
         }
 
         #region SearchByUserName
-        [HttpGet("odata/Accounts/{username}/SearchByUserName")]
+        [HttpGet("odata/Accounts/SearchByUserName")]
         [EnableQuery]
-        public async Task<IActionResult> SearchByUserName([FromRoute] string username)
+        public async Task<IActionResult> SearchByUserName([FromQuery] string username)
         {
             try
             {
                 List<GetAccountResponse> accountDTOs = await _accountRepository.SearchByUserName(username);
-
+                List<GetAccountResponse> accountDTOss = new List<GetAccountResponse>();
                 // Nếu muốn thực hiện bất kỳ xử lý hoặc kiểm tra nào đó trước khi trả kết quả, bạn có thể thêm vào đây
 
                 if (accountDTOs.Count > 0)
@@ -57,7 +59,7 @@ namespace GenZStyleApp_API.Controllers
                 else
                 {
                     // Không tìm thấy tài khoản, trả về thông báo không có kết quả
-                    return Ok(new { Message = "Không tìm thấy tài khoản nào." });
+                    return Ok(new { Message = "Không tìm thấy tài khoản nào.", Accounts = accountDTOss });
                 }
             }
             catch (Exception ex)

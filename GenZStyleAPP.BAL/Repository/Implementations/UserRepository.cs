@@ -429,17 +429,20 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 }
                 var followings  =  await this._unitOfWork.userRelationDAO.GetFollowing(account.AccountId);//người này đang follow bao nhiêu người
                 var UserRelationnn = _mapper.Map<List<GetUserRelationResponse>>(followings);
-                var followingAccounts = new List<GetAccountResponse>(); // Danh sách các tài khoản của người theo dõi
+                var followingAccountss = new List<GetAccountResponse>(); // Danh sách các tài khoản của người theo dõi
                 foreach (var following in UserRelationnn)
-                {
-                    followingAccounts.Add(following.Account);
+                {   
+                    
+                    Account account1 = await _unitOfWork.AccountDAO.GetAccountById(following.FollowingId);
+                    GetAccountResponse followingAccounts = _mapper.Map<GetAccountResponse>(account1);
+                    followingAccountss.Add(followingAccounts);
                 }
                 GetFollowResponse followResponse = new GetFollowResponse
                 {
                     /*Follower = followers.Count,
                     Followering = followings.Count,*/
                     Followers = followerAccounts,
-                    Following = followingAccounts
+                    Following = followingAccountss
                 };
 
                 return followResponse;

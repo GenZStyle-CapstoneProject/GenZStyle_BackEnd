@@ -20,6 +20,6 @@ namespace GenZStyleAPP.BAL.DTOs.Reports
         [ForeignKey("AccountId")]
         public Account Account { get; set; }
         [ForeignKey("PostId")]
-        public Post Post { get; set; }
+        public GetReportResponse Post { get; set; }
     }
 }

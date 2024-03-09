@@ -17,7 +17,7 @@ namespace GenZStyleAPP.BAL.Repository.Interfaces
 
         public Task<List<GetReportResponse>> GetPostReportsByReportId(int reportId);
         public Task<List<GetReportResponse>> GetUserReportsByReportId(int reportId);
-        public Task<List<GetReportResponse>> BanReportAsync(int reportId);
+        public Task<List<GetReportResponse>> BanReportAsync(int reportId, string status);
         //public Task DeleteReportAsync(int postId, HttpContext httpContext);
         //public Task<List<GetReportResponse>> ProcessReportStatusAsync(int reportId, ReportAction reportAction);
         public Task<GetReportResponse> CreateNewReportByPostIdAsync(AddReportRequest addReportRequest, HttpContext httpContext);

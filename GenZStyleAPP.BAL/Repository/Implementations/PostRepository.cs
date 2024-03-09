@@ -270,7 +270,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 {
                     foreach (string hashtagName in addPostRequest.Hashtags)
                     {
-                        List<Hashtag> existingHashtags = await _unitOfWork.HashTagDAO.SearchByHashTagName(hashtagName);
+                        List<Hashtag> existingHashtags = await _unitOfWork.HashTagDAO.SearchByHashTagNames(hashtagName);
 
                         if (existingHashtags == null || existingHashtags.Count == 0)
                         {

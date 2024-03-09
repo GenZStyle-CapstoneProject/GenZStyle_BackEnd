@@ -20,6 +20,8 @@ namespace GenZStyleApp_API.Controllers
 {
     //[Route("api/[controller]")]
     //[ApiController]
+    [ApiController]
+    [Route("[controller]/[action]")]
     public class PostsController : ODataController
     {
         private IPostRepository _postRepository;

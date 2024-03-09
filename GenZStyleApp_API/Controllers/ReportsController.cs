@@ -17,7 +17,9 @@ using static GenZStyleAPP.BAL.Repository.Implementations.ReportRepository;
 namespace GenZStyleApp_API.Controllers
 {
     //[Route("api/[controller]")]
-    //[ApiController]
+    /*[ApiController]
+    [Route("[controller]/[action]")]*/
+
     public class ReportsController : ODataController
     {
         private IReportRepository _reportRepository;
@@ -34,24 +36,36 @@ namespace GenZStyleApp_API.Controllers
         }
 
 
-        [HttpGet("odata/Reports/Active/GetAllReportByPost")]
+        [HttpGet("odata/Reports/GetAllReportByPost")]
         [EnableQuery]
         public async Task<IActionResult> GetAllReportByPost()
-        {
-            List<GetReportResponse> postReports = await this._reportRepository.GetPostReports();
-
-
-            return Ok(postReports);
+        {   
+            try {
+                List<GetReportResponse> postReports = await this._reportRepository.GetPostReports();
+                return Ok(postReports); 
+            
+            }catch (Exception ex) 
+            {
+                throw new Exception(ex.Message);
+            }
+            
         }
-
-        [HttpGet("odata/Reports/Active/GetAllReportByUser")]
+        [Microsoft.AspNetCore.Mvc.HttpGet("odata/Reports/GetAllReportByUser")]
+        /*[HttpGet("odata/Reports/Active/GetAllReportByUser")]*/
         [EnableQuery]
         public async Task<IActionResult> GetAllReportByUser()
         {
+            try {
+                List<GetReportResponse> userReports = await this._reportRepository.GetUserReports();            
+                return Ok(userReports); 
+            } 
+            catch (Exception ex)
             
-            List<GetReportResponse> userReports = await this._reportRepository.GetUserReports();
-
-            return Ok(userReports);
+            {
+                throw new Exception(ex.Message);
+            }
+            
+            
         }
 
         [HttpGet("odata/Reports/Active/GetPostReportsByReportId/{reportID}")]
@@ -231,35 +245,27 @@ namespace GenZStyleApp_API.Controllers
 
         //ban Report
         [EnableQuery]
-        [HttpPut("odata/Reports/{key}/BanReportByPostId")]
+        [HttpPut("odata/Reports/{id}/{status}/BanReportByPostId")]
         //[PermissionAuthorize("Store Owner")]
-        public async Task<IActionResult> BanReportByPostId([FromRoute] int key)
+        public async Task<IActionResult> BanReportByPostId([FromRoute] int id, [FromRoute] string status)
         {
             try
             {
-                List<GetReportResponse> report = await this._reportRepository.BanReportAsync(key);
-                if (report != null)
-                {
-                    return Ok(new
-                    {
-                        Status = " Accept Successfully",
-                        Data = report
-                    });
-                }
-                else
-                {
-                    return StatusCode(400, new
-                    {
-                        Status = -1,
-                        Message = "Ban Report Fail"
-                    });
+                List<GetReportResponse> reports = await this._reportRepository.BanReportAsync(id, status);
 
-                }
-
+                return Ok(new
+                {
+                    Message = "Accept Successfully",
+                    Data = reports
+                });
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode(400, new
+                {
+                    Status = -1,
+                    Message = "Ban Report Fail: " + ex.Message
+                });
             }
         }
 

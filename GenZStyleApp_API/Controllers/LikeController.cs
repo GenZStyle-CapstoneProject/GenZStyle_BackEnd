@@ -10,6 +10,8 @@ using ProjectParticipantManagement.BAL.Heplers;
 
 namespace GenZStyleApp_API.Controllers
 {
+    [ApiController]
+    [Route("[controller]/[action]")]
     public class LikeController : ODataController
     {
         private ILikeRepository _likeRepository;
