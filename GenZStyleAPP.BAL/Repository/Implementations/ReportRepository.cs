@@ -255,11 +255,11 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
         #endregion
 
 
-       
 
 
 
-        public async Task<List<GetReportResponse>> BanReportAsync(int reportId)
+
+        public async Task<List<GetReportResponse>> BanReportAsync(int reportId, string status)
         {
             try
             {
@@ -277,8 +277,17 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                     // Set IsStatusReport to 1 for the report (accepted)
                     report.IsStatusReport = 1;
 
-                    // Cập nhật trạng thái thành "Active"
-                     report.Status = "Active";
+                    // Update the status
+                    if (status.ToLower() == "active")
+                    {
+                        report.Status = "Active";
+                    }
+                    else if (status.ToLower() == "reject")
+                    {
+                        report.Status = "Reject";
+                        report.IsStatusReport = 2;
+                    }
+
                     _unitOfWork.ReportDAO.AcceptReport(report);
 
                     await this._unitOfWork.CommitAsync();
@@ -300,6 +309,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 throw new Exception(error);
             }
         }
+
 
         private async Task CheckAndDeletePost(int? postId)
         {
@@ -323,6 +333,7 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
                 }
             }
         }
+    }
 
 
         //public async Task<List<GetReportResponse>> RestoreReportAsync(int reportId)
@@ -457,4 +468,4 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
 
 
 
-}
+

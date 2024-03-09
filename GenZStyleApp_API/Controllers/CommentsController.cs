@@ -28,7 +28,7 @@ namespace GenZStyleApp_API.Controllers
 
 
 
-        [HttpGet("odata/Comments/{PostId}")]
+        [HttpGet("odata/Comment/{PostId}")]
         public async Task<IActionResult> GetAllComment(int PostId)
         {
             List<GetCommentResponse> result = await _commentRepository.GetCommentByPostId(PostId);
@@ -36,7 +36,7 @@ namespace GenZStyleApp_API.Controllers
         }
         
         [EnableQuery]
-        [HttpPost("odata/Comments/{key}")]
+        [HttpPost("odata/Comment/{key}")]
 
         public async Task<IActionResult> Post([FromRoute] int key, [FromBody]  GetCommentRequest commentRequest)
         {

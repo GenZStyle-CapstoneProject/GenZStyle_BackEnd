@@ -27,7 +27,7 @@ namespace GenZStyleAPP.BAL.DTOs.Posts
 
         public string Content { get; set; }
         public string Image { get; set; }
-        /*public ICollection<GetHashPostsResponse> HashPosts { get; set; }*/
+        public ICollection<GetHashPostsResponse> HashPosts { get; set; }
         /*public GetAccountResponse Account { get; set; }*/
 
         public List<string>? Hashtags { get; set; }

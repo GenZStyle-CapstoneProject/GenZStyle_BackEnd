@@ -13,9 +13,12 @@ using Microsoft.Extensions.Options;
 using ProjectParticipantManagement.BAL.Exceptions;
 using ProjectParticipantManagement.BAL.Heplers;
 using System.ComponentModel.DataAnnotations;
+using GenZStyleAPP.BAL.DTOs.Posts;
 
 namespace GenZStyleApp_API.Controllers
 {
+    [ApiController]
+    [Route("[controller]/[action]")]
     public class HashTagsController : ODataController
     {
         private IHashTagRepository _hashTagRepository;
@@ -32,14 +35,15 @@ namespace GenZStyleApp_API.Controllers
         }
 
         #region SearchByHashTagName
-        [HttpGet("odata/HashTags/{hashtag}/SearchByHashTagName")]
+        [HttpGet("odata/HashTags/SearchByHashTagName")]
 
-        public async Task<IActionResult> SearchByHashTagName([FromRoute] string hashtag)
+        public async Task<IActionResult> SearchByHashTagName([FromQuery] string hashtag)
         {
             try
             {
-                List<GetHashTagResponse> hashtagDTOs = await _hashTagRepository.SearchByHashTagName(hashtag);
 
+                List<GetPostForSearch> hashtagDTOs = await _hashTagRepository.SearchByHashTagName(hashtag);
+                List<GetHashTagResponse> hashtagDTOss = new List<GetHashTagResponse>();
                 // Nếu muốn thực hiện bất kỳ xử lý hoặc kiểm tra nào đó trước khi trả kết quả, bạn có thể thêm vào đây
 
                 if (hashtagDTOs.Count > 0)
@@ -50,7 +54,7 @@ namespace GenZStyleApp_API.Controllers
                 else
                 {
                     // Không tìm thấy tài khoản, trả về thông báo không có kết quả
-                    return Ok(new { Message = "Not Found HashTagName in the system." });
+                    return Ok(new { Message = "Not Found HashTagName in the system.", HashTags = hashtagDTOss });
                 }
             }
             catch (Exception ex)
@@ -67,7 +71,7 @@ namespace GenZStyleApp_API.Controllers
         {
 
 
-            List<GetHashTagResponse> result = await _hashTagRepository.GetHashTagsAsync();
+            List<GetAllHashTag> result = await _hashTagRepository.GetHashTagsAsync();
             return Ok(result);
         }
         #endregion

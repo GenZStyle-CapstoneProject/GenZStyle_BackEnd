@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GenZStyleAPP.BAL.DTOs.HashTags;
 using GenZStyleApp.BAL.Helpers;
+using GenZStyleAPP.BAL.DTOs.Posts;
 
 namespace GenZStyleAPP.BAL.Repository.Implementations
 {
@@ -28,19 +29,20 @@ namespace GenZStyleAPP.BAL.Repository.Implementations
             _mapper = mapper;
         }
 
-        public async Task<List<DTOs.HashTags.GetHashTagResponse>> SearchByHashTagName(string hashtag) {
-            List<Hashtag> hashtags = await _unitOfWork.HashTagDAO.SearchByHashTagName(hashtag);
-            List<GetHashTagResponse> hashtagDTOs = _mapper.Map<List<GetHashTagResponse>>(hashtags);
-            return hashtagDTOs;
+        public async Task<List<GetPostForSearch>> SearchByHashTagName(string hashtag)
+        {
+            List<Post> hashtags = await _unitOfWork.HashTagDAO.SearchByHashTagName(hashtag);
+            return _mapper.Map<List<GetPostForSearch>>(hashtags);
+
         }
-            
+
         #region GetHashTag
-        public async Task<List<GetHashTagResponse>> GetHashTagsAsync()
+        public async Task<List<GetAllHashTag>> GetHashTagsAsync()
         {
             try
             {
                 var hashtags = await _unitOfWork.HashTagDAO.GetAllHashTag();
-                return _mapper.Map<List<GetHashTagResponse>>(hashtags);
+                return _mapper.Map<List<GetAllHashTag>>(hashtags);
             }
             catch (NotFoundException ex)
             {

@@ -1,5 +1,7 @@
 ﻿using GenZStyleApp.DAL.Models;
 using GenZStyleAPP.BAL.DTOs.HashTags;
+using GenZStyleAPP.BAL.DTOs.Posts;
+using GenZStyleAPP.BAL.DTOs.Postss;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -20,5 +22,7 @@ namespace GenZStyleAPP.BAL.DTOs.HashPosts
         public DateTime UpdateAt { get; set; }
 
         public GetHashTagResponse Hashtag { get; set; }
+
+        /*public Post Post { get; set; }*/
     }
 }

@@ -14,6 +14,7 @@ namespace GenZStyleAPP.BAL.Profiles.HashTags
         public HashTagProfile() 
         { 
             CreateMap<Hashtag, GetHashTagResponse>().ReverseMap();
+            CreateMap<Hashtag, GetAllHashTag>().ReverseMap();
         
         }
     }
